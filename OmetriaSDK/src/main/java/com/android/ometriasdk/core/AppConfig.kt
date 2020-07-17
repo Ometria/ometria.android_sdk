@@ -8,14 +8,9 @@ import android.content.Context
  */
 
 internal class AppConfig(
-    context: Context,
-    notificationIcon: Int
-) {
-    var context: Context? = null
+    var context: Context,
+    var apiKey: String,
     var notificationIcon: Int = 0
-
-    init {
-        this.context = context
-        this.notificationIcon = notificationIcon
-    }
+) {
+    var enableDebugging: Boolean = false
 }

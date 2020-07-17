@@ -12,17 +12,50 @@ import com.google.firebase.messaging.RemoteMessage
 
 private val TAG = Ometria::class.simpleName
 
-object Ometria {
+class Ometria private constructor() {
+
     private lateinit var appConfig: AppConfig
+    private var isInitialized = false
 
-    fun initialize(application: Application, apiKey: String, notificationIcon: Int) {
-        val activityLifecycleHelper = OmetriaActivityLifecycleHelper()
-        application.registerActivityLifecycleCallbacks(activityLifecycleHelper)
+    /**
+     * Kotlin Object ensures thread safety.
+     */
+    private object HOLDER {
+        val INSTANCE = Ometria()
+    }
 
-        val lifecycle = ProcessLifecycleOwner.get().lifecycle
-        lifecycle.addObserver(activityLifecycleHelper)
+    companion object {
+        private val instance: Ometria by lazy { HOLDER.INSTANCE }
 
-        appConfig = AppConfig(application, notificationIcon)
+        @JvmStatic
+        fun initialize(application: Application, apiKey: String, notificationIcon: Int): Ometria {
+            val activityLifecycleHelper = OmetriaActivityLifecycleHelper()
+            application.registerActivityLifecycleCallbacks(activityLifecycleHelper)
+
+            val lifecycle = ProcessLifecycleOwner.get().lifecycle
+            lifecycle.addObserver(activityLifecycleHelper)
+
+            return instance.also {
+                it.appConfig = AppConfig(application, apiKey, notificationIcon)
+                it.isInitialized = true
+            }
+        }
+
+        @JvmStatic
+        fun instance(): Ometria {
+            if (!instance.isInitialized) {
+                throw IllegalStateException("SDK not initialized. Please initialize before using this method.")
+            }
+
+            return instance
+        }
+    }
+
+    fun enableDebugging(enableDebugging: Boolean): Ometria {
+        appConfig.enableDebugging = enableDebugging
+        // ToDo notify custom logger
+
+        return instance
     }
 
     // Notification events
@@ -41,7 +74,7 @@ object Ometria {
 
     // Usage events
 
-    fun trackScreenViewed() {
+    fun trackScreenViewed(screenName: String) {
 
     }
 
@@ -71,5 +104,9 @@ object Ometria {
 
     fun trackOrderCompleted() {
 
+    }
+
+    fun trackEvent(name: String, block: (Event).() -> Unit) {
+        val event = Event(name).apply(block)
     }
 }

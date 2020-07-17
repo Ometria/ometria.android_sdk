@@ -19,13 +19,13 @@ class OmetriaPocFirebaseMessagingService : FirebaseMessagingService() {
         super.onMessageReceived(remoteMessage)
         Log.d(TAG, "$remoteMessage")
 
-        Ometria.onMessageReceived(remoteMessage)
+        Ometria.instance().onMessageReceived(remoteMessage)
     }
 
     override fun onNewToken(token: String) {
         super.onNewToken(token)
         Log.d(TAG, "Token: $token")
 
-        Ometria.onNewToken(token)
+        Ometria.instance().onNewToken(token)
     }
 }
