@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/restaurants"
+        android:title="@string/tab_one" />
+
+    <item
+        android:id="@+id/my_orders"
+        android:title="@string/tab_two" />
+
+    <item
+        android:id="@+id/my_profile"
+        android:title="@string/tab_three" />
+</menu>
