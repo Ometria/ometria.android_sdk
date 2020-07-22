@@ -14,7 +14,7 @@ private val TAG = Ometria::class.simpleName
 
 class Ometria private constructor() {
 
-    private lateinit var appConfig: AppConfig
+    internal lateinit var appConfig: AppConfig
     private var isInitialized = false
 
     /**
@@ -53,7 +53,7 @@ class Ometria private constructor() {
 
     fun enableDebugging(enableDebugging: Boolean): Ometria {
         appConfig.enableDebugging = enableDebugging
-        // ToDo notify custom logger
+        OmetriaLog.setLevel(VERBOSE)
 
         return instance
     }
@@ -108,5 +108,7 @@ class Ometria private constructor() {
 
     fun trackEvent(name: String, block: (Event).() -> Unit) {
         val event = Event(name).apply(block)
+
+        OmetriaLog.d(TAG, "Ometria initialized", event)
     }
 }
