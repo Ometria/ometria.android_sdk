@@ -1,8 +1,8 @@
-package com.android.ometriapoc.presentation
+package com.android.sample.presentation
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
-import com.android.ometriapoc.R
+import com.android.sample.R
 
 /**
  * Created by cristiandregan

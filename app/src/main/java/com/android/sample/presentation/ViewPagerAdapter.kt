@@ -1,4 +1,4 @@
-package com.android.ometriapoc.presentation
+package com.android.sample.presentation
 
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager

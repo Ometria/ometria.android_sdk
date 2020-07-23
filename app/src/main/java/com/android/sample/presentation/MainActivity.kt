@@ -1,9 +1,9 @@
-package com.android.ometriapoc.presentation
+package com.android.sample.presentation
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.viewpager.widget.ViewPager
-import com.android.ometriapoc.R
+import com.android.sample.R
 import kotlinx.android.synthetic.main.activity_main.*
 
 private val TAG = MainActivity::class.simpleName
@@ -48,7 +48,9 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun setupViewPager() {
-        val adapter = ViewPagerAdapter(supportFragmentManager)
+        val adapter = ViewPagerAdapter(
+            supportFragmentManager
+        )
         val firstFragment = HomeFragment()
         val secondFragment = HomeFragment()
         val thirdFragment = HomeFragment()
@@ -56,7 +58,8 @@ class MainActivity : AppCompatActivity() {
         adapter.addFragment(secondFragment)
         adapter.addFragment(thirdFragment)
         containerVP.adapter = adapter
-        containerVP.offscreenPageLimit = OFF_SCREEN_PAGE_LIMIT
+        containerVP.offscreenPageLimit =
+            OFF_SCREEN_PAGE_LIMIT
         switchFragment(0)
         bottomMenuBnv.menu.getItem(0).isChecked = true
 

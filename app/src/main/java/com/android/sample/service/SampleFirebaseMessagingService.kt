@@ -1,8 +1,7 @@
-package com.android.ometriapoc.service
+package com.android.sample.service
 
 import android.util.Log
 import com.android.ometriasdk.core.Ometria
-import com.android.ometriasdk.notifications.OmetriaFirebaseMessagingService
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
 
@@ -11,9 +10,9 @@ import com.google.firebase.messaging.RemoteMessage
  * on 09/07/2020.
  */
 
-private val TAG = OmetriaPocFirebaseMessagingService::class.simpleName
+private val TAG = SampleFirebaseMessagingService::class.simpleName
 
-class OmetriaPocFirebaseMessagingService : FirebaseMessagingService() {
+class SampleFirebaseMessagingService : FirebaseMessagingService() {
 
     override fun onMessageReceived(remoteMessage: RemoteMessage) {
         super.onMessageReceived(remoteMessage)
