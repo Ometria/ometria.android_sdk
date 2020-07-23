@@ -9,12 +9,14 @@ import java.util.*
  */
 
 data class Event(
-    val name: String,
+    val type: String,
+    val value: String,
     // ToDo Figure it out how to manage time zone
-    val timeStamp: Long = Date().time,
-    val bundle: Bundle = Bundle()
+    private val creationDate: Long = Date().time,
+    private val params: Bundle = Bundle(),
+    val isFlushed: Boolean = false
 ) {
     fun param(key: String, value: String) {
-        bundle.putString(key, value)
+        params.putString(key, value)
     }
 }
