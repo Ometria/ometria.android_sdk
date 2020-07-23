@@ -58,8 +58,6 @@ class Ometria private constructor() {
         return instance
     }
 
-    // Notification events
-
     fun onMessageReceived(remoteMessage: RemoteMessage) {
         NotificationsHandler.showNotification(
             remoteMessage,
@@ -72,43 +70,14 @@ class Ometria private constructor() {
         // TODO send token to the API
     }
 
-    // Usage events
+    fun trackEvent(type: String, value: String, block: (Event).() -> Unit) {
+        val event = Event(type, value).apply(block)
 
-    fun trackScreenViewed(screenName: String) {
-
+        OmetriaLog.d(TAG, "Track event", event)
     }
 
-    fun trackProductClicked() {
+    fun trackEvent(event: Event) {
 
-    }
-
-    fun trackProductViewed() {
-
-    }
-
-    fun trackProductAdded() {
-
-    }
-
-    fun trackProductRemoved() {
-
-    }
-
-    fun trackCartViewed() {
-
-    }
-
-    fun trackCheckoutStarted() {
-
-    }
-
-    fun trackOrderCompleted() {
-
-    }
-
-    fun trackEvent(name: String, block: (Event).() -> Unit) {
-        val event = Event(name).apply(block)
-
-        OmetriaLog.d(TAG, "Ometria initialized", event)
+        OmetriaLog.d(TAG, "Track event", event)
     }
 }
