@@ -70,14 +70,45 @@ class Ometria private constructor() {
         // TODO send token to the API
     }
 
-    fun trackEvent(type: String, value: String, block: (Event).() -> Unit) {
-        val event = Event(type, value).apply(block)
+    fun trackEvent(event: Event) {
+        OmetriaLog.d(TAG, "Track event: ", event)
 
-        OmetriaLog.d(TAG, "Track event", event)
+
     }
 
-    fun trackEvent(event: Event) {
+    fun trackEvent(
+        type: OmetriaEventType,
+        value: String,
+        configurationBlock: ((Event).() -> Unit)? = null
+    ) {
+        val event = Event(type, value)
 
-        OmetriaLog.d(TAG, "Track event", event)
+        if (configurationBlock != null) {
+            event.apply(configurationBlock)
+        }
+
+        trackEvent(event)
+    }
+
+    fun trackCustomEvent(
+        customEventType: String,
+        value: String,
+        configurationBlock: ((Event).() -> Unit)? = null
+    ) {
+        val eventType = OmetriaEventType.CUSTOM
+        eventType.id = customEventType
+        val event = Event(eventType, value)
+
+        if (configurationBlock != null) {
+            event.apply(configurationBlock)
+        }
+
+        trackEvent(event)
+    }
+
+    fun trackCustomEvent(event: Event, customEventType: String) {
+        event.type.id = customEventType
+
+        trackEvent(event)
     }
 }
