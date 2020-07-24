@@ -19,6 +19,7 @@ class Ometria private constructor() {
 
     internal lateinit var appConfig: AppConfig
     private var isInitialized = false
+    internal lateinit var localCache: LocalCache
 
     /**
      * Kotlin Object ensures thread safety.
@@ -32,17 +33,18 @@ class Ometria private constructor() {
 
         @JvmStatic
         fun initialize(application: Application, apiKey: String, notificationIcon: Int): Ometria {
-            val activityLifecycleHelper =
-                OmetriaActivityLifecycleHelper()
-
-            val lifecycle = ProcessLifecycleOwner.get().lifecycle
-            lifecycle.addObserver(activityLifecycleHelper)
-
-            application.registerActivityLifecycleCallbacks(activityLifecycleHelper)
 
             return instance.also {
                 it.appConfig = AppConfig(application, apiKey, notificationIcon)
+                it.localCache = LocalCache(application)
                 it.isInitialized = true
+
+                val activityLifecycleHelper = OmetriaActivityLifecycleHelper(it.localCache)
+
+                val lifecycle = ProcessLifecycleOwner.get().lifecycle
+                lifecycle.addObserver(activityLifecycleHelper)
+
+                application.registerActivityLifecycleCallbacks(activityLifecycleHelper)
             }
         }
 
