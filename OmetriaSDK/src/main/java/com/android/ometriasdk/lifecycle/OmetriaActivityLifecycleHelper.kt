@@ -1,10 +1,12 @@
-package com.android.ometriasdk.core
+package com.android.ometriasdk.lifecycle
 
 import android.app.Activity
 import android.app.Application
 import android.os.Bundle
 import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
+import com.android.ometriasdk.core.Ometria
+import com.android.ometriasdk.core.event.OmetriaEventType
 import java.util.concurrent.atomic.AtomicBoolean
 
 /**
@@ -71,7 +73,8 @@ class OmetriaActivityLifecycleHelper :
      * Using activity started callback to track Screen View event
      */
     override fun onActivityStarted(activity: Activity) {
-        Ometria.instance().trackEvent(OmetriaEventType.VIEW_SCREEN, activity::class.simpleName)
+        Ometria.instance()
+            .trackEvent(OmetriaEventType.VIEW_SCREEN, activity::class.simpleName)
     }
 
     /**

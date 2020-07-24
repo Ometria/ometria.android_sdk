@@ -3,7 +3,7 @@ package com.android.ometriasdk.notifications
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
-import com.android.ometriasdk.core.OmetriaLog
+import com.android.ometriasdk.core.Logger
 
 /**
  * Created by cristiandregan
@@ -17,7 +17,7 @@ class OmetriaPushNotificationDismissReceiver : BroadcastReceiver() {
         val action = intent?.action
         if (action != null && action == PUSH_DISMISS_ACTION) {
             // TODO track push notification dismissed
-            OmetriaLog.d(TAG, "push dismissed")
+            Logger.d(TAG, "push dismissed")
         }
     }
 }

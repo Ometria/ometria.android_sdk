@@ -2,6 +2,9 @@ package com.android.ometriasdk.core
 
 import android.app.Application
 import androidx.lifecycle.ProcessLifecycleOwner
+import com.android.ometriasdk.core.event.Event
+import com.android.ometriasdk.core.event.OmetriaEventType
+import com.android.ometriasdk.lifecycle.OmetriaActivityLifecycleHelper
 import com.android.ometriasdk.notifications.NotificationsHandler
 import com.google.firebase.messaging.RemoteMessage
 
@@ -29,7 +32,8 @@ class Ometria private constructor() {
 
         @JvmStatic
         fun initialize(application: Application, apiKey: String, notificationIcon: Int): Ometria {
-            val activityLifecycleHelper = OmetriaActivityLifecycleHelper()
+            val activityLifecycleHelper =
+                OmetriaActivityLifecycleHelper()
 
             val lifecycle = ProcessLifecycleOwner.get().lifecycle
             lifecycle.addObserver(activityLifecycleHelper)
@@ -54,7 +58,7 @@ class Ometria private constructor() {
 
     fun enableDebugging(enableDebugging: Boolean): Ometria {
         appConfig.enableDebugging = enableDebugging
-        OmetriaLog.setLevel(VERBOSE)
+        Logger.setLevel(VERBOSE)
 
         return instance
     }
@@ -72,7 +76,7 @@ class Ometria private constructor() {
     }
 
     fun trackEvent(event: Event) {
-        OmetriaLog.d(TAG, "Track event: ", event)
+        Logger.d(TAG, "Track event: ", event)
 
 
     }

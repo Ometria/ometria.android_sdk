@@ -13,7 +13,7 @@ const val INFO = 4
 const val WARN = 5
 const val ERROR = 6
 
-object OmetriaLog {
+internal object Logger {
 
     private var minLevel: Int = WARN
 

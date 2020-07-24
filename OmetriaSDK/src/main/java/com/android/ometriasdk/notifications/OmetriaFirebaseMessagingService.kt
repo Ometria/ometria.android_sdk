@@ -1,6 +1,6 @@
 package com.android.ometriasdk.notifications
 
-import com.android.ometriasdk.core.OmetriaLog
+import com.android.ometriasdk.core.Logger
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
 
@@ -15,13 +15,13 @@ open class OmetriaFirebaseMessagingService : FirebaseMessagingService() {
 
     override fun onMessageReceived(remoteMessage: RemoteMessage) {
         super.onMessageReceived(remoteMessage)
-        OmetriaLog.d(TAG, "$remoteMessage")
+        Logger.d(TAG, "$remoteMessage")
 
     }
 
     override fun onNewToken(token: String) {
         super.onNewToken(token)
-        OmetriaLog.d(TAG, "Token: $token")
+        Logger.d(TAG, "Token: $token")
 
     }
 }

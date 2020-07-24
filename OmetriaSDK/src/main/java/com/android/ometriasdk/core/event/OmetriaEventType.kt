@@ -1,12 +1,8 @@
-package com.android.ometriasdk.core
-
-import android.os.Bundle
-import com.android.ometriasdk.BuildConfig
-import java.util.*
+package com.android.ometriasdk.core.event
 
 /**
  * Created by cristiandregan
- * on 17/07/2020.
+ * on 24/07/2020.
  */
 
 enum class OmetriaEventType(var id: String) {
@@ -37,26 +33,4 @@ enum class OmetriaEventType(var id: String) {
     // Other event types
     OPEN_DEEP_LINK("OPEN_DEEP_LINK"),
     CUSTOM("")
-}
-
-open class BaseEvent(
-    // ToDo Decide on how to manage time zone
-    private val applicationID: String? = null,
-    private val applicationVersion: String? = null,
-    private val buildNumber: String? = null,
-    private val sdkVersion: String? = BuildConfig.VERSION_NAME,
-    private val osType: String = "Android",
-    private val creationDate: Long = Date().time,
-    private val flushDate: Long = Date().time,
-    private val isFlushed: Boolean = false
-)
-
-data class Event(
-    val type: OmetriaEventType,
-    val value: String?,
-    private val params: Bundle = Bundle()
-) : BaseEvent() {
-    fun param(key: String, value: String) {
-        params.putString(key, value)
-    }
 }
