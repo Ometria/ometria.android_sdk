@@ -53,7 +53,7 @@ open class BaseEvent(
 
 data class Event(
     val type: OmetriaEventType,
-    val value: String,
+    val value: String?,
     private val params: Bundle = Bundle()
 ) : BaseEvent() {
     fun param(key: String, value: String) {

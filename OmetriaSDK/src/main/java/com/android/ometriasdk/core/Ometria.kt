@@ -30,10 +30,11 @@ class Ometria private constructor() {
         @JvmStatic
         fun initialize(application: Application, apiKey: String, notificationIcon: Int): Ometria {
             val activityLifecycleHelper = OmetriaActivityLifecycleHelper()
-            application.registerActivityLifecycleCallbacks(activityLifecycleHelper)
 
             val lifecycle = ProcessLifecycleOwner.get().lifecycle
             lifecycle.addObserver(activityLifecycleHelper)
+
+            application.registerActivityLifecycleCallbacks(activityLifecycleHelper)
 
             return instance.also {
                 it.appConfig = AppConfig(application, apiKey, notificationIcon)
@@ -78,7 +79,7 @@ class Ometria private constructor() {
 
     fun trackEvent(
         type: OmetriaEventType,
-        value: String,
+        value: String? = null,
         configurationBlock: ((Event).() -> Unit)? = null
     ) {
         val event = Event(type, value)
