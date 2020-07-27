@@ -40,7 +40,7 @@ class Ometria private constructor() {
                 it.appConfig = AppConfig(application, apiKey, notificationIcon)
                 it.localCache = LocalCache(application)
                 it.isInitialized = true
-                it.eventHandler = EventHandler(application)
+                it.eventHandler = EventHandler(application, it.localCache)
 
                 val activityLifecycleHelper = OmetriaActivityLifecycleHelper(it.localCache)
 
