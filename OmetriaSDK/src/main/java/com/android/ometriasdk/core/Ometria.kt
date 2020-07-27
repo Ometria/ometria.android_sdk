@@ -3,6 +3,7 @@ package com.android.ometriasdk.core
 import android.app.Application
 import androidx.lifecycle.ProcessLifecycleOwner
 import com.android.ometriasdk.core.event.Event
+import com.android.ometriasdk.core.event.EventHandler
 import com.android.ometriasdk.core.event.OmetriaEventType
 import com.android.ometriasdk.lifecycle.OmetriaActivityLifecycleHelper
 import com.android.ometriasdk.notifications.NotificationsHandler
@@ -17,9 +18,10 @@ private val TAG = Ometria::class.simpleName
 
 class Ometria private constructor() {
 
-    internal lateinit var appConfig: AppConfig
+    private lateinit var appConfig: AppConfig
     private var isInitialized = false
-    internal lateinit var localCache: LocalCache
+    private lateinit var localCache: LocalCache
+    private lateinit var eventHandler: EventHandler
 
     /**
      * Kotlin Object ensures thread safety.
@@ -38,6 +40,7 @@ class Ometria private constructor() {
                 it.appConfig = AppConfig(application, apiKey, notificationIcon)
                 it.localCache = LocalCache(application)
                 it.isInitialized = true
+                it.eventHandler = EventHandler(application)
 
                 val activityLifecycleHelper = OmetriaActivityLifecycleHelper(it.localCache)
 
@@ -78,9 +81,7 @@ class Ometria private constructor() {
     }
 
     fun trackEvent(event: Event) {
-        Logger.d(TAG, "Track event: ", event)
-
-
+        eventHandler.processEvent(event)
     }
 
     fun trackEvent(
