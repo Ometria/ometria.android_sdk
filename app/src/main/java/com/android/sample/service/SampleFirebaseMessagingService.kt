@@ -1,8 +1,7 @@
 package com.android.sample.service
 
 import android.util.Log
-import com.android.ometriasdk.core.Ometria
-import com.google.firebase.messaging.FirebaseMessagingService
+import com.android.ometriasdk.notifications.OmetriaFirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
 
 /**
@@ -12,19 +11,15 @@ import com.google.firebase.messaging.RemoteMessage
 
 private val TAG = SampleFirebaseMessagingService::class.simpleName
 
-class SampleFirebaseMessagingService : FirebaseMessagingService() {
+class SampleFirebaseMessagingService : OmetriaFirebaseMessagingService() {
 
     override fun onMessageReceived(remoteMessage: RemoteMessage) {
         super.onMessageReceived(remoteMessage)
         Log.d(TAG, "$remoteMessage")
-
-        Ometria.instance().onMessageReceived(remoteMessage)
     }
 
     override fun onNewToken(token: String) {
         super.onNewToken(token)
         Log.d(TAG, "Token: $token")
-
-        Ometria.instance().onNewToken(token)
     }
 }

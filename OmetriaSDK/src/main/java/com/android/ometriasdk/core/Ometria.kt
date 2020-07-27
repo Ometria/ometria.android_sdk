@@ -74,10 +74,12 @@ class Ometria private constructor() {
             appConfig.context,
             appConfig.notificationIcon
         )
+
+        trackEvent(OmetriaEventType.RECEIVE_NOTIFICATION, remoteMessage.messageId)
     }
 
     fun onNewToken(token: String) {
-        // TODO send token to the API
+        trackEvent(OmetriaEventType.REFRESH_PUSH_TOKEN, token)
     }
 
     fun trackEvent(event: Event) {
