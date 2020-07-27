@@ -18,10 +18,6 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-//        detailsBTN.setOnClickListener {
-//            startActivity(Intent(this, DetailsActivity::class.java))
-//        }
-
         setUpBottomNavMenu()
         setupViewPager()
     }
@@ -51,9 +47,9 @@ class MainActivity : AppCompatActivity() {
         val adapter = ViewPagerAdapter(
             supportFragmentManager
         )
-        val firstFragment = HomeFragment()
-        val secondFragment = HomeFragment()
-        val thirdFragment = HomeFragment()
+        val firstFragment = HomeFragment.newInstance(TAB_ONE)
+        val secondFragment = HomeFragment.newInstance(TAB_TWO)
+        val thirdFragment = HomeFragment.newInstance(TAB_THREE)
         adapter.addFragment(firstFragment)
         adapter.addFragment(secondFragment)
         adapter.addFragment(thirdFragment)
