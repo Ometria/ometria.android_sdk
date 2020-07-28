@@ -4,6 +4,8 @@ import android.content.Context
 import com.android.ometriasdk.core.LocalCache
 import com.android.ometriasdk.core.Logger
 import com.android.ometriasdk.core.event.OmetriaEventType.LAUNCH_APPLICATION
+import java.io.File
+import java.io.FileOutputStream
 
 /**
  * Created by cristiandregan
@@ -22,10 +24,19 @@ internal class EventHandler(private val context: Context, private val localCache
     }
 
     private fun <T> sendEvent(event: T) where T : Event {
-        context.openFileOutput("Events.txt", Context.MODE_APPEND).use {
+        Logger.d(TAG, "Track event: ", event)
+        writeEventToFile(event)
+    }
+
+    private fun writeEventToFile(event: Event) {
+        val path = context.getExternalFilesDir(null)
+
+        val letDirectory = File(path, "Events")
+        letDirectory.mkdirs()
+        val file = File(letDirectory, "Events.txt")
+
+        FileOutputStream(file, true).use {
             it.write("$event\n".toByteArray())
         }
-
-        Logger.d(TAG, "Track event: ", event)
     }
 }
