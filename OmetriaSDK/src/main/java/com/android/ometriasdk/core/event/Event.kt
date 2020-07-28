@@ -7,12 +7,16 @@ import android.os.Bundle
  * on 17/07/2020.
  */
 
-data class Event(
+open class Event(
     val type: OmetriaEventType,
     val value: String?,
-    private val params: Bundle = Bundle()
-) : BaseEvent() {
+    val params: Bundle = Bundle()
+) {
     fun param(key: String, value: String) {
         params.putString(key, value)
+    }
+
+    override fun toString(): String {
+        return "Event(type=$type, value=$value, params=$params)"
     }
 }
