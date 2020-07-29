@@ -24,11 +24,12 @@ internal class EventHandler(private val context: Context, private val localCache
     }
 
     private fun <T> sendEvent(event: T) where T : Event {
+        localCache.saveEvent(event)
         Logger.d(TAG, "Track event: ", event)
         writeEventToFile(event)
     }
 
-    private fun writeEventToFile(event: Event) {
+    private fun <T> writeEventToFile(event: T) where T : Event {
         val path = context.getExternalFilesDir(null)
 
         val letDirectory = File(path, "Events")
@@ -36,7 +37,7 @@ internal class EventHandler(private val context: Context, private val localCache
         val file = File(letDirectory, "Events.txt")
 
         FileOutputStream(file, true).use {
-            it.write("$event\n".toByteArray())
+            it.write("- $event\n".toByteArray())
         }
     }
 }
