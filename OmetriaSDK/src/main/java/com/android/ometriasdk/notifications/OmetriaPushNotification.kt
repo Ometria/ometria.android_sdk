@@ -28,11 +28,11 @@ internal class OmetriaPushNotification(
     fun createPushNotification(intent: Intent): Notification {
         val channelId = OMETRIA_CHANNEL_ID
 
-        val contentIntent = PendingIntent.getActivity(
+        val contentIntent = PendingIntent.getBroadcast(
             context,
             System.currentTimeMillis().toInt(),
             getRoutingIntent(),
-            PendingIntent.FLAG_CANCEL_CURRENT
+            PendingIntent.FLAG_UPDATE_CURRENT
         )
 
         val deleteIntent = PendingIntent.getBroadcast(
@@ -46,6 +46,7 @@ internal class OmetriaPushNotification(
             .setSmallIcon(notificationIcon)
             .setContentTitle("Title")
             .setContentText("Text")
+            .setAutoCancel(true)
             .setContentIntent(contentIntent)
             .setDeleteIntent(deleteIntent)
 
@@ -66,13 +67,13 @@ internal class OmetriaPushNotification(
     }
 
     private fun getRoutingIntent(): Intent {
-        val options: Bundle = Bundle()
+        val options = Bundle()
 
-        val intent = context!!.packageManager.getLaunchIntentForPackage(context.packageName)
-
-        return intent!!.setAction(PUSH_TAP_ACTION)
-            .putExtras(options)
-            .setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY)
+        return Intent().setAction(PUSH_TAP_ACTION)
+            .setClass(
+                context!!,
+                PushClickBroadcastReceiver::class.java
+            ).putExtras(options)
     }
 
     private fun getDeleteIntent(): Intent {
@@ -80,7 +81,7 @@ internal class OmetriaPushNotification(
         return Intent().setAction(PUSH_DISMISS_ACTION)
             .setClass(
                 context!!,
-                OmetriaPushNotificationDismissReceiver::class.java
+                PushDismissNotificationReceiver::class.java
             ).putExtras(options)
     }
 }

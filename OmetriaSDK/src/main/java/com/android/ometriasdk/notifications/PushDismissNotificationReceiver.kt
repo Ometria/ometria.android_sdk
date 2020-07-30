@@ -10,9 +10,9 @@ import com.android.ometriasdk.core.Logger
  * on 16/07/2020.
  */
 
-private val TAG = OmetriaPushNotificationDismissReceiver::class.simpleName
+private val TAG = PushDismissNotificationReceiver::class.simpleName
 
-class OmetriaPushNotificationDismissReceiver : BroadcastReceiver() {
+class PushDismissNotificationReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context?, intent: Intent?) {
         val action = intent?.action
         if (action != null && action == PUSH_DISMISS_ACTION) {
