@@ -1,6 +1,7 @@
 package com.android.ometriasdk.core.event
 
 import android.os.Bundle
+import android.util.JsonReader
 import org.json.JSONObject
 
 /**
@@ -31,7 +32,7 @@ open class Event(
         val jsonObject = JSONObject()
         jsonObject.put("type", type)
         jsonObject.put("value", value)
-        jsonObject.put("params", params)
+        jsonObject.put("params", bundleToJson())
 
         jsonObject.put("creationDate", creationDate)
         jsonObject.put("flushDate", flushDate)
@@ -39,5 +40,16 @@ open class Event(
         jsonObject.put("isAutomaticallyTracked", isAutomaticallyTracked)
 
         return jsonObject
+    }
+
+    private fun bundleToJson(): JSONObject {
+        val bundleJsonObject = JSONObject()
+        val keys = params.keySet()
+
+        keys.forEach {
+            bundleJsonObject.put(it, JSONObject.wrap(params.get(it)))
+        }
+
+        return bundleJsonObject
     }
 }
