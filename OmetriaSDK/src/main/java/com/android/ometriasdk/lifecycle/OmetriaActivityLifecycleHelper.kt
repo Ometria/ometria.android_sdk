@@ -38,11 +38,11 @@ internal class OmetriaActivityLifecycleHelper(private val localCache: LocalCache
     override fun onStart(owner: LifecycleOwner) {
         if (firstLaunch.get()) {
             Ometria.instance().trackEvent(OmetriaEventType.LAUNCH_APPLICATION)
+        } else {
+            Ometria.instance().trackEvent(OmetriaEventType.BRING_APPLICATION_TO_FOREGROUND)
         }
 
         !firstLaunch.getAndSet(false)
-
-        Ometria.instance().trackEvent(OmetriaEventType.BRING_APPLICATION_TO_FOREGROUND)
 
         if (localCache.isFirstAppRun()) {
             Ometria.instance().trackEvent(OmetriaEventType.INSTALL_APPLICATION)

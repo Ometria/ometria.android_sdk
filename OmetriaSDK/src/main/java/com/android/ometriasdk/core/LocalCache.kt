@@ -2,6 +2,7 @@ package com.android.ometriasdk.core
 
 import android.content.Context
 import android.content.SharedPreferences
+import com.android.ometriasdk.core.event.Event
 
 /**
  * Created by cristiandregan
@@ -9,19 +10,42 @@ import android.content.SharedPreferences
  */
 
 private const val LOCAL_CACHE_PREFERENCES = "LOCAL_CACHE_PREFERENCES"
-private const val IS_FIRST_APP_RUN = "IS_FIRST_APP_RUN"
+private const val IS_FIRST_APP_RUN_KEY = "IS_FIRST_APP_RUN_KEY"
+private const val INSTALLMENT_ID_KEY = "INSTALLMENT_ID_KEY"
+private const val EVENTS_KEY = "EVENTS_KEY"
 
 internal class LocalCache(private val context: Context) {
 
     fun isFirstAppRun(isFirstAppRun: Boolean) {
-        getSettingsPreferences().edit().putBoolean(IS_FIRST_APP_RUN, isFirstAppRun).apply()
+        getLocalCachePreferences().edit().putBoolean(IS_FIRST_APP_RUN_KEY, isFirstAppRun).apply()
     }
 
     fun isFirstAppRun(): Boolean {
-        return getSettingsPreferences().getBoolean(IS_FIRST_APP_RUN, true)
+        return getLocalCachePreferences().getBoolean(IS_FIRST_APP_RUN_KEY, true)
     }
 
-    private fun getSettingsPreferences(): SharedPreferences {
+    fun saveInstallmentID(installmentID: String) {
+        getLocalCachePreferences().edit().putString(INSTALLMENT_ID_KEY, installmentID).apply()
+    }
+
+    fun getInstallmentID(): String? {
+        return getLocalCachePreferences().getString(INSTALLMENT_ID_KEY, null)
+    }
+
+    fun <T> saveEvent(event: T) where T : Event {
+        val eventsHashSet: HashSet<String> = getLocalCachePreferences()
+            .getStringSet(EVENTS_KEY, null) as HashSet<String>? ?: HashSet()
+
+        eventsHashSet.add(event.toJson().toString())
+
+        getLocalCachePreferences().edit().putStringSet(EVENTS_KEY, eventsHashSet).apply()
+    }
+
+    fun getEvents(): Set<String>? {
+        return getLocalCachePreferences().getStringSet(EVENTS_KEY, null)
+    }
+
+    private fun getLocalCachePreferences(): SharedPreferences {
         return context.getSharedPreferences(LOCAL_CACHE_PREFERENCES, Context.MODE_PRIVATE)
     }
 }
