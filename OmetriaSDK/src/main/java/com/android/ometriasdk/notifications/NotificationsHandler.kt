@@ -9,7 +9,7 @@ import com.google.firebase.messaging.RemoteMessage
  */
 object NotificationsHandler {
 
-    fun showNotification(remoteMessage: RemoteMessage, context: Context?, notificationIcon: Int) {
+    fun showNotification(remoteMessage: RemoteMessage, context: Context, notificationIcon: Int) {
         val ometriaPushNotification = OmetriaPushNotification(context, notificationIcon)
         ometriaPushNotification.createPushNotification(remoteMessage.toIntent())
     }

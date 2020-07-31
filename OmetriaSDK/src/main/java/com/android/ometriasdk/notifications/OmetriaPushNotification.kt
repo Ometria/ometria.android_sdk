@@ -21,7 +21,7 @@ const val OMETRIA_CHANNEL_ID = "ometria"
 const val OMETRIA_CHANNEL_NAME = "ometria"
 
 internal class OmetriaPushNotification(
-    private val context: Context?,
+    private val context: Context,
     private val notificationIcon: Int
 ) {
 
