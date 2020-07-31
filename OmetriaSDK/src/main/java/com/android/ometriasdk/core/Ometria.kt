@@ -6,7 +6,7 @@ import com.android.ometriasdk.core.event.Event
 import com.android.ometriasdk.core.event.EventHandler
 import com.android.ometriasdk.core.event.OmetriaEventType
 import com.android.ometriasdk.lifecycle.OmetriaActivityLifecycleHelper
-import com.android.ometriasdk.notifications.NotificationsHandler
+import com.android.ometriasdk.notification.NotificationHandler
 import com.google.firebase.messaging.RemoteMessage
 
 /**
@@ -69,7 +69,7 @@ class Ometria private constructor() {
     }
 
     fun onMessageReceived(remoteMessage: RemoteMessage) {
-        NotificationsHandler.showNotification(
+        NotificationHandler.showNotification(
             remoteMessage,
             appConfig.context,
             appConfig.notificationIcon

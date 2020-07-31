@@ -1,4 +1,4 @@
-package com.android.ometriasdk.notifications
+package com.android.ometriasdk.notification
 
 import android.app.Notification
 import android.app.NotificationChannel
@@ -42,7 +42,7 @@ internal class OmetriaPushNotification(
             0
         )
 
-        val notificationBuilder = NotificationCompat.Builder(context!!, channelId)
+        val notificationBuilder = NotificationCompat.Builder(context, channelId)
             .setSmallIcon(notificationIcon)
             .setContentTitle("Title")
             .setContentText("Text")
@@ -71,7 +71,7 @@ internal class OmetriaPushNotification(
 
         return Intent().setAction(PUSH_TAP_ACTION)
             .setClass(
-                context!!,
+                context,
                 PushClickBroadcastReceiver::class.java
             ).putExtras(options)
     }
@@ -80,8 +80,8 @@ internal class OmetriaPushNotification(
         val options = Bundle()
         return Intent().setAction(PUSH_DISMISS_ACTION)
             .setClass(
-                context!!,
-                PushDismissNotificationReceiver::class.java
+                context,
+                PushDismissBroadcastReceiver::class.java
             ).putExtras(options)
     }
 }

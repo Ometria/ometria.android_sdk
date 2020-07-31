@@ -1,4 +1,4 @@
-package com.android.ometriasdk.notifications
+package com.android.ometriasdk.notification
 
 import android.content.BroadcastReceiver
 import android.content.Context
