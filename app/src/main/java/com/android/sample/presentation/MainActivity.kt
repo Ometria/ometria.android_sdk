@@ -47,12 +47,6 @@ class MainActivity : AppCompatActivity() {
         val adapter = ViewPagerAdapter(
             supportFragmentManager
         )
-        val firstFragment = HomeFragment.newInstance(TAB_ONE)
-        val secondFragment = HomeFragment.newInstance(TAB_TWO)
-        val thirdFragment = HomeFragment.newInstance(TAB_THREE)
-        adapter.addFragment(firstFragment)
-        adapter.addFragment(secondFragment)
-        adapter.addFragment(thirdFragment)
         containerVP.adapter = adapter
         containerVP.offscreenPageLimit =
             OFF_SCREEN_PAGE_LIMIT

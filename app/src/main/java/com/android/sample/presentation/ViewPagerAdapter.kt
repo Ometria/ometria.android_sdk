@@ -8,18 +8,22 @@ import androidx.fragment.app.FragmentPagerAdapter
  * Created by cristiandregan
  * on 17/07/2020.
  */
+
+private const val SCREENS_NO = 3
+
 class ViewPagerAdapter(manager: FragmentManager) :
     FragmentPagerAdapter(manager, BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT) {
-    private val mFragmentList = mutableListOf<Fragment>()
     override fun getItem(position: Int): Fragment {
-        return mFragmentList[position]
+        return when (position) {
+            FIRST_FRAGMENT_POS -> HomeFragment.newInstance(TAB_ONE)
+            SECOND_FRAGMENT_POS -> HomeFragment.newInstance(TAB_TWO)
+            THIRD_FRAGMENT_POS -> HomeFragment.newInstance(TAB_THREE)
+
+            else -> HomeFragment.newInstance(TAB_ONE)
+        }
     }
 
     override fun getCount(): Int {
-        return mFragmentList.size
-    }
-
-    fun addFragment(fragment: Fragment) {
-        mFragmentList.add(fragment)
+        return SCREENS_NO
     }
 }
