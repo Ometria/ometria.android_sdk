@@ -19,7 +19,5 @@ class SampleApp : Application() {
 
         Ometria.initialize(this, "API_KEY", R.mipmap.ic_launcher)
             .enableDebugging(true)
-
-
     }
 }
