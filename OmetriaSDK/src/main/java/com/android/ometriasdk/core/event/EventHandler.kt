@@ -3,7 +3,6 @@ package com.android.ometriasdk.core.event
 import android.content.Context
 import com.android.ometriasdk.core.LocalCache
 import com.android.ometriasdk.core.Logger
-import com.android.ometriasdk.core.event.OmetriaEventType.LAUNCH_APPLICATION
 import java.io.File
 import java.io.FileOutputStream
 
@@ -17,19 +16,16 @@ private val TAG = EventHandler::class.simpleName
 internal class EventHandler(private val context: Context, private val localCache: LocalCache) {
 
     fun processEvent(event: Event) {
-        when (event.type) {
-            LAUNCH_APPLICATION -> sendEvent(event.toGeneric(context, localCache))
-            else -> sendEvent(event)
-        }
+        sendEvent(event.toCachedEvent(context, localCache))
     }
 
-    private fun <T> sendEvent(event: T) where T : Event {
-        localCache.saveEvent(event)
-        Logger.d(TAG, "Track event: ", event)
-        writeEventToFile(event)
+    private fun sendEvent(cachedEvent: CachedEvent) {
+        localCache.saveEvent(cachedEvent)
+        Logger.d(TAG, "Track event: ", cachedEvent)
+        writeEventToFile(cachedEvent)
     }
 
-    private fun <T> writeEventToFile(event: T) where T : Event {
+    private fun writeEventToFile(event: CachedEvent) {
         val path = context.getExternalFilesDir(null)
 
         val letDirectory = File(path, "Events")

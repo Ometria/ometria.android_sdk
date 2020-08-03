@@ -2,7 +2,8 @@ package com.android.ometriasdk.core
 
 import android.content.Context
 import android.content.SharedPreferences
-import com.android.ometriasdk.core.event.Event
+import com.android.ometriasdk.core.event.CachedEvent
+import com.android.ometriasdk.core.event.toJson
 
 /**
  * Created by cristiandregan
@@ -32,11 +33,11 @@ internal class LocalCache(private val context: Context) {
         return getLocalCachePreferences().getString(INSTALLMENT_ID_KEY, null)
     }
 
-    fun <T> saveEvent(event: T) where T : Event {
+    fun saveEvent(cachedEvent: CachedEvent) {
         val eventsHashSet: HashSet<String> = getLocalCachePreferences()
             .getStringSet(EVENTS_KEY, null) as HashSet<String>? ?: HashSet()
 
-        eventsHashSet.add(event.toJson().toString())
+        eventsHashSet.add(cachedEvent.toJson().toString())
 
         getLocalCachePreferences().edit().putStringSet(EVENTS_KEY, eventsHashSet).apply()
     }
