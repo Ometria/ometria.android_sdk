@@ -46,7 +46,7 @@ internal class OmetriaActivityLifecycleHelper(private val localCache: LocalCache
 
         if (localCache.isFirstAppRun()) {
             Ometria.instance().trackEvent(OmetriaEventType.INSTALL_APPLICATION)
-            localCache.isFirstAppRun(false)
+            localCache.saveIsFirstAppRun(false)
         }
     }
 

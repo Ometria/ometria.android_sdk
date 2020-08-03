@@ -16,7 +16,7 @@ private const val EVENTS_KEY = "EVENTS_KEY"
 
 internal class LocalCache(private val context: Context) {
 
-    fun isFirstAppRun(isFirstAppRun: Boolean) {
+    fun saveIsFirstAppRun(isFirstAppRun: Boolean) {
         getLocalCachePreferences().edit().putBoolean(IS_FIRST_APP_RUN_KEY, isFirstAppRun).apply()
     }
 
