@@ -36,18 +36,17 @@ internal class OmetriaActivityLifecycleHelper(private val localCache: LocalCache
      * and Bring Application to Foreground event
      */
     override fun onStart(owner: LifecycleOwner) {
-        if (firstLaunch.get()) {
-            Ometria.instance().trackEvent(OmetriaEventType.LAUNCH_APPLICATION)
-        } else {
-            Ometria.instance().trackEvent(OmetriaEventType.BRING_APPLICATION_TO_FOREGROUND)
-        }
-
-        !firstLaunch.getAndSet(false)
-
         if (localCache.isFirstAppRun()) {
             Ometria.instance().trackEvent(OmetriaEventType.INSTALL_APPLICATION)
             localCache.saveIsFirstAppRun(false)
         }
+
+        if (firstLaunch.get()) {
+            Ometria.instance().trackEvent(OmetriaEventType.LAUNCH_APPLICATION)
+        }
+        Ometria.instance().trackEvent(OmetriaEventType.BRING_APPLICATION_TO_FOREGROUND)
+
+        !firstLaunch.getAndSet(false)
     }
 
     /**
