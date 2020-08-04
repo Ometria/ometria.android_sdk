@@ -10,7 +10,8 @@ import com.android.ometriasdk.core.event.OmetriaEventType.TAP_ON_NOTIFICATION
  * Created by cristiandregan
  * on 30/07/2020.
  */
-class PushClickBroadcastReceiver : BroadcastReceiver() {
+
+internal class PushClickBroadcastReceiver : BroadcastReceiver() {
 
     override fun onReceive(context: Context?, intent: Intent?) {
         val action = intent?.action

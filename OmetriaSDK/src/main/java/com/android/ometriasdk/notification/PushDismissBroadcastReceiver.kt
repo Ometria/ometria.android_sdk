@@ -12,7 +12,8 @@ import com.android.ometriasdk.core.Logger
 
 private val TAG = PushDismissBroadcastReceiver::class.simpleName
 
-class PushDismissBroadcastReceiver : BroadcastReceiver() {
+internal class PushDismissBroadcastReceiver : BroadcastReceiver() {
+
     override fun onReceive(context: Context?, intent: Intent?) {
         val action = intent?.action
         if (action != null && action == PUSH_DISMISS_ACTION) {
