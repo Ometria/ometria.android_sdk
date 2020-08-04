@@ -1,4 +1,4 @@
-package com.android.ometriasdk.notifications
+package com.android.ometriasdk.notification
 
 import com.android.ometriasdk.core.Logger
 import com.android.ometriasdk.core.Ometria

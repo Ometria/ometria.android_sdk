@@ -1,4 +1,4 @@
-package com.android.ometriasdk.notifications
+package com.android.ometriasdk.notification
 
 import android.content.BroadcastReceiver
 import android.content.Context
@@ -10,9 +10,10 @@ import com.android.ometriasdk.core.Logger
  * on 16/07/2020.
  */
 
-private val TAG = OmetriaPushNotificationDismissReceiver::class.simpleName
+private val TAG = PushDismissBroadcastReceiver::class.simpleName
 
-class OmetriaPushNotificationDismissReceiver : BroadcastReceiver() {
+internal class PushDismissBroadcastReceiver : BroadcastReceiver() {
+
     override fun onReceive(context: Context?, intent: Intent?) {
         val action = intent?.action
         if (action != null && action == PUSH_DISMISS_ACTION) {
