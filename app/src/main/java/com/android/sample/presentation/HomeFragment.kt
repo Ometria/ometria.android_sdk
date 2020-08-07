@@ -62,25 +62,16 @@ class HomeFragment : Fragment() {
             TAB_ONE -> {
                 screenTitleTV.text = "List of Products"
                 detailsBTN.visibility = VISIBLE
-
-                Ometria.instance()
-                    .trackEvent(OmetriaEventType.VIEW_SCREEN, "List of Products screen")
             }
 
             TAB_TWO -> {
                 screenTitleTV.text = "Orders"
                 detailsBTN.visibility = GONE
-
-                Ometria.instance()
-                    .trackEvent(OmetriaEventType.VIEW_SCREEN, "Orders screen")
             }
 
             TAB_THREE -> {
                 screenTitleTV.text = "My Profile"
                 detailsBTN.visibility = GONE
-
-                Ometria.instance()
-                    .trackEvent(OmetriaEventType.VIEW_SCREEN, "My Profile screen")
             }
         }
     }
