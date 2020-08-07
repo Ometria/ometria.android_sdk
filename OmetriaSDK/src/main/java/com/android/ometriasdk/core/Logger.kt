@@ -81,7 +81,7 @@ internal object Logger {
         }
     }
 
-    fun e(tag: String, message: String, throwable: Throwable) {
+    fun e(tag: String?, message: String?, throwable: Throwable?) {
         if (shouldLog(ERROR)) {
             Log.e(tag, message, throwable)
         }
