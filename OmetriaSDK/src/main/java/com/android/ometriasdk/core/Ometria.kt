@@ -5,6 +5,8 @@ import androidx.lifecycle.ProcessLifecycleOwner
 import com.android.ometriasdk.core.event.Event
 import com.android.ometriasdk.core.event.EventHandler
 import com.android.ometriasdk.core.event.OmetriaEventType
+import com.android.ometriasdk.core.network.Repository
+import com.android.ometriasdk.core.network.RetrofitBuilder
 import com.android.ometriasdk.lifecycle.OmetriaActivityLifecycleHelper
 import com.android.ometriasdk.notification.NotificationHandler
 import com.google.firebase.messaging.RemoteMessage
@@ -22,6 +24,7 @@ class Ometria private constructor() {
     private var isInitialized = false
     private lateinit var localCache: LocalCache
     private lateinit var eventHandler: EventHandler
+    private lateinit var repository: Repository
 
     /**
      * Kotlin Object ensures thread safety.
@@ -40,7 +43,8 @@ class Ometria private constructor() {
                 it.appConfig = AppConfig(application, apiKey, notificationIcon)
                 it.localCache = LocalCache(application)
                 it.isInitialized = true
-                it.eventHandler = EventHandler(application, it.localCache)
+                it.repository = Repository(RetrofitBuilder.getOmetriaApi(it.appConfig))
+                it.eventHandler = EventHandler(application, it.localCache, it.repository)
 
                 val activityLifecycleHelper = OmetriaActivityLifecycleHelper(it.localCache)
 

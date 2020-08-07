@@ -6,7 +6,7 @@ package com.android.ometriasdk.core.network
  */
 
 interface ApiCallback<T> {
-    fun onError(error: String?)
-
     fun onSuccess(response: T)
+
+    fun onError(error: String?)
 }

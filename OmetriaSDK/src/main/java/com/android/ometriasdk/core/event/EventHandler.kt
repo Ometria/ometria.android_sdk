@@ -3,6 +3,7 @@ package com.android.ometriasdk.core.event
 import android.content.Context
 import com.android.ometriasdk.core.LocalCache
 import com.android.ometriasdk.core.Logger
+import com.android.ometriasdk.core.network.Repository
 import java.io.File
 import java.io.FileOutputStream
 
@@ -13,7 +14,11 @@ import java.io.FileOutputStream
 
 private val TAG = EventHandler::class.simpleName
 
-internal class EventHandler(private val context: Context, private val localCache: LocalCache) {
+internal class EventHandler(
+    private val context: Context,
+    private val localCache: LocalCache,
+    private val repository: Repository
+) {
 
     fun processEvent(event: Event) {
         sendEvent(event.toCachedEvent(context, localCache))

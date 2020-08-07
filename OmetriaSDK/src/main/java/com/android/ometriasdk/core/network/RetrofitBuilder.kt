@@ -1,5 +1,6 @@
 package com.android.ometriasdk.core.network
 
+import com.android.ometriasdk.core.AppConfig
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
@@ -13,9 +14,9 @@ internal object RetrofitBuilder {
 
     private const val BASE_URL = " https://mobile-events.ometria.com/v1/"
 
-    private fun getRetrofit(): Retrofit {
-
+    private fun getRetrofit(appConfig: AppConfig): Retrofit {
         val okHttpClient = OkHttpClient.Builder()
+        okHttpClient.addNetworkInterceptor(SessionInterceptor(appConfig))
         okHttpClient.addInterceptor(HttpLoggingInterceptor().apply {
             level = HttpLoggingInterceptor.Level.BODY
         })
@@ -27,5 +28,7 @@ internal object RetrofitBuilder {
             .build()
     }
 
-    val ometriaApi: OmetriaApi = getRetrofit().create(OmetriaApi::class.java)
+    fun getOmetriaApi(appConfig: AppConfig): OmetriaApi {
+        return getRetrofit(appConfig).create(OmetriaApi::class.java)
+    }
 }

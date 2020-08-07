@@ -15,12 +15,12 @@ import java.nio.charset.Charset
 
 private val TAG = Repository::class.simpleName
 
-internal object Repository {
+internal class Repository(private val ometriaApi: OmetriaApi) {
 
     private val UTF8 = Charset.forName("UTF-8")
 
     fun postEventsValidate(request: Any, callback: ApiCallback<PostEventsValidateResponse>) {
-        val call = RetrofitBuilder.ometriaApi.postEventsValidate(request)
+        val call = ometriaApi.postEventsValidate(request)
         call.enqueue(
             object : Callback<PostEventsValidateResponse> {
                 override fun onResponse(
