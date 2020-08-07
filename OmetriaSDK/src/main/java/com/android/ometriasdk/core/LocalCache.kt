@@ -38,6 +38,7 @@ internal class LocalCache(private val context: Context) {
 
         eventsHashSet.add(AppGson.instance.toJson(cachedEvent))
 
+        getLocalCachePreferences().edit().remove(EVENTS_KEY).apply()
         getLocalCachePreferences().edit().putStringSet(EVENTS_KEY, eventsHashSet).apply()
     }
 
