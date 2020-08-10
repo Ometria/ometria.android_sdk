@@ -3,6 +3,7 @@ package com.android.ometriasdk.core.event
 import android.content.Context
 import android.os.Bundle
 import androidx.core.content.pm.PackageInfoCompat
+import com.android.ometriasdk.core.AppGson
 import com.android.ometriasdk.core.LocalCache
 import org.json.JSONObject
 
@@ -64,4 +65,19 @@ private fun Bundle.toJson(): JSONObject {
     }
 
     return bundleJsonObject
+}
+
+internal fun Set<String>.toCachedEventList(): List<CachedEvent> {
+    val eventsList = mutableListOf<CachedEvent>()
+
+    this.sorted().forEach { cachedEventString ->
+        eventsList.add(
+            AppGson.instance.fromJson(
+                cachedEventString,
+                CachedEvent::class.java
+            )
+        )
+    }
+
+    return eventsList
 }

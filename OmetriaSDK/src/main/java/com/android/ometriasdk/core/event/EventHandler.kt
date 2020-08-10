@@ -3,6 +3,8 @@ package com.android.ometriasdk.core.event
 import android.content.Context
 import com.android.ometriasdk.core.LocalCache
 import com.android.ometriasdk.core.Logger
+import com.android.ometriasdk.core.network.ApiCallback
+import com.android.ometriasdk.core.network.PostEventsValidateResponse
 import com.android.ometriasdk.core.network.Repository
 import java.io.File
 import java.io.FileOutputStream
@@ -13,6 +15,7 @@ import java.io.FileOutputStream
  */
 
 private val TAG = EventHandler::class.simpleName
+private const val BATCH_LIMIT = 10
 
 internal class EventHandler(
     private val context: Context,
@@ -26,6 +29,7 @@ internal class EventHandler(
 
     private fun sendEvent(cachedEvent: CachedEvent) {
         localCache.saveEvent(cachedEvent)
+        flushEvents()
         Logger.d(TAG, "Track event: ", cachedEvent)
         writeEventToFile(cachedEvent)
     }
@@ -40,5 +44,27 @@ internal class EventHandler(
         FileOutputStream(file, true).use {
             it.write("- $event\n".toByteArray())
         }
+    }
+
+    private fun flushEvents() {
+        val eventsSet = localCache.getEvents()
+
+        if (shouldFlush(eventsSet)) {
+            repository.postEventsValidate(
+                eventsSet!!.toCachedEventList(),
+                object : ApiCallback<PostEventsValidateResponse> {
+                    override fun onSuccess(response: PostEventsValidateResponse) {
+                        Logger.d(TAG, "Successfully flushed")
+                    }
+
+                    override fun onError(error: String?) {
+                        Logger.d(TAG, error ?: "")
+                    }
+                })
+        }
+    }
+
+    private fun shouldFlush(eventsSet: Set<String>?): Boolean {
+        return !eventsSet.isNullOrEmpty() && eventsSet.size >= BATCH_LIMIT
     }
 }

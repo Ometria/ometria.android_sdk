@@ -33,17 +33,30 @@ internal class LocalCache(private val context: Context) {
     }
 
     fun saveEvent(cachedEvent: CachedEvent) {
-        val eventsHashSet: HashSet<String> = getLocalCachePreferences()
-            .getStringSet(EVENTS_KEY, null) as HashSet<String>? ?: HashSet()
+        val eventsSet: MutableSet<String> = getLocalCachePreferences()
+            .getStringSet(EVENTS_KEY, null) ?: mutableSetOf()
 
-        eventsHashSet.add(AppGson.instance.toJson(cachedEvent))
+        eventsSet.add(AppGson.instance.toJson(cachedEvent))
 
         getLocalCachePreferences().edit().remove(EVENTS_KEY).apply()
-        getLocalCachePreferences().edit().putStringSet(EVENTS_KEY, eventsHashSet).apply()
+        getLocalCachePreferences().edit().putStringSet(EVENTS_KEY, eventsSet).apply()
     }
 
     fun getEvents(): Set<String>? {
         return getLocalCachePreferences().getStringSet(EVENTS_KEY, null)
+    }
+
+    fun removeEvents(events: List<CachedEvent>) {
+        val eventsSet: MutableSet<String> = getLocalCachePreferences()
+            .getStringSet(EVENTS_KEY, null) ?: mutableSetOf()
+        val eventsList = eventsSet.sorted().toMutableList()
+
+        for (i in events.indices) {
+            eventsList.removeAt(i)
+        }
+
+        getLocalCachePreferences().edit().remove(EVENTS_KEY).apply()
+        getLocalCachePreferences().edit().putStringSet(EVENTS_KEY, eventsList.toSet()).apply()
     }
 
     private fun getLocalCachePreferences(): SharedPreferences {
