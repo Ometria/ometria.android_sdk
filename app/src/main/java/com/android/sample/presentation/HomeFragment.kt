@@ -8,8 +8,6 @@ import android.view.View.GONE
 import android.view.View.VISIBLE
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import com.android.ometriasdk.core.Ometria
-import com.android.ometriasdk.core.event.OmetriaEventType
 import com.android.sample.R
 import kotlinx.android.synthetic.main.fragment_home.*
 

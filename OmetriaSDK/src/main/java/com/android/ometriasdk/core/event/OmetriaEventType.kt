@@ -5,33 +5,32 @@ package com.android.ometriasdk.core.event
  * on 24/07/2020.
  */
 
-enum class OmetriaEventType(var id: String) {
+internal enum class OmetriaEventType(var id: String) {
     // Product related events
-    VIEW_PRODUCT("VIEW_PRODUCT"),
-    ADD_PRODUCT_TO_CART("ADD_PRODUCT_TO_CART"),
-    REMOVE_PRODUCT_FROM_CART("REMOVE_PRODUCT_FROM_CART"),
-    VIEW_CART("VIEW_CART"),
+    PRODUCT_VIEWED("productViewed"),
+    BASKET_VIEWED("basketViewed"),
     START_CHECKOUT("START_CHECKOUT"),
-    COMPLETE_ORDER("COMPLETE_ORDER"),
-    ADD_PRODUCT_TO_WISHLIST("ADD_PRODUCT_TO_WISHLIST"),
-    REMOVE_PRODUCT_FROM_WISHLIST("REMOVE_PRODUCT_FROM_WISHLIST"),
-    ADD_PRODUCT_TO_CART_FROM_WISHLIST("ADD_PRODUCT_TO_CART_FROM_WISHLIST"),
+    ORDER_COMPLETED("orderCompleted"),
+    WISH_LIST_ADDED_TO("wishlistAddedTo"),
+    WISHLIST_REMOVED_FROM("wishlistRemovedFrom"),
+    BASKET_UPDATE("basketUpdated"),
+    PRODUCT_CATEGORY_VIEWED("productCategoryViewed"),
 
     // Application related events
-    VIEW_SCREEN("VIEW_SCREEN"),
-    INSTALL_APPLICATION("INSTALL_APPLICATION"),
-    LAUNCH_APPLICATION("LAUNCH_APPLICATION"),
-    BRING_APPLICATION_TO_FOREGROUND("BRING_APPLICATION_TO_FOREGROUND"),
-    SEND_APPLICATION_TO_BACKGROUND("SEND_APPLICATION_TO_BACKGROUND"),
-    IDENTIFY_APPLICATION("IDENTIFY_APPLICATION"),
-    RESET_APPLICATION_IDENTIFICATION("RESET_APPLICATION_IDENTIFICATION"),
+    SCREEN_VIEWED("screenViewed"),
+    APP_INSTALLED("appInstalled"),
+    APP_LAUNCHED("appLaunched"),
+    APP_FOREGROUNDED("appForegrounded"),
+    APP_BACKGROUNDED("appBackgrounded"),
+    PROFILE_IDENTIFIED("profileIdentified"),
+    PROFILE_DEIDENTIFIED("profileDeidentified"),
 
     // Notification related events
-    REFRESH_PUSH_TOKEN("REFRESH_PUSH_TOKEN"),
-    RECEIVE_NOTIFICATION("RECEIVE_NOTIFICATION"),
-    TAP_ON_NOTIFICATION("TAP_ON_NOTIFICATION"),
+    PUSH_TOKEN_REFRESHED("pushTokenRefreshed"),
+    NOTIFICATION_RECEIVED("notificationReceived"),
+    NOTIFICATION_INTERACTED("notificationInteracted"),
 
     // Other event types
-    OPEN_DEEP_LINK("OPEN_DEEP_LINK"),
-    CUSTOM("")
+    DEEP_LINK_OPENED("deepLinkOpened"),
+    CUSTOM("customEvent")
 }

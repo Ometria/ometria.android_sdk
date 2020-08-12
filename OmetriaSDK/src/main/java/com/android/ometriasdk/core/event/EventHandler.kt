@@ -15,7 +15,7 @@ import java.io.FileOutputStream
  */
 
 private val TAG = EventHandler::class.simpleName
-private const val BATCH_LIMIT = 10
+private const val BATCH_LIMIT = 2
 
 internal class EventHandler(
     private val context: Context,
@@ -23,18 +23,18 @@ internal class EventHandler(
     private val repository: Repository
 ) {
 
-    fun processEvent(event: Event) {
-        sendEvent(event.toCachedEvent(context, localCache))
+    fun processEvent(event: OmetriaEvent) {
+        sendEvent(event)
     }
 
-    private fun sendEvent(cachedEvent: CachedEvent) {
+    private fun sendEvent(cachedEvent: OmetriaEvent) {
         localCache.saveEvent(cachedEvent)
         flushEvents()
         Logger.d(TAG, "Track event: ", cachedEvent)
         writeEventToFile(cachedEvent)
     }
 
-    private fun writeEventToFile(event: CachedEvent) {
+    private fun writeEventToFile(event: OmetriaEvent) {
         val path = context.getExternalFilesDir(null)
 
         val letDirectory = File(path, "Events")

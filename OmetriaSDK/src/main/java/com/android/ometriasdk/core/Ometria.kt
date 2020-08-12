@@ -2,7 +2,6 @@ package com.android.ometriasdk.core
 
 import android.app.Application
 import androidx.lifecycle.ProcessLifecycleOwner
-import com.android.ometriasdk.core.event.Event
 import com.android.ometriasdk.core.event.EventHandler
 import com.android.ometriasdk.core.event.OmetriaEventType
 import com.android.ometriasdk.core.network.Repository
@@ -79,50 +78,16 @@ class Ometria private constructor() {
             appConfig.notificationIcon
         )
 
-        trackEvent(OmetriaEventType.RECEIVE_NOTIFICATION, remoteMessage.messageId)
+        trackEvent(OmetriaEventType.NOTIFICATION_RECEIVED, remoteMessage.messageId)
     }
 
     fun onNewToken(token: String) {
-        trackEvent(OmetriaEventType.REFRESH_PUSH_TOKEN, token)
+        trackEvent(OmetriaEventType.PUSH_TOKEN_REFRESHED, token)
     }
 
-    fun trackEvent(event: Event) {
-        eventHandler.processEvent(event)
-    }
-
-    fun trackEvent(
+    internal fun trackEvent(
         type: OmetriaEventType,
-        value: String? = null,
-        configurationBlock: ((Event).() -> Unit)? = null
+        data: Any? = null
     ) {
-        val event = Event(type, value)
-
-        if (configurationBlock != null) {
-            event.apply(configurationBlock)
-        }
-
-        trackEvent(event)
-    }
-
-    fun trackCustomEvent(
-        customEventType: String,
-        value: String,
-        configurationBlock: ((Event).() -> Unit)? = null
-    ) {
-        val eventType = OmetriaEventType.CUSTOM
-        eventType.id = customEventType
-        val event = Event(eventType, value)
-
-        if (configurationBlock != null) {
-            event.apply(configurationBlock)
-        }
-
-        trackEvent(event)
-    }
-
-    fun trackCustomEvent(event: Event, customEventType: String) {
-        event.type.id = customEventType
-
-        trackEvent(event)
     }
 }

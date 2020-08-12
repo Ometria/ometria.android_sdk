@@ -2,7 +2,7 @@ package com.android.ometriasdk.core
 
 import android.content.Context
 import android.content.SharedPreferences
-import com.android.ometriasdk.core.event.CachedEvent
+import com.android.ometriasdk.core.event.OmetriaEvent
 
 /**
  * Created by cristiandregan
@@ -32,7 +32,7 @@ internal class LocalCache(private val context: Context) {
         return getLocalCachePreferences().getString(INSTALLMENT_ID_KEY, null)
     }
 
-    fun saveEvent(cachedEvent: CachedEvent) {
+    fun saveEvent(cachedEvent: OmetriaEvent) {
         val eventsSet: MutableSet<String> = getLocalCachePreferences()
             .getStringSet(EVENTS_KEY, null) ?: mutableSetOf()
 
@@ -46,7 +46,7 @@ internal class LocalCache(private val context: Context) {
         return getLocalCachePreferences().getStringSet(EVENTS_KEY, null)
     }
 
-    fun removeEvents(events: List<CachedEvent>) {
+    fun removeEvents(events: List<OmetriaEvent>) {
         val eventsSet: MutableSet<String> = getLocalCachePreferences()
             .getStringSet(EVENTS_KEY, null) ?: mutableSetOf()
         val eventsList = eventsSet.sorted().toMutableList()
