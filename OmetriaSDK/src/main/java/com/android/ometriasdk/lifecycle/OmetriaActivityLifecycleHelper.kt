@@ -37,14 +37,14 @@ internal class OmetriaActivityLifecycleHelper(private val localCache: LocalCache
      */
     override fun onStart(owner: LifecycleOwner) {
         if (localCache.isFirstAppRun()) {
-            Ometria.instance().trackEvent(OmetriaEventType.APP_INSTALLED)
+            Ometria.instance().trackAppInstalledEvent()
             localCache.saveIsFirstAppRun(false)
         }
 
         if (firstLaunch.get()) {
-            Ometria.instance().trackEvent(OmetriaEventType.APP_LAUNCHED)
+            Ometria.instance().trackAppLaunchedEvent()
         }
-        Ometria.instance().trackEvent(OmetriaEventType.APP_FOREGROUNDED)
+        Ometria.instance().trackAppForegroundedEvent()
 
         !firstLaunch.getAndSet(false)
     }
@@ -53,7 +53,7 @@ internal class OmetriaActivityLifecycleHelper(private val localCache: LocalCache
      * Using lifecycle's observer onStop callback to track Application Backgrounded event
      */
     override fun onStop(owner: LifecycleOwner) {
-        Ometria.instance().trackEvent(OmetriaEventType.APP_BACKGROUNDED)
+        Ometria.instance().trackAppBackgroundedEvent()
     }
 
     //////////////////////////////////////////////////////////////////////////////////////////////////
@@ -71,7 +71,8 @@ internal class OmetriaActivityLifecycleHelper(private val localCache: LocalCache
             return
         }
 
-        Ometria.instance().trackEvent(OmetriaEventType.DEEP_LINK_OPENED)
+        // ToDo extract link and page
+        Ometria.instance().trackDeepLinkOpenedEvent("link", "page")
     }
 
     /**
@@ -79,7 +80,7 @@ internal class OmetriaActivityLifecycleHelper(private val localCache: LocalCache
      */
     override fun onActivityStarted(activity: Activity) {
         Ometria.instance()
-            .trackEvent(OmetriaEventType.SCREEN_VIEWED, activity::class.simpleName)
+            .trackScreenViewedEvent(activity::class.simpleName)
     }
 
     /**

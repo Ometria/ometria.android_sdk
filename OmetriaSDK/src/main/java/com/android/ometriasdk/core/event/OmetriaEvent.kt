@@ -2,6 +2,7 @@ package com.android.ometriasdk.core.event
 
 import android.os.Build
 import com.android.ometriasdk.BuildConfig
+import com.google.gson.annotations.Expose
 import java.util.*
 
 /**
@@ -23,6 +24,7 @@ internal open class OmetriaEvent(
     val osVersion: String? = Build.VERSION.RELEASE,
     val deviceManufacturer: String? = Build.MANUFACTURER,
     val deviceModel: String? = Build.MODEL,
+    @Expose
     val type: OmetriaEventType,
-    val data: Any?
+    val data: Map<String, Any>?
 )

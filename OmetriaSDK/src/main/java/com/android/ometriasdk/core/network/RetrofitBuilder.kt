@@ -1,6 +1,7 @@
 package com.android.ometriasdk.core.network
 
 import com.android.ometriasdk.core.AppConfig
+import com.android.ometriasdk.core.AppGson
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
@@ -24,7 +25,7 @@ internal object RetrofitBuilder {
         return Retrofit.Builder()
             .baseUrl(BASE_URL)
             .client(okHttpClient.build())
-            .addConverterFactory(GsonConverterFactory.create())
+            .addConverterFactory(GsonConverterFactory.create(AppGson.instance))
             .build()
     }
 

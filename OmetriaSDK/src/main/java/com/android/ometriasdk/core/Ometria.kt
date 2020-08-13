@@ -3,6 +3,7 @@ package com.android.ometriasdk.core
 import android.app.Application
 import androidx.lifecycle.ProcessLifecycleOwner
 import com.android.ometriasdk.core.event.EventHandler
+import com.android.ometriasdk.core.event.OmetriaBasket
 import com.android.ometriasdk.core.event.OmetriaEventType
 import com.android.ometriasdk.core.network.Repository
 import com.android.ometriasdk.core.network.RetrofitBuilder
@@ -78,16 +79,119 @@ class Ometria private constructor() {
             appConfig.notificationIcon
         )
 
-        trackEvent(OmetriaEventType.NOTIFICATION_RECEIVED, remoteMessage.messageId)
+        trackNotificationReceivedEvent(remoteMessage.messageId)
     }
 
     fun onNewToken(token: String) {
-        trackEvent(OmetriaEventType.PUSH_TOKEN_REFRESHED, token)
+        trackEvent(OmetriaEventType.PUSH_TOKEN_REFRESHED, mapOf("token" to token))
     }
 
-    internal fun trackEvent(
+    private fun trackEvent(
         type: OmetriaEventType,
-        data: Any? = null
+        data: Map<String, Any>? = null
     ) {
+        eventHandler.processEvent(type, data)
+    }
+
+    internal fun trackAppInstalledEvent() {
+        trackEvent(OmetriaEventType.APP_INSTALLED)
+    }
+
+    internal fun trackAppLaunchedEvent() {
+        trackEvent(OmetriaEventType.APP_LAUNCHED)
+    }
+
+    internal fun trackAppForegroundedEvent() {
+        trackEvent(OmetriaEventType.APP_FOREGROUNDED)
+    }
+
+    internal fun trackAppBackgroundedEvent() {
+        trackEvent(OmetriaEventType.APP_BACKGROUNDED)
+    }
+
+    fun trackScreenViewedEvent(screenName: String?, additionalInfo: Map<String, Any> = mapOf()) {
+        val data = additionalInfo.toMutableMap()
+        data["page"] = screenName ?: ""
+        trackEvent(
+            OmetriaEventType.SCREEN_VIEWED,
+            data
+        )
+    }
+
+    fun trackProfileIdentifiedByEmailEvent(email: String) {
+        trackEvent(OmetriaEventType.PROFILE_IDENTIFIED, mapOf("email" to email))
+    }
+
+    fun trackProfileIdentifiedByCustomerIdEvent(customerId: String) {
+        trackEvent(OmetriaEventType.PROFILE_IDENTIFIED, mapOf("customerId" to customerId))
+    }
+
+    fun trackProfileDeidentifiedEvent() {
+        trackEvent(OmetriaEventType.PROFILE_DEIDENTIFIED)
+    }
+
+    fun trackProductViewedEvent(productId: String) {
+        trackEvent(OmetriaEventType.PRODUCT_VIEWED, mapOf("productId" to productId))
+    }
+
+    fun trackProductCategoryViewedEvent(category: String) {
+        trackEvent(OmetriaEventType.PRODUCT_CATEGORY_VIEWED, mapOf("category" to category))
+    }
+
+    fun trackWishlistAddedToEvent(productId: String) {
+        trackEvent(OmetriaEventType.WISH_LIST_ADDED_TO, mapOf("productId" to productId))
+    }
+
+    fun trackWishlistRemovedFromEvent(productId: String) {
+        trackEvent(OmetriaEventType.WISHLIST_REMOVED_FROM, mapOf("productId" to productId))
+    }
+
+    fun trackBasketViewedEvent() {
+        trackEvent(OmetriaEventType.BASKET_VIEWED)
+    }
+
+    fun trackBasketUpdatedEvent(basket: OmetriaBasket) {
+        trackEvent(OmetriaEventType.BASKET_UPDATED, mapOf("basket" to basket))
+    }
+
+    internal fun trackOrderCompletedEvent(orderId: String, basket: OmetriaBasket) {
+        trackEvent(
+            OmetriaEventType.ORDER_COMPLETED,
+            mapOf("orderId" to orderId, "basket" to basket)
+        )
+    }
+
+    internal fun trackPushTokenRefreshedEvent(pushToken: String) {
+        trackEvent(OmetriaEventType.PUSH_TOKEN_REFRESHED, mapOf("pushToken" to pushToken))
+    }
+
+    internal fun trackNotificationReceivedEvent(notificationId: String?) {
+        trackEvent(
+            OmetriaEventType.NOTIFICATION_RECEIVED,
+            mapOf("notificationId" to (notificationId ?: ""))
+        )
+    }
+
+    internal fun trackNotificationInteractedEvent(notificationId: String) {
+        trackEvent(
+            OmetriaEventType.NOTIFICATION_INTERACTED,
+            mapOf("notificationId" to notificationId)
+        )
+    }
+
+    internal fun trackDeepLinkOpenedEvent(link: String, page: String) {
+        trackEvent(
+            OmetriaEventType.DEEP_LINK_OPENED,
+            mapOf("link" to link, "page" to page)
+        )
+    }
+
+    internal fun trackCustomEvent(customEventType: String, additionalInfo: Map<String, Any>) {
+        val data = additionalInfo.toMutableMap()
+        data["customEventType"] = customEventType
+        trackEvent(
+            OmetriaEventType.CUSTOM,
+            data
+        )
     }
 }

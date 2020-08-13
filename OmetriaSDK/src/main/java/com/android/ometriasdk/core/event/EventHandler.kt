@@ -1,6 +1,7 @@
 package com.android.ometriasdk.core.event
 
 import android.content.Context
+import androidx.core.content.pm.PackageInfoCompat
 import com.android.ometriasdk.core.LocalCache
 import com.android.ometriasdk.core.Logger
 import com.android.ometriasdk.core.network.ApiCallback
@@ -23,7 +24,27 @@ internal class EventHandler(
     private val repository: Repository
 ) {
 
-    fun processEvent(event: OmetriaEvent) {
+    fun processEvent(
+        type: OmetriaEventType,
+        data: Map<String, Any>? = null
+    ) {
+
+        val applicationID = context.packageName
+        val installmentID = localCache.getInstallmentID()
+
+        val packageInfo = context.packageManager.getPackageInfo(context.packageName, 0)
+        val applicationVersion = packageInfo.versionName
+        val buildNumber = PackageInfoCompat.getLongVersionCode(packageInfo).toString()
+
+        val event = OmetriaEvent(
+            applicationID = applicationID,
+            installmentID = installmentID,
+            applicationVersion = applicationVersion,
+            buildNumber = buildNumber,
+            type = type,
+            data = data
+        )
+
         sendEvent(event)
     }
 
@@ -51,7 +72,7 @@ internal class EventHandler(
 
         if (shouldFlush(eventsSet)) {
             repository.postEventsValidate(
-                eventsSet!!.toCachedEventList(),
+                eventsSet!!.toOmetriaEventList(),
                 object : ApiCallback<PostEventsValidateResponse> {
                     override fun onSuccess(response: PostEventsValidateResponse) {
                         Logger.d(TAG, "Successfully flushed")

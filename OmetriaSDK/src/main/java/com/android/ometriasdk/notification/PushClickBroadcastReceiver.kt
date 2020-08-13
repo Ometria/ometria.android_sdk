@@ -20,7 +20,8 @@ internal class PushClickBroadcastReceiver : BroadcastReceiver() {
             mainIntent?.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
             context.startActivity(mainIntent)
 
-            Ometria.instance().trackEvent(NOTIFICATION_INTERACTED)
+            // ToDo extract notificationId
+            Ometria.instance().trackNotificationInteractedEvent("notificationId")
         }
     }
 }

@@ -7,7 +7,7 @@ import com.android.ometriasdk.core.AppGson
  * on 28/07/2020.
  */
 
-internal fun Set<String>.toCachedEventList(): List<OmetriaEvent> {
+internal fun Set<String>.toOmetriaEventList(): List<OmetriaEvent> {
     val eventsList = mutableListOf<OmetriaEvent>()
 
     this.sorted().forEach { cachedEventString ->
