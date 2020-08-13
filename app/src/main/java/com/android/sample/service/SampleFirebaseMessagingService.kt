@@ -1,7 +1,7 @@
 package com.android.sample.service
 
 import android.util.Log
-import com.android.ometriasdk.notifications.OmetriaFirebaseMessagingService
+import com.android.ometriasdk.notification.OmetriaFirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
 
 /**
