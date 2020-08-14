@@ -18,6 +18,6 @@ class SampleApp : Application() {
         instance = this
 
         Ometria.initialize(this, "validation-only-test-key", R.mipmap.ic_launcher)
-            .enableDebugging(true)
+            .loggingEnabled(true)
     }
 }

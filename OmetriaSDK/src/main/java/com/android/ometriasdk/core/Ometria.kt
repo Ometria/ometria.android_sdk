@@ -65,8 +65,8 @@ class Ometria private constructor() {
         }
     }
 
-    fun enableDebugging(enableDebugging: Boolean): Ometria {
-        appConfig.enableDebugging = enableDebugging
+    fun loggingEnabled(enableDebugging: Boolean): Ometria {
+        ometriaConfig.enableDebugging = enableDebugging
         Logger.setLevel(VERBOSE)
 
         return instance
