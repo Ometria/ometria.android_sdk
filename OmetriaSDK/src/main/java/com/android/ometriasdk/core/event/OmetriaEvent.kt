@@ -14,14 +14,12 @@ import java.util.*
 internal open class OmetriaEvent(
     @Expose
     @SerializedName("timestampOccurred")
-    val creationDate: String = Date().toString(),
-    val flushDate: String? = null,
-    val isFlushed: Boolean = false,
+    val timestampOccurred: String = Date().toString(),
     val isAutomaticallyTracked: Boolean? = false,
-    val applicationID: String? = null,
-    val installmentID: String? = null,
-    val applicationVersion: String? = null,
-    val buildNumber: String? = null,
+    val appId: String? = null,
+    val installationId: String? = null,
+    val appVersion: String? = null,
+    val appBuildNumber: String? = null,
     val sdkVersion: String? = BuildConfig.VERSION_NAME,
     val platform: String = "Android",
     val osVersion: String? = Build.VERSION.RELEASE,

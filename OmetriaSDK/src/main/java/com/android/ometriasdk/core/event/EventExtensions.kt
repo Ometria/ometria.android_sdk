@@ -28,7 +28,7 @@ internal fun Set<String>.toOmetriaEventList(): List<OmetriaEvent> {
 }
 
 internal fun OmetriaEvent.batchIdentifier(): Int {
-    return (applicationID + buildNumber + applicationVersion + osVersion).hashCode()
+    return (appId + appBuildNumber + appVersion + osVersion).hashCode()
 }
 
 internal fun List<OmetriaEvent>.toApiRequest(): OmetriaApiRequest {
@@ -38,10 +38,10 @@ internal fun List<OmetriaEvent>.toApiRequest(): OmetriaApiRequest {
 
     // ToDo extract installationId from event when generated
     return OmetriaApiRequest(
-        appId = ometriaEvent.applicationID,
-        appVersion = ometriaEvent.applicationVersion,
+        appId = ometriaEvent.appId,
+        appVersion = ometriaEvent.appVersion,
         installationId = "c2dd8d0f-2dcc-41c3-a4ef-b0cf164db357",
-        appBuildNumber = ometriaEvent.buildNumber,
+        appBuildNumber = ometriaEvent.appBuildNumber,
         sdkVersion = ometriaEvent.sdkVersion,
         osVersion = ometriaEvent.osVersion,
         timestampSent = dateFormat.format(Calendar.getInstance().time),

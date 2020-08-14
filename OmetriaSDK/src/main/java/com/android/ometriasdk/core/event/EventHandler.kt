@@ -33,18 +33,19 @@ internal class EventHandler(
         val dateFormat: DateFormat =
             SimpleDateFormat(Constants.Date.API_DATE_FORMAT, Locale.getDefault())
 
-        val applicationID = context.packageName
-        val installmentID = repository.getInstallmentID()
+        val appId = context.packageName
+        val installationId = repository.getInstallmentID()
+
         val packageInfo = context.packageManager.getPackageInfo(context.packageName, 0)
-        val applicationVersion = packageInfo.versionName
-        val buildNumber = PackageInfoCompat.getLongVersionCode(packageInfo).toString()
+        val appVersion = packageInfo.versionName
+        val appBuildNumber = PackageInfoCompat.getLongVersionCode(packageInfo).toString()
 
         val event = OmetriaEvent(
-            creationDate = dateFormat.format(Calendar.getInstance().time),
-            applicationID = applicationID,
-            installmentID = installmentID,
-            applicationVersion = applicationVersion,
-            buildNumber = buildNumber,
+            timestampOccurred = dateFormat.format(Calendar.getInstance().time),
+            appId = appId,
+            installationId = installationId,
+            appVersion = appVersion,
+            appBuildNumber = appBuildNumber,
             type = type.id,
             data = data
         )
