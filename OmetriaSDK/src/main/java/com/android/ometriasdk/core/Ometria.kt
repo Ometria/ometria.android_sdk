@@ -5,7 +5,6 @@ import androidx.lifecycle.ProcessLifecycleOwner
 import com.android.ometriasdk.core.event.EventHandler
 import com.android.ometriasdk.core.event.OmetriaBasket
 import com.android.ometriasdk.core.event.OmetriaEventType
-import com.android.ometriasdk.core.network.Repository
 import com.android.ometriasdk.core.network.RetrofitBuilder
 import com.android.ometriasdk.lifecycle.OmetriaActivityLifecycleHelper
 import com.android.ometriasdk.notification.NotificationHandler
@@ -43,8 +42,10 @@ class Ometria private constructor() {
                 it.ometriaConfig = OmetriaConfig(application, apiKey, notificationIcon)
                 it.localCache = LocalCache(application)
                 it.isInitialized = true
-                it.repository = Repository(RetrofitBuilder.getOmetriaApi(it.ometriaConfig))
-                it.eventHandler = EventHandler(application, it.localCache, it.repository)
+                it.repository = Repository(
+                    RetrofitBuilder.getOmetriaApi(it.ometriaConfig), it.localCache
+                )
+                it.eventHandler = EventHandler(application, it.repository)
 
                 val activityLifecycleHelper = OmetriaActivityLifecycleHelper(it.localCache)
 

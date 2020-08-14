@@ -3,10 +3,9 @@ package com.android.ometriasdk.core.event
 import android.content.Context
 import androidx.core.content.pm.PackageInfoCompat
 import com.android.ometriasdk.core.Constants
-import com.android.ometriasdk.core.LocalCache
 import com.android.ometriasdk.core.Logger
+import com.android.ometriasdk.core.Repository
 import com.android.ometriasdk.core.network.ApiCallback
-import com.android.ometriasdk.core.network.Repository
 import com.android.ometriasdk.core.network.model.OmetriaApiResponse
 import java.io.File
 import java.io.FileOutputStream
@@ -24,7 +23,6 @@ private const val BATCH_LIMIT = 2
 
 internal class EventHandler(
     private val context: Context,
-    private val localCache: LocalCache,
     private val repository: Repository
 ) {
 
@@ -36,7 +34,7 @@ internal class EventHandler(
             SimpleDateFormat(Constants.Date.API_DATE_FORMAT, Locale.getDefault())
 
         val applicationID = context.packageName
-        val installmentID = localCache.getInstallmentID()
+        val installmentID = repository.getInstallmentID()
         val packageInfo = context.packageManager.getPackageInfo(context.packageName, 0)
         val applicationVersion = packageInfo.versionName
         val buildNumber = PackageInfoCompat.getLongVersionCode(packageInfo).toString()
@@ -55,7 +53,7 @@ internal class EventHandler(
     }
 
     private fun sendEvent(cachedEvent: OmetriaEvent) {
-        localCache.saveEvent(cachedEvent)
+        repository.saveEvent(cachedEvent)
         flushEvents()
         Logger.d(TAG, "Track event: ", cachedEvent)
         writeEventToFile(cachedEvent)
@@ -74,7 +72,7 @@ internal class EventHandler(
     }
 
     private fun flushEvents() {
-        val eventsSet = localCache.getEvents() ?: return
+        val eventsSet = repository.getEvents() ?: return
 
         if (shouldFlush(eventsSet)) {
             val eventList = eventsSet.toOmetriaEventList()

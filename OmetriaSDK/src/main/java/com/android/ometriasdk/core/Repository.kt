@@ -1,7 +1,9 @@
-package com.android.ometriasdk.core.network
+package com.android.ometriasdk.core
 
-import com.android.ometriasdk.core.AppGson
-import com.android.ometriasdk.core.Logger
+import com.android.ometriasdk.core.event.OmetriaEvent
+import com.android.ometriasdk.core.network.ApiCallback
+import com.android.ometriasdk.core.network.ApiError
+import com.android.ometriasdk.core.network.OmetriaApi
 import com.android.ometriasdk.core.network.model.OmetriaApiRequest
 import com.android.ometriasdk.core.network.model.OmetriaApiResponse
 import okhttp3.ResponseBody
@@ -17,7 +19,7 @@ import java.nio.charset.Charset
 
 private val TAG = Repository::class.simpleName
 
-internal class Repository(private val ometriaApi: OmetriaApi) {
+internal class Repository(private val ometriaApi: OmetriaApi, private val localCache: LocalCache) {
 
     private val UTF8 = Charset.forName("UTF-8")
 
@@ -65,5 +67,33 @@ internal class Repository(private val ometriaApi: OmetriaApi) {
         }
 
         return ApiError()
+    }
+
+    fun saveIsFirstAppRun(isFirstAppRun: Boolean) {
+        localCache.saveIsFirstAppRun(isFirstAppRun)
+    }
+
+    fun isFirstAppRun(): Boolean {
+        return localCache.isFirstAppRun()
+    }
+
+    fun saveInstallmentId(installmentID: String) {
+        localCache.saveInstallmentId(installmentID)
+    }
+
+    fun getInstallmentID(): String? {
+        return localCache.getInstallmentID()
+    }
+
+    fun saveEvent(cachedEvent: OmetriaEvent) {
+        localCache.saveEvent(cachedEvent)
+    }
+
+    fun getEvents(): Set<String>? {
+        return localCache.getEvents()
+    }
+
+    fun removeEvents(events: List<OmetriaEvent>) {
+        localCache.removeEvents(events)
     }
 }
