@@ -20,7 +20,7 @@ private val TAG = Ometria::class.simpleName
 
 class Ometria private constructor() {
 
-    private lateinit var appConfig: AppConfig
+    private lateinit var ometriaConfig: OmetriaConfig
     private var isInitialized = false
     private lateinit var localCache: LocalCache
     private lateinit var eventHandler: EventHandler
@@ -40,10 +40,10 @@ class Ometria private constructor() {
         fun initialize(application: Application, apiKey: String, notificationIcon: Int): Ometria {
 
             return instance.also {
-                it.appConfig = AppConfig(application, apiKey, notificationIcon)
+                it.ometriaConfig = OmetriaConfig(application, apiKey, notificationIcon)
                 it.localCache = LocalCache(application)
                 it.isInitialized = true
-                it.repository = Repository(RetrofitBuilder.getOmetriaApi(it.appConfig))
+                it.repository = Repository(RetrofitBuilder.getOmetriaApi(it.ometriaConfig))
                 it.eventHandler = EventHandler(application, it.localCache, it.repository)
 
                 val activityLifecycleHelper = OmetriaActivityLifecycleHelper(it.localCache)
@@ -75,15 +75,15 @@ class Ometria private constructor() {
     fun onMessageReceived(remoteMessage: RemoteMessage) {
         NotificationHandler.showNotification(
             remoteMessage,
-            appConfig.context,
-            appConfig.notificationIcon
+            ometriaConfig.context,
+            ometriaConfig.notificationIcon
         )
 
         trackNotificationReceivedEvent(remoteMessage.messageId)
     }
 
     fun onNewToken(token: String) {
-        trackEvent(OmetriaEventType.PUSH_TOKEN_REFRESHED, mapOf("token" to token))
+        trackPushTokenRefreshedEvent(token)
     }
 
     private fun trackEvent(
@@ -154,39 +154,39 @@ class Ometria private constructor() {
         trackEvent(OmetriaEventType.BASKET_UPDATED, mapOf("basket" to basket))
     }
 
-    internal fun trackOrderCompletedEvent(orderId: String, basket: OmetriaBasket) {
+    fun trackOrderCompletedEvent(orderId: String, basket: OmetriaBasket) {
         trackEvent(
             OmetriaEventType.ORDER_COMPLETED,
             mapOf("orderId" to orderId, "basket" to basket)
         )
     }
 
-    internal fun trackPushTokenRefreshedEvent(pushToken: String) {
+    fun trackPushTokenRefreshedEvent(pushToken: String) {
         trackEvent(OmetriaEventType.PUSH_TOKEN_REFRESHED, mapOf("pushToken" to pushToken))
     }
 
-    internal fun trackNotificationReceivedEvent(notificationId: String?) {
+    fun trackNotificationReceivedEvent(notificationId: String?) {
         trackEvent(
             OmetriaEventType.NOTIFICATION_RECEIVED,
             mapOf("notificationId" to (notificationId ?: ""))
         )
     }
 
-    internal fun trackNotificationInteractedEvent(notificationId: String) {
+    fun trackNotificationInteractedEvent(notificationId: String) {
         trackEvent(
             OmetriaEventType.NOTIFICATION_INTERACTED,
             mapOf("notificationId" to notificationId)
         )
     }
 
-    internal fun trackDeepLinkOpenedEvent(link: String, page: String) {
+    fun trackDeepLinkOpenedEvent(link: String, page: String) {
         trackEvent(
             OmetriaEventType.DEEP_LINK_OPENED,
             mapOf("link" to link, "page" to page)
         )
     }
 
-    internal fun trackCustomEvent(customEventType: String, additionalInfo: Map<String, Any>) {
+    fun trackCustomEvent(customEventType: String, additionalInfo: Map<String, Any>) {
         val data = additionalInfo.toMutableMap()
         data["customEventType"] = customEventType
         trackEvent(

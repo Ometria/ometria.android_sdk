@@ -2,6 +2,8 @@ package com.android.ometriasdk.core.network
 
 import com.android.ometriasdk.core.AppGson
 import com.android.ometriasdk.core.Logger
+import com.android.ometriasdk.core.network.model.OmetriaApiRequest
+import com.android.ometriasdk.core.network.model.OmetriaApiResponse
 import okhttp3.ResponseBody
 import retrofit2.Call
 import retrofit2.Callback
@@ -19,13 +21,13 @@ internal class Repository(private val ometriaApi: OmetriaApi) {
 
     private val UTF8 = Charset.forName("UTF-8")
 
-    fun postEventsValidate(request: Any, callback: ApiCallback<PostEventsValidateResponse>) {
+    fun postEventsValidate(request: OmetriaApiRequest, callback: ApiCallback<OmetriaApiResponse>) {
         val call = ometriaApi.postEventsValidate(request)
         call.enqueue(
-            object : Callback<PostEventsValidateResponse> {
+            object : Callback<OmetriaApiResponse> {
                 override fun onResponse(
-                    call: Call<PostEventsValidateResponse>,
-                    response: Response<PostEventsValidateResponse>
+                    call: Call<OmetriaApiResponse>,
+                    response: Response<OmetriaApiResponse>
                 ) {
                     if (response.isSuccessful) {
                         callback.onSuccess(response.body()!!)
@@ -35,13 +37,13 @@ internal class Repository(private val ometriaApi: OmetriaApi) {
                     }
                 }
 
-                override fun onFailure(call: Call<PostEventsValidateResponse>, t: Throwable) {
+                override fun onFailure(call: Call<OmetriaApiResponse>, t: Throwable) {
                     callback.onError(t.message)
                 }
             })
     }
 
-    private fun getApiError(response: Response<PostEventsValidateResponse>): ApiError {
+    private fun getApiError(response: Response<OmetriaApiResponse>): ApiError {
         try {
             val responseBody: ResponseBody? = response.errorBody()
             val source = responseBody!!.source()

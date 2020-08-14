@@ -3,6 +3,7 @@ package com.android.ometriasdk.core.event
 import android.os.Build
 import com.android.ometriasdk.BuildConfig
 import com.google.gson.annotations.Expose
+import com.google.gson.annotations.SerializedName
 import java.util.*
 
 /**
@@ -11,6 +12,8 @@ import java.util.*
  */
 
 internal open class OmetriaEvent(
+    @Expose
+    @SerializedName("timestampOccurred")
     val creationDate: String = Date().toString(),
     val flushDate: String? = null,
     val isFlushed: Boolean = false,
@@ -25,6 +28,7 @@ internal open class OmetriaEvent(
     val deviceManufacturer: String? = Build.MANUFACTURER,
     val deviceModel: String? = Build.MODEL,
     @Expose
-    val type: OmetriaEventType,
+    val type: String,
+    @Expose
     val data: Map<String, Any>?
 )

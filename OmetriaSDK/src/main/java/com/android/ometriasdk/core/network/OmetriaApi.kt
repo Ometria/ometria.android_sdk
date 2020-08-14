@@ -1,5 +1,7 @@
 package com.android.ometriasdk.core.network
 
+import com.android.ometriasdk.core.network.model.OmetriaApiRequest
+import com.android.ometriasdk.core.network.model.OmetriaApiResponse
 import retrofit2.Call
 import retrofit2.http.Body
 import retrofit2.http.POST
@@ -12,5 +14,5 @@ import retrofit2.http.POST
 internal interface OmetriaApi {
 
     @POST("mobile-events/validate")
-    fun postEventsValidate(@Body request: Any): Call<PostEventsValidateResponse>
+    fun postEventsValidate(@Body request: OmetriaApiRequest): Call<OmetriaApiResponse>
 }
