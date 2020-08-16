@@ -5,9 +5,8 @@ import android.app.Application
 import android.os.Bundle
 import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
-import com.android.ometriasdk.core.LocalCache
 import com.android.ometriasdk.core.Ometria
-import com.android.ometriasdk.core.event.OmetriaEventType
+import com.android.ometriasdk.core.Repository
 import java.util.concurrent.atomic.AtomicBoolean
 
 /**
@@ -15,7 +14,7 @@ import java.util.concurrent.atomic.AtomicBoolean
  * on 07/07/2020.
  */
 
-internal class OmetriaActivityLifecycleHelper(private val localCache: LocalCache) :
+internal class OmetriaActivityLifecycleHelper(private val repository: Repository) :
     DefaultLifecycleObserver,
     Application.ActivityLifecycleCallbacks {
 
@@ -36,9 +35,9 @@ internal class OmetriaActivityLifecycleHelper(private val localCache: LocalCache
      * and Bring Application to Foreground event
      */
     override fun onStart(owner: LifecycleOwner) {
-        if (localCache.isFirstAppRun()) {
+        if (repository.isFirstAppRun()) {
             Ometria.instance().trackAppInstalledEvent()
-            localCache.saveIsFirstAppRun(false)
+            repository.saveIsFirstAppRun(false)
         }
 
         if (firstLaunch.get()) {

@@ -47,7 +47,7 @@ class Ometria private constructor() {
                 )
                 it.eventHandler = EventHandler(application, it.repository)
 
-                val activityLifecycleHelper = OmetriaActivityLifecycleHelper(it.localCache)
+                val activityLifecycleHelper = OmetriaActivityLifecycleHelper(it.repository)
 
                 val lifecycle = ProcessLifecycleOwner.get().lifecycle
                 lifecycle.addObserver(activityLifecycleHelper)
