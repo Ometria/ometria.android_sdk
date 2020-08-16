@@ -11,7 +11,7 @@ import com.android.ometriasdk.core.event.OmetriaEvent
 
 private const val LOCAL_CACHE_PREFERENCES = "LOCAL_CACHE_PREFERENCES"
 private const val IS_FIRST_APP_RUN_KEY = "IS_FIRST_APP_RUN_KEY"
-private const val INSTALLMENT_ID_KEY = "INSTALLMENT_ID_KEY"
+private const val INSTALLATION_ID_KEY = "INSTALLATION_ID_KEY"
 private const val EVENTS_KEY = "EVENTS_KEY"
 
 internal class LocalCache(private val context: Context) {
@@ -24,12 +24,12 @@ internal class LocalCache(private val context: Context) {
         return getLocalCachePreferences().getBoolean(IS_FIRST_APP_RUN_KEY, true)
     }
 
-    fun saveInstallmentId(installmentID: String) {
-        getLocalCachePreferences().edit().putString(INSTALLMENT_ID_KEY, installmentID).apply()
+    fun saveInstallationId(installationId: String) {
+        getLocalCachePreferences().edit().putString(INSTALLATION_ID_KEY, installationId).apply()
     }
 
-    fun getInstallmentID(): String? {
-        return getLocalCachePreferences().getString(INSTALLMENT_ID_KEY, null)
+    fun getInstallationId(): String? {
+        return getLocalCachePreferences().getString(INSTALLATION_ID_KEY, null)
     }
 
     fun saveEvent(cachedEvent: OmetriaEvent) {

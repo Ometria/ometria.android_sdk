@@ -9,6 +9,7 @@ import com.android.ometriasdk.core.network.RetrofitBuilder
 import com.android.ometriasdk.lifecycle.OmetriaActivityLifecycleHelper
 import com.android.ometriasdk.notification.NotificationHandler
 import com.google.firebase.messaging.RemoteMessage
+import java.util.*
 
 /**
  * Created by cristiandregan
@@ -47,6 +48,8 @@ class Ometria private constructor() {
                 )
                 it.eventHandler = EventHandler(application, it.repository)
 
+                it.generateInstallationId()
+
                 val activityLifecycleHelper = OmetriaActivityLifecycleHelper(it.repository)
 
                 val lifecycle = ProcessLifecycleOwner.get().lifecycle
@@ -64,6 +67,14 @@ class Ometria private constructor() {
 
             return instance
         }
+    }
+
+    internal fun generateInstallationId() {
+        if (repository.getInstallationId() != null) return
+
+        val installationId = UUID.randomUUID().toString()
+
+        repository.saveinstallationId(installationId)
     }
 
     fun loggingEnabled(enableDebugging: Boolean): Ometria {

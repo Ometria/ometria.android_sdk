@@ -34,7 +34,7 @@ internal class EventHandler(
             SimpleDateFormat(Constants.Date.API_DATE_FORMAT, Locale.getDefault())
 
         val appId = context.packageName
-        val installationId = repository.getInstallmentID()
+        val installationId = repository.getInstallationId()
 
         val packageInfo = context.packageManager.getPackageInfo(context.packageName, 0)
         val appVersion = packageInfo.versionName

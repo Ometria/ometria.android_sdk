@@ -36,11 +36,10 @@ internal fun List<OmetriaEvent>.toApiRequest(): OmetriaApiRequest {
         SimpleDateFormat(Constants.Date.API_DATE_FORMAT, Locale.getDefault())
     val ometriaEvent = this.first()
 
-    // ToDo extract installationId from event when generated
     return OmetriaApiRequest(
         appId = ometriaEvent.appId,
         appVersion = ometriaEvent.appVersion,
-        installationId = "c2dd8d0f-2dcc-41c3-a4ef-b0cf164db357",
+        installationId = ometriaEvent.installationId,
         appBuildNumber = ometriaEvent.appBuildNumber,
         sdkVersion = ometriaEvent.sdkVersion,
         osVersion = ometriaEvent.osVersion,
