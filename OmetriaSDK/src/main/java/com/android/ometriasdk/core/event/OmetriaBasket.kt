@@ -6,7 +6,7 @@ package com.android.ometriasdk.core.event
  */
 
 open class OmetriaBasket(
-    val currency: String,
     val totalPrice: Float,
+    val currency: String,
     val items: List<OmetriaBasketItem> = listOf()
 )
