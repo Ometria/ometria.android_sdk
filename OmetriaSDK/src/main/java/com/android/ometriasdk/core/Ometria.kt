@@ -85,7 +85,7 @@ class Ometria private constructor() {
 
         val installationId = UUID.randomUUID().toString()
 
-        repository.saveinstallationId(installationId)
+        repository.saveInstallationId(installationId)
     }
 
     fun loggingEnabled(enableDebugging: Boolean): Ometria {

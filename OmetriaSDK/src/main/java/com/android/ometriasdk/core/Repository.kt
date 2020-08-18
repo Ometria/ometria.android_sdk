@@ -77,7 +77,7 @@ internal class Repository(private val ometriaApi: OmetriaApi, private val localC
         return localCache.isFirstAppRun()
     }
 
-    fun saveinstallationId(installationId: String) {
+    fun saveInstallationId(installationId: String) {
         localCache.saveInstallationId(installationId)
     }
 
@@ -85,15 +85,17 @@ internal class Repository(private val ometriaApi: OmetriaApi, private val localC
         return localCache.getInstallationId()
     }
 
-    fun saveEvent(cachedEvent: OmetriaEvent) {
-        localCache.saveEvent(cachedEvent)
+    fun saveEvent(ometriaEvent: OmetriaEvent) {
+        localCache.saveEvent(ometriaEvent)
     }
 
-    fun getEvents(): Set<String>? {
+    fun getEvents(): List<OmetriaEvent> {
         return localCache.getEvents()
     }
 
-    fun removeEvents(events: List<OmetriaEvent>) {
+    fun removeEvents(events: List<OmetriaEvent>?) {
+        events ?: return
+
         localCache.removeEvents(events)
     }
 }

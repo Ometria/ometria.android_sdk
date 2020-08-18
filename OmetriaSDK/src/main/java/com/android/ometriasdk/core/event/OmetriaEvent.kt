@@ -11,7 +11,7 @@ import java.util.*
  * on 17/07/2020.
  */
 
-internal open class OmetriaEvent(
+internal data class OmetriaEvent(
     @Expose
     @SerializedName("timestampOccurred")
     val timestampOccurred: String = Date().toString(),
@@ -26,6 +26,7 @@ internal open class OmetriaEvent(
     val deviceManufacturer: String? = Build.MANUFACTURER,
     val deviceModel: String? = Build.MODEL,
     @Expose
+    @SerializedName("type")
     val type: String,
     @Expose
     val data: Map<String, Any>?

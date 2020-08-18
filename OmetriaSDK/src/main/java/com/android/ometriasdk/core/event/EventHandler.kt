@@ -19,7 +19,7 @@ import java.util.*
  */
 
 private val TAG = EventHandler::class.simpleName
-private const val BATCH_LIMIT = 2
+private const val BATCH_LIMIT = 5
 
 internal class EventHandler(
     private val context: Context,
@@ -53,11 +53,12 @@ internal class EventHandler(
         sendEvent(event)
     }
 
-    private fun sendEvent(cachedEvent: OmetriaEvent) {
-        repository.saveEvent(cachedEvent)
-        flushEvents()
-        Logger.d(TAG, "Track event: ", cachedEvent)
-        writeEventToFile(cachedEvent)
+    private fun sendEvent(ometriaEvent: OmetriaEvent) {
+        Logger.d(TAG, "Track event: ", ometriaEvent)
+
+        repository.saveEvent(ometriaEvent)
+        flushEventsIfNeeded()
+        writeEventToFile(ometriaEvent)
     }
 
     private fun writeEventToFile(event: OmetriaEvent) {
@@ -72,11 +73,10 @@ internal class EventHandler(
         }
     }
 
-    private fun flushEvents() {
-        val eventsSet = repository.getEvents() ?: return
+    private fun flushEventsIfNeeded() {
+        val eventList = repository.getEvents()
 
-        if (shouldFlush(eventsSet)) {
-            val eventList = eventsSet.toOmetriaEventList()
+        if (shouldFlush(eventList)) {
             eventList.groupBy { it.batchIdentifier() }.forEach { flush(it.value) }
         }
     }
@@ -89,15 +89,17 @@ internal class EventHandler(
             object : ApiCallback<OmetriaApiResponse> {
                 override fun onSuccess(response: OmetriaApiResponse) {
                     Logger.d(TAG, "Successfully flushed")
+
+                    repository.removeEvents(response.received.events)
                 }
 
                 override fun onError(error: String?) {
-                    Logger.d(TAG, error ?: "")
+                    Logger.e(TAG, error ?: "Unknown error")
                 }
             })
     }
 
-    private fun shouldFlush(eventsSet: Set<String>): Boolean {
-        return eventsSet.isNotEmpty() && eventsSet.size >= BATCH_LIMIT
+    private fun shouldFlush(eventList: List<OmetriaEvent>): Boolean {
+        return eventList.isNotEmpty() && eventList.size >= BATCH_LIMIT
     }
 }

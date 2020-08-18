@@ -7,6 +7,6 @@ import com.google.gson.Gson
  * on 07/08/2020.
  */
 
-object AppGson {
+internal object AppGson {
     val instance: Gson by lazy { Gson() }
 }

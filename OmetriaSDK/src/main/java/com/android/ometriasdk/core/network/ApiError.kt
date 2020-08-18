@@ -6,7 +6,8 @@ import com.google.gson.annotations.SerializedName
  * Created by cristiandregan
  * on 07/08/2020.
  */
-data class ApiError(
+
+internal data class ApiError(
     @SerializedName("detail")
     val detail: String? = null,
     @SerializedName("status")

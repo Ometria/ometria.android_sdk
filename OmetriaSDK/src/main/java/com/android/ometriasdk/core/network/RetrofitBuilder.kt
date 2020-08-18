@@ -11,6 +11,7 @@ import retrofit2.converter.gson.GsonConverterFactory
  * Created by cristiandregan
  * on 03/08/2020.
  */
+
 internal object RetrofitBuilder {
 
     private const val BASE_URL = " https://mobile-events.ometria.com/v1/"

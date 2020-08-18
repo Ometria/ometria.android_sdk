@@ -32,31 +32,37 @@ internal class LocalCache(private val context: Context) {
         return getLocalCachePreferences().getString(INSTALLATION_ID_KEY, null)
     }
 
-    fun saveEvent(cachedEvent: OmetriaEvent) {
-        val eventsSet: MutableSet<String> = getLocalCachePreferences()
-            .getStringSet(EVENTS_KEY, null) ?: mutableSetOf()
+    fun saveEvent(ometriaEvent: OmetriaEvent) {
+        val eventsString: String? = getLocalCachePreferences()
+            .getString(EVENTS_KEY, "[]")
 
-        eventsSet.add(AppGson.instance.toJson(cachedEvent))
+        val eventsList =
+            AppGson.instance.fromJson(eventsString, Array<OmetriaEvent>::class.java).toMutableList()
+
+        eventsList.add(ometriaEvent)
 
         getLocalCachePreferences().edit().remove(EVENTS_KEY).apply()
-        getLocalCachePreferences().edit().putStringSet(EVENTS_KEY, eventsSet).apply()
+        getLocalCachePreferences().edit().putString(EVENTS_KEY, AppGson.instance.toJson(eventsList))
+            .apply()
     }
 
-    fun getEvents(): Set<String>? {
-        return getLocalCachePreferences().getStringSet(EVENTS_KEY, null)
+    fun getEvents(): List<OmetriaEvent> {
+        val eventsString = getLocalCachePreferences().getString(EVENTS_KEY, null) ?: ""
+
+        return AppGson.instance.fromJson(eventsString, Array<OmetriaEvent>::class.java).toList()
     }
 
-    fun removeEvents(events: List<OmetriaEvent>) {
-        val eventsSet: MutableSet<String> = getLocalCachePreferences()
-            .getStringSet(EVENTS_KEY, null) ?: mutableSetOf()
-        val eventsList = eventsSet.sorted().toMutableList()
+    @OptIn(ExperimentalStdlibApi::class)
+    fun removeEvents(eventsToRemove: List<OmetriaEvent>) {
+        val eventsList = getEvents().toMutableList()
 
-        for (i in events.indices) {
-            eventsList.removeAt(i)
+        for (i in eventsToRemove.indices) {
+            eventsList.removeFirst()
         }
 
         getLocalCachePreferences().edit().remove(EVENTS_KEY).apply()
-        getLocalCachePreferences().edit().putStringSet(EVENTS_KEY, eventsList.toSet()).apply()
+        getLocalCachePreferences().edit().putString(EVENTS_KEY, AppGson.instance.toJson(eventsList))
+            .apply()
     }
 
     private fun getLocalCachePreferences(): SharedPreferences {

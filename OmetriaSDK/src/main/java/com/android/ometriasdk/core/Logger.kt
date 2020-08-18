@@ -75,7 +75,7 @@ internal object Logger {
         }
     }
 
-    fun e(tag: String, message: String) {
+    fun e(tag: String?, message: String) {
         if (shouldLog(ERROR)) {
             Log.e(tag, message)
         }
