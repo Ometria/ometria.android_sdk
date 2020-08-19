@@ -41,6 +41,7 @@ internal class EventHandler(
         val appBuildNumber = PackageInfoCompat.getLongVersionCode(packageInfo).toString()
 
         val event = OmetriaEvent(
+            eventId = UUID.randomUUID().toString(),
             timestampOccurred = dateFormat.format(Calendar.getInstance().time),
             appId = appId,
             installationId = installationId,
@@ -74,15 +75,17 @@ internal class EventHandler(
     }
 
     private fun flushEventsIfNeeded() {
-        val eventList = repository.getEvents()
+        val events = repository.getEvents().filter { !it.isBeingFlushed }
 
-        if (shouldFlush(eventList)) {
-            eventList.groupBy { it.batchIdentifier() }.forEach { flush(it.value) }
+        if (shouldFlush(events)) {
+            events.groupBy { it.batchIdentifier() }.forEach { flush(it.value) }
         }
     }
 
-    private fun flush(eventList: List<OmetriaEvent>) {
-        val apiRequest = eventList.toApiRequest()
+    private fun flush(events: List<OmetriaEvent>) {
+        val apiRequest = events.toApiRequest()
+
+        repository.updateEvents(events)
 
         repository.postEventsValidate(
             apiRequest,
@@ -90,7 +93,7 @@ internal class EventHandler(
                 override fun onSuccess(response: OmetriaApiResponse) {
                     Logger.d(TAG, "Successfully flushed")
 
-                    repository.removeEvents(response.received.events)
+                    repository.removeEvents(apiRequest.events)
                 }
 
                 override fun onError(error: String?) {
@@ -99,7 +102,7 @@ internal class EventHandler(
             })
     }
 
-    private fun shouldFlush(eventList: List<OmetriaEvent>): Boolean {
-        return eventList.isNotEmpty() && eventList.size >= BATCH_LIMIT
+    private fun shouldFlush(events: List<OmetriaEvent>): Boolean {
+        return events.isNotEmpty() && events.size >= BATCH_LIMIT
     }
 }

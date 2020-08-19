@@ -41,7 +41,6 @@ internal class LocalCache(private val context: Context) {
 
         eventsList.add(ometriaEvent)
 
-        getLocalCachePreferences().edit().remove(EVENTS_KEY).apply()
         getLocalCachePreferences().edit().putString(EVENTS_KEY, AppGson.instance.toJson(eventsList))
             .apply()
     }
@@ -52,13 +51,23 @@ internal class LocalCache(private val context: Context) {
         return AppGson.instance.fromJson(eventsString, Array<OmetriaEvent>::class.java).toList()
     }
 
-    @OptIn(ExperimentalStdlibApi::class)
+    fun updateEvents(events: List<OmetriaEvent>) {
+        val cachedEvents = getEvents().toMutableList()
+
+        events.forEach {
+            cachedEvents[cachedEvents.indexOf(it)].isBeingFlushed = true
+        }
+
+        getLocalCachePreferences().edit().remove(EVENTS_KEY).apply()
+        getLocalCachePreferences().edit()
+            .putString(EVENTS_KEY, AppGson.instance.toJson(cachedEvents))
+            .apply()
+    }
+
     fun removeEvents(eventsToRemove: List<OmetriaEvent>) {
         val eventsList = getEvents().toMutableList()
 
-        for (i in eventsToRemove.indices) {
-            eventsList.removeFirst()
-        }
+        eventsToRemove.forEach { eventsList.remove(it) }
 
         getLocalCachePreferences().edit().remove(EVENTS_KEY).apply()
         getLocalCachePreferences().edit().putString(EVENTS_KEY, AppGson.instance.toJson(eventsList))

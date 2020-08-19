@@ -93,6 +93,10 @@ internal class Repository(private val ometriaApi: OmetriaApi, private val localC
         return localCache.getEvents()
     }
 
+    fun updateEvents(events: List<OmetriaEvent>) {
+        localCache.updateEvents(events)
+    }
+
     fun removeEvents(events: List<OmetriaEvent>?) {
         events ?: return
 

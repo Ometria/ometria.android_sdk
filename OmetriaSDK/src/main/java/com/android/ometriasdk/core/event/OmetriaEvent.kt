@@ -12,6 +12,8 @@ import java.util.*
  */
 
 internal data class OmetriaEvent(
+    val eventId: String,
+    var isBeingFlushed: Boolean = false,
     @Expose
     @SerializedName("timestampOccurred")
     val timestampOccurred: String = Date().toString(),
