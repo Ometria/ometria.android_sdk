@@ -32,7 +32,7 @@ internal class Repository(private val ometriaApi: OmetriaApi, private val localC
                     response: Response<OmetriaApiResponse>
                 ) {
                     if (response.isSuccessful) {
-                        callback.onSuccess(response.body()!!)
+                        callback.onSuccess(response.body())
                     } else {
                         val apiError = getApiError(response)
                         callback.onError(apiError.detail)

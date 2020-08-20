@@ -90,8 +90,8 @@ internal class EventHandler(
         repository.postEventsValidate(
             apiRequest,
             object : ApiCallback<OmetriaApiResponse> {
-                override fun onSuccess(response: OmetriaApiResponse) {
-                    Logger.d(TAG, "Successfully flushed")
+                override fun onSuccess(response: OmetriaApiResponse?) {
+                    Logger.d(TAG, "Successfully flushed ${apiRequest.events?.size} events")
 
                     repository.removeEvents(apiRequest.events)
                 }
