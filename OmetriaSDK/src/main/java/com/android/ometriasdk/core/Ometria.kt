@@ -16,7 +16,8 @@ import com.android.ometriasdk.core.Constants.Params.PUSH_TOKEN
 import com.android.ometriasdk.core.event.EventHandler
 import com.android.ometriasdk.core.event.OmetriaBasket
 import com.android.ometriasdk.core.event.OmetriaEventType
-import com.android.ometriasdk.core.network.RetrofitBuilder
+import com.android.ometriasdk.core.network.Client
+import com.android.ometriasdk.core.network.ConnectionFactory
 import com.android.ometriasdk.lifecycle.OmetriaActivityLifecycleHelper
 import com.android.ometriasdk.notification.NotificationHandler
 import com.google.firebase.messaging.RemoteMessage
@@ -54,9 +55,9 @@ class Ometria private constructor() {
                 it.ometriaConfig = OmetriaConfig(application, apiKey, notificationIcon)
                 it.localCache = LocalCache(application)
                 it.isInitialized = true
-                it.repository = Repository(
-                    RetrofitBuilder.getOmetriaApi(it.ometriaConfig), it.localCache
-                )
+
+                it.repository =
+                    Repository(Client(ConnectionFactory(it.ometriaConfig)), it.localCache)
                 it.eventHandler = EventHandler(application, it.repository)
 
                 it.generateInstallationId()

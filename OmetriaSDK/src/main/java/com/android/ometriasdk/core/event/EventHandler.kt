@@ -5,8 +5,6 @@ import androidx.core.content.pm.PackageInfoCompat
 import com.android.ometriasdk.core.Constants
 import com.android.ometriasdk.core.Logger
 import com.android.ometriasdk.core.Repository
-import com.android.ometriasdk.core.network.ApiCallback
-import com.android.ometriasdk.core.network.model.OmetriaApiResponse
 import java.io.File
 import java.io.FileOutputStream
 import java.text.DateFormat
@@ -19,7 +17,7 @@ import java.util.*
  */
 
 private val TAG = EventHandler::class.simpleName
-private const val BATCH_LIMIT = 5
+private const val BATCH_LIMIT = 3
 
 internal class EventHandler(
     private val context: Context,
@@ -87,19 +85,21 @@ internal class EventHandler(
 
         repository.updateEvents(events)
 
-        repository.postEventsValidate(
-            apiRequest,
-            object : ApiCallback<OmetriaApiResponse> {
-                override fun onSuccess(response: OmetriaApiResponse?) {
-                    Logger.d(TAG, "Successfully flushed ${apiRequest.events?.size} events")
+//        repository.postEventsValidate(
+//            apiRequest,
+//            object : ApiCallback<OmetriaApiResponse> {
+//                override fun onSuccess(response: OmetriaApiResponse?) {
+//                    Logger.d(TAG, "Successfully flushed ${apiRequest.events?.size} events")
+//
+//                    repository.removeEvents(apiRequest.events)
+//                }
+//
+//                override fun onError(error: String?) {
+//                    Logger.e(TAG, error ?: "Unknown error")
+//                }
+//            })
 
-                    repository.removeEvents(apiRequest.events)
-                }
-
-                override fun onError(error: String?) {
-                    Logger.e(TAG, error ?: "Unknown error")
-                }
-            })
+        repository.postEvents(apiRequest)
     }
 
     private fun shouldFlush(events: List<OmetriaEvent>): Boolean {

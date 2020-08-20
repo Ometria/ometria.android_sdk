@@ -2,15 +2,10 @@ package com.android.ometriasdk.core
 
 import com.android.ometriasdk.core.event.OmetriaEvent
 import com.android.ometriasdk.core.network.ApiCallback
-import com.android.ometriasdk.core.network.ApiError
-import com.android.ometriasdk.core.network.OmetriaApi
+import com.android.ometriasdk.core.network.Client
+import com.android.ometriasdk.core.network.model.OmetriaApiError
 import com.android.ometriasdk.core.network.model.OmetriaApiRequest
 import com.android.ometriasdk.core.network.model.OmetriaApiResponse
-import okhttp3.ResponseBody
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
-import java.nio.charset.Charset
 
 /**
  * Created by cristiandregan
@@ -19,54 +14,24 @@ import java.nio.charset.Charset
 
 private val TAG = Repository::class.simpleName
 
-internal class Repository(private val ometriaApi: OmetriaApi, private val localCache: LocalCache) {
+internal class Repository(private val client: Client, private val localCache: LocalCache) {
 
-    private val UTF8 = Charset.forName("UTF-8")
+    fun postEvents(apiRequest: OmetriaApiRequest) {
+        Thread(Runnable {
+            client.postEvents(apiRequest, object : ApiCallback<OmetriaApiResponse> {
+                override fun onSuccess(response: OmetriaApiResponse?) {
+                    Logger.d(
+                        TAG, "Successfully flushed ${apiRequest.events?.size} events"
+                    )
 
-    fun postEventsValidate(request: OmetriaApiRequest, callback: ApiCallback<OmetriaApiResponse>) {
-        val call = ometriaApi.postEventsValidate(request)
-        call.enqueue(
-            object : Callback<OmetriaApiResponse> {
-                override fun onResponse(
-                    call: Call<OmetriaApiResponse>,
-                    response: Response<OmetriaApiResponse>
-                ) {
-                    if (response.isSuccessful) {
-                        callback.onSuccess(response.body())
-                    } else {
-                        val apiError = getApiError(response)
-                        callback.onError(apiError.detail)
-                    }
+                    removeEvents(apiRequest.events)
                 }
 
-                override fun onFailure(call: Call<OmetriaApiResponse>, t: Throwable) {
-                    callback.onError(t.message)
+                override fun onError(ometriaApiError: OmetriaApiError?) {
+                    Logger.e(TAG, ometriaApiError?.detail ?: "Unknown error")
                 }
             })
-    }
-
-    private fun getApiError(response: Response<OmetriaApiResponse>): ApiError {
-        try {
-            val responseBody: ResponseBody? = response.errorBody()
-            val source = responseBody!!.source()
-            source.request(java.lang.Long.MAX_VALUE) // Buffer the entire body.
-            val buffer = source.buffer
-
-            var charset: Charset? = UTF8
-            val contentType = responseBody.contentType()
-            if (contentType != null) {
-                charset = contentType.charset(UTF8)
-            }
-
-            if (responseBody.contentLength() != 0L) {
-                val responseJSON = buffer.clone().readString(charset!!)
-                return AppGson.instance.fromJson(responseJSON, ApiError::class.java)
-            }
-        } catch (e: Exception) {
-            Logger.e(TAG, e.message, e.cause)
-        }
-
-        return ApiError()
+        }).start()
     }
 
     fun saveIsFirstAppRun(isFirstAppRun: Boolean) {
