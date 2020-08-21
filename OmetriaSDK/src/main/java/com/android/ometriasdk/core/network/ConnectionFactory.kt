@@ -18,7 +18,7 @@ private const val DEFAULT_CONNECT_TIMEOUT_MILLIS = 15 * 1000 // 15s
 internal class ConnectionFactory(private val ometriaConfig: OmetriaConfig) {
 
     fun postConnection(): HttpURLConnection {
-        val url = "https://mobile-events.ometria.com/v1/mobile-events/validate"
+        val url = "https://mobile-events.ometria.com/v1/mobile-events"
         val requestedURL: URL
         requestedURL = try {
             URL(url)
