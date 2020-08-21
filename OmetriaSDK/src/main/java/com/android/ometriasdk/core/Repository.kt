@@ -63,11 +63,11 @@ internal class Repository(
         return localCache.getEvents()
     }
 
-    fun updateEvents(events: List<OmetriaEvent>) {
+    private fun updateEvents(events: List<OmetriaEvent>) {
         localCache.updateEvents(events)
     }
 
-    fun removeEvents(events: List<OmetriaEvent>?) {
+    private fun removeEvents(events: List<OmetriaEvent>?) {
         events ?: return
 
         localCache.removeEvents(events)

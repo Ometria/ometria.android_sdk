@@ -3,6 +3,8 @@ package com.android.ometriasdk.core
 import android.content.Context
 import android.content.SharedPreferences
 import com.android.ometriasdk.core.event.OmetriaEvent
+import com.android.ometriasdk.core.network.toJson
+import com.android.ometriasdk.core.network.toOmetriaEventList
 
 /**
  * Created by cristiandregan
@@ -33,34 +35,32 @@ internal class LocalCache(private val context: Context) {
     }
 
     fun saveEvent(ometriaEvent: OmetriaEvent) {
-        val eventsString: String? = getLocalCachePreferences()
-            .getString(EVENTS_KEY, "[]")
+        val eventsString = getLocalCachePreferences().getString(EVENTS_KEY, "[]") ?: "[]"
 
-        val eventsList =
-            AppGson.instance.fromJson(eventsString, Array<OmetriaEvent>::class.java).toMutableList()
+        val eventsList = eventsString.toOmetriaEventList()
 
         eventsList.add(ometriaEvent)
 
-        getLocalCachePreferences().edit().putString(EVENTS_KEY, AppGson.instance.toJson(eventsList))
+        getLocalCachePreferences().edit().putString(EVENTS_KEY, eventsList.toJson().toString())
             .apply()
     }
 
     fun getEvents(): List<OmetriaEvent> {
         val eventsString = getLocalCachePreferences().getString(EVENTS_KEY, null) ?: ""
 
-        return AppGson.instance.fromJson(eventsString, Array<OmetriaEvent>::class.java).toList()
+        return eventsString.toOmetriaEventList()
     }
 
     fun updateEvents(events: List<OmetriaEvent>) {
         val cachedEvents = getEvents().toMutableList()
 
-        events.forEach {
-            cachedEvents[cachedEvents.indexOf(it)].isBeingFlushed = true
+        events.forEach { event ->
+            cachedEvents.first { it.eventId == event.eventId }.isBeingFlushed = true
         }
 
         getLocalCachePreferences().edit().remove(EVENTS_KEY).apply()
         getLocalCachePreferences().edit()
-            .putString(EVENTS_KEY, AppGson.instance.toJson(cachedEvents))
+            .putString(EVENTS_KEY, cachedEvents.toJson().toString())
             .apply()
     }
 
@@ -70,7 +70,7 @@ internal class LocalCache(private val context: Context) {
         eventsToRemove.forEach { eventsList.remove(it) }
 
         getLocalCachePreferences().edit().remove(EVENTS_KEY).apply()
-        getLocalCachePreferences().edit().putString(EVENTS_KEY, AppGson.instance.toJson(eventsList))
+        getLocalCachePreferences().edit().putString(EVENTS_KEY, eventsList.toJson().toString())
             .apply()
     }
 
