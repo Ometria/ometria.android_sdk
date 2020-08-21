@@ -1,7 +1,6 @@
 package com.android.ometriasdk.core.network.model
 
 import android.os.Build
-import com.android.ometriasdk.BuildConfig
 import com.android.ometriasdk.core.event.OmetriaEvent
 import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName

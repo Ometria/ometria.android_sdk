@@ -76,33 +76,11 @@ internal class EventHandler(
         val events = repository.getEvents().filter { !it.isBeingFlushed }
 
         if (shouldFlush(events)) {
-            events.groupBy { it.batchIdentifier() }.forEach { flush(it.value) }
+            events.groupBy { it.batchIdentifier() }.forEach { repository.flushEvents(it.value) }
         }
     }
 
-    private fun flush(events: List<OmetriaEvent>) {
-        val apiRequest = events.toApiRequest()
+    private fun shouldFlush(events: List<OmetriaEvent>): Boolean =
+        events.isNotEmpty() && events.size >= BATCH_LIMIT
 
-        repository.updateEvents(events)
-
-//        repository.postEventsValidate(
-//            apiRequest,
-//            object : ApiCallback<OmetriaApiResponse> {
-//                override fun onSuccess(response: OmetriaApiResponse?) {
-//                    Logger.d(TAG, "Successfully flushed ${apiRequest.events?.size} events")
-//
-//                    repository.removeEvents(apiRequest.events)
-//                }
-//
-//                override fun onError(error: String?) {
-//                    Logger.e(TAG, error ?: "Unknown error")
-//                }
-//            })
-
-        repository.postEvents(apiRequest)
-    }
-
-    private fun shouldFlush(events: List<OmetriaEvent>): Boolean {
-        return events.isNotEmpty() && events.size >= BATCH_LIMIT
-    }
 }

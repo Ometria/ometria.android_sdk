@@ -1,11 +1,10 @@
 package com.android.ometriasdk.core
 
 import com.android.ometriasdk.core.event.OmetriaEvent
-import com.android.ometriasdk.core.network.ApiCallback
+import com.android.ometriasdk.core.event.toApiRequest
 import com.android.ometriasdk.core.network.Client
-import com.android.ometriasdk.core.network.model.OmetriaApiError
+import com.android.ometriasdk.core.network.OmetriaThreadPoolExecutor
 import com.android.ometriasdk.core.network.model.OmetriaApiRequest
-import com.android.ometriasdk.core.network.model.OmetriaApiResponse
 
 /**
  * Created by cristiandregan
@@ -14,24 +13,30 @@ import com.android.ometriasdk.core.network.model.OmetriaApiResponse
 
 private val TAG = Repository::class.simpleName
 
-internal class Repository(private val client: Client, private val localCache: LocalCache) {
+internal class Repository(
+    private val client: Client,
+    private val localCache: LocalCache,
+    private val executor: OmetriaThreadPoolExecutor
+) {
 
-    fun postEvents(apiRequest: OmetriaApiRequest) {
-        Thread(Runnable {
-            client.postEvents(apiRequest, object : ApiCallback<OmetriaApiResponse> {
-                override fun onSuccess(response: OmetriaApiResponse?) {
-                    Logger.d(
-                        TAG, "Successfully flushed ${apiRequest.events?.size} events"
-                    )
+    fun flushEvents(events: List<OmetriaEvent>) {
+        val apiRequest = events.toApiRequest()
+        updateEvents(events)
+        postEvents(apiRequest)
+    }
 
-                    removeEvents(apiRequest.events)
-                }
+    private fun postEvents(apiRequest: OmetriaApiRequest) {
+        executor.execute {
+            client.postEvents(apiRequest, success = {
+                Logger.d(
+                    TAG, "Successfully flushed ${apiRequest.events?.size} events"
+                )
 
-                override fun onError(ometriaApiError: OmetriaApiError?) {
-                    Logger.e(TAG, ometriaApiError?.detail ?: "Unknown error")
-                }
+                removeEvents(apiRequest.events)
+            }, error = {
+                Logger.e(TAG, it.detail ?: "Unknown error")
             })
-        }).start()
+        }
     }
 
     fun saveIsFirstAppRun(isFirstAppRun: Boolean) {

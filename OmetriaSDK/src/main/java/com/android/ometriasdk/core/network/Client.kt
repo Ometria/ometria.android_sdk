@@ -10,21 +10,24 @@ import java.io.*
 import java.net.HttpURLConnection
 import java.net.URLEncoder
 import java.nio.charset.Charset
-import javax.net.ssl.HttpsURLConnection
 
 /**
  * Created by cristiandregan
  * on 20/08/2020.
  */
 
+private const val ERROR_RESPONSE_CODE_START_RANGE = 300
+
 internal class Client(private val connectionFactory: ConnectionFactory) {
 
     private val UTF8 = Charset.forName("UTF-8")
+    private val successResponseCodeRange = 200..299
 
     @Throws(IOException::class)
     fun postEvents(
         ometriaApiRequest: OmetriaApiRequest,
-        callback: ApiCallback<OmetriaApiResponse>
+        success: (OmetriaApiResponse) -> Unit,
+        error: (OmetriaApiError) -> Unit
     ) {
         val connection: HttpURLConnection = connectionFactory.postConnection()
 
@@ -36,42 +39,24 @@ internal class Client(private val connectionFactory: ConnectionFactory) {
         os.close()
 
         val responseCode: Int = connection.responseCode // To Check for 200
-        if (responseCode == HttpsURLConnection.HTTP_OK) {
-            val br = BufferedReader(InputStreamReader(connection.inputStream))
-            val sb = StringBuffer("")
-            var line: String? = ""
-
-//            while (`is`.readLine().also { line = it } != null) {
-//                sb.append(line)
-//                break
-//            }
-
-            val responseBody = br.readText()
+        if (responseCode in successResponseCodeRange) {
+            val body = BufferedReader(InputStreamReader(connection.inputStream)).readText()
 
             val ometriaApiResponse = AppGson.instance.fromJson(
-                responseBody,
+                body,
                 OmetriaApiResponse::class.java
             )
 
-            callback.onSuccess(ometriaApiResponse)
-        } else if (responseCode >= 300) {
-            val br = BufferedReader(InputStreamReader(connection.errorStream))
-            val sb = StringBuffer("")
-            var line: String? = ""
-
-//            while (`is`.readLine().also { line = it } != null) {
-//                sb.append(line)
-//                break
-//            }
-
-            val responseBody = br.readText()
+            success(ometriaApiResponse)
+        } else if (responseCode >= ERROR_RESPONSE_CODE_START_RANGE) {
+            val body = BufferedReader(InputStreamReader(connection.errorStream)).readText()
 
             val ometriaApiError = AppGson.instance.fromJson(
-                responseBody,
+                body,
                 OmetriaApiError::class.java
             )
 
-            callback.onError(ometriaApiError)
+            error(ometriaApiError)
         }
     }
 
@@ -94,5 +79,4 @@ internal class Client(private val connectionFactory: ConnectionFactory) {
     private fun getGson(): Gson {
         return Gson().newBuilder().excludeFieldsWithoutExposeAnnotation().create()
     }
-
 }

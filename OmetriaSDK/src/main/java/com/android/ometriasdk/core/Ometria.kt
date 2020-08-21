@@ -18,6 +18,7 @@ import com.android.ometriasdk.core.event.OmetriaBasket
 import com.android.ometriasdk.core.event.OmetriaEventType
 import com.android.ometriasdk.core.network.Client
 import com.android.ometriasdk.core.network.ConnectionFactory
+import com.android.ometriasdk.core.network.OmetriaThreadPoolExecutor
 import com.android.ometriasdk.lifecycle.OmetriaActivityLifecycleHelper
 import com.android.ometriasdk.notification.NotificationHandler
 import com.google.firebase.messaging.RemoteMessage
@@ -57,7 +58,11 @@ class Ometria private constructor() {
                 it.isInitialized = true
 
                 it.repository =
-                    Repository(Client(ConnectionFactory(it.ometriaConfig)), it.localCache)
+                    Repository(
+                        Client(ConnectionFactory(it.ometriaConfig)),
+                        it.localCache,
+                        OmetriaThreadPoolExecutor()
+                    )
                 it.eventHandler = EventHandler(application, it.repository)
 
                 it.generateInstallationId()
