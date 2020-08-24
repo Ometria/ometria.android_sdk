@@ -111,8 +111,7 @@ internal fun Collection<OmetriaEvent>.toAPIJson(): JSONArray {
 
 internal fun OmetriaEvent.toAPIJson(): JSONObject {
     val jsonObject = JSONObject()
-    // ToDO add eventId back when API supports it
-//    jsonObject.put("eventId", eventId)
+    jsonObject.put("eventId", eventId)
     jsonObject.put("timestampOccurred", timestampOccurred)
     jsonObject.put("type", type)
     jsonObject.put("data", data?.dataToJson())

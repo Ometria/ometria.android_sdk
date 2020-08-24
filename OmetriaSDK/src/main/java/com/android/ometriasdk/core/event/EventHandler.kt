@@ -17,7 +17,7 @@ import java.util.*
  */
 
 private val TAG = EventHandler::class.simpleName
-private const val BATCH_LIMIT = 3
+private const val BATCH_LIMIT = 20
 
 internal class EventHandler(
     private val context: Context,

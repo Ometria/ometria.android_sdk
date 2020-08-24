@@ -21,7 +21,6 @@ class SampleApp : Application() {
             this,
             "pk_test_IY2XfgrRsIlRGBP0rH2ks9dAbG1Ov24BsdggNTqP",
             R.mipmap.ic_launcher
-        )
-            .loggingEnabled(true)
+        ).loggingEnabled(true)
     }
 }
