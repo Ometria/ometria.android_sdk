@@ -12,8 +12,8 @@ import java.net.URL
  */
 
 private const val POST: String = "POST"
-private const val DEFAULT_READ_TIMEOUT_MILLIS: Int = 15 * 1000 // s
-private const val DEFAULT_CONNECT_TIMEOUT_MILLIS = 15 * 1000 // 15s
+private const val DEFAULT_READ_TIMEOUT_MILLIS: Int = 30 * 1000 // 30s
+private const val DEFAULT_CONNECT_TIMEOUT_MILLIS = 30 * 1000 // 30s
 
 internal class ConnectionFactory(private val ometriaConfig: OmetriaConfig) {
 
