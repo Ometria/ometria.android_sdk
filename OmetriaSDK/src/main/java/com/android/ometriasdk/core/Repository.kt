@@ -11,8 +11,6 @@ import com.android.ometriasdk.core.network.model.OmetriaApiRequest
  * on 06/08/2020.
  */
 
-private val TAG = Repository::class.simpleName
-
 internal class Repository(
     private val client: Client,
     private val localCache: LocalCache,
@@ -29,12 +27,13 @@ internal class Repository(
         executor.execute {
             client.postEvents(apiRequest, success = {
                 Logger.d(
-                    TAG, "Successfully flushed ${apiRequest.events?.size} events"
+                    Constants.Logger.EVENTS,
+                    "Successfully flushed ${apiRequest.events?.size} events"
                 )
 
                 removeEvents(apiRequest.events)
             }, error = {
-                Logger.e(TAG, it.detail ?: "Unknown error")
+                Logger.e(Constants.Logger.EVENTS, it.detail ?: "Unknown error")
             })
         }
     }

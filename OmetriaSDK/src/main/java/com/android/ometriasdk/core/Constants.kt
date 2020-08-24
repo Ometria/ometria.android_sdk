@@ -23,4 +23,14 @@ internal object Constants {
         const val LINK = "link"
         const val CUSTOM_EVENT_TYPE = "customEventType"
     }
+
+    object Logger {
+        const val UI = "UI"
+        const val NETWORK = "Network"
+        const val CACHE = "Cache"
+        const val PUSH_NOTIFICATIONS = "PushNotifications"
+        const val APPLICATION = "Application"
+        const val EVENTS = "Events"
+        const val GENERAL = "General"
+    }
 }
