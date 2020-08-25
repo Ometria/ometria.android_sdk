@@ -7,7 +7,7 @@ import android.content.Context
  * on 16/07/2020.
  */
 
-internal class AppConfig(
+internal class OmetriaConfig(
     var context: Context,
     var apiKey: String,
     var notificationIcon: Int = 0

@@ -1,67 +1,33 @@
 package com.android.ometriasdk.core.event
 
-import android.content.Context
-import android.os.Bundle
-import androidx.core.content.pm.PackageInfoCompat
-import com.android.ometriasdk.core.LocalCache
-import org.json.JSONObject
+import com.android.ometriasdk.core.Constants
+import com.android.ometriasdk.core.network.model.OmetriaApiRequest
+import java.text.DateFormat
+import java.text.SimpleDateFormat
+import java.util.*
 
 /**
  * Created by cristiandregan
  * on 28/07/2020.
  */
 
-internal fun Event.toCachedEvent(
-    context: Context,
-    localCache: LocalCache
-): CachedEvent {
-    val applicationID = context.packageName
-    val installmentID = localCache.getInstallmentID()
+internal fun OmetriaEvent.batchIdentifier(): Int {
+    return (appId + appBuildNumber + appVersion + osVersion).hashCode()
+}
 
-    val packageInfo = context.packageManager.getPackageInfo(context.packageName, 0)
-    val applicationVersion = packageInfo.versionName
-    val buildNumber = PackageInfoCompat.getLongVersionCode(packageInfo).toString()
+internal fun List<OmetriaEvent>.toApiRequest(): OmetriaApiRequest {
+    val dateFormat: DateFormat =
+        SimpleDateFormat(Constants.Date.API_DATE_FORMAT, Locale.getDefault())
+    val ometriaEvent = this.first()
 
-    return CachedEvent(
-        this,
-        applicationID = applicationID,
-        installmentID = installmentID,
-        applicationVersion = applicationVersion,
-        buildNumber = buildNumber
+    return OmetriaApiRequest(
+        appId = ometriaEvent.appId,
+        appVersion = ometriaEvent.appVersion,
+        installationId = ometriaEvent.installationId,
+        appBuildNumber = ometriaEvent.appBuildNumber,
+        sdkVersion = ometriaEvent.sdkVersion,
+        osVersion = ometriaEvent.osVersion,
+        timestampSent = dateFormat.format(Calendar.getInstance().time),
+        events = this
     )
-}
-
-internal fun CachedEvent.toJson(): JSONObject {
-    val jsonObject = JSONObject()
-    jsonObject.put("type", type)
-    jsonObject.put("value", value)
-    jsonObject.put("params", params.toJson())
-
-    jsonObject.put("creationDate", creationDate)
-    jsonObject.put("flushDate", flushDate)
-    jsonObject.put("isFlushed", isFlushed)
-    jsonObject.put("isAutomaticallyTracked", isAutomaticallyTracked)
-
-    jsonObject.put("applicationID", applicationID)
-    jsonObject.put("installmentID", installmentID)
-    jsonObject.put("applicationVersion", applicationVersion)
-    jsonObject.put("buildNumber", buildNumber)
-    jsonObject.put("sdkVersion", sdkVersion)
-    jsonObject.put("platform", platform)
-    jsonObject.put("osVersion", osVersion)
-    jsonObject.put("deviceManufacturer", deviceManufacturer)
-    jsonObject.put("deviceModel", deviceModel)
-
-    return jsonObject
-}
-
-private fun Bundle.toJson(): JSONObject {
-    val bundleJsonObject = JSONObject()
-    val keys = this.keySet()
-
-    keys.forEach {
-        bundleJsonObject.put(it, JSONObject.wrap(this.get(it)))
-    }
-
-    return bundleJsonObject
 }

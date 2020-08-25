@@ -17,7 +17,10 @@ class SampleApp : Application() {
         super.onCreate()
         instance = this
 
-        Ometria.initialize(this, "API_KEY", R.mipmap.ic_launcher)
-            .enableDebugging(true)
+        Ometria.initialize(
+            this,
+            "pk_test_IY2XfgrRsIlRGBP0rH2ks9dAbG1Ov24BsdggNTqP",
+            R.mipmap.ic_launcher
+        ).loggingEnabled(true)
     }
 }

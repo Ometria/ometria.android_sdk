@@ -5,9 +5,8 @@ import android.app.Application
 import android.os.Bundle
 import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
-import com.android.ometriasdk.core.LocalCache
 import com.android.ometriasdk.core.Ometria
-import com.android.ometriasdk.core.event.OmetriaEventType
+import com.android.ometriasdk.core.Repository
 import java.util.concurrent.atomic.AtomicBoolean
 
 /**
@@ -15,7 +14,7 @@ import java.util.concurrent.atomic.AtomicBoolean
  * on 07/07/2020.
  */
 
-internal class OmetriaActivityLifecycleHelper(private val localCache: LocalCache) :
+internal class OmetriaActivityLifecycleHelper(private val repository: Repository) :
     DefaultLifecycleObserver,
     Application.ActivityLifecycleCallbacks {
 
@@ -36,15 +35,15 @@ internal class OmetriaActivityLifecycleHelper(private val localCache: LocalCache
      * and Bring Application to Foreground event
      */
     override fun onStart(owner: LifecycleOwner) {
-        if (localCache.isFirstAppRun()) {
-            Ometria.instance().trackEvent(OmetriaEventType.INSTALL_APPLICATION)
-            localCache.saveIsFirstAppRun(false)
+        if (repository.isFirstAppRun()) {
+            Ometria.instance().trackAppInstalledEvent()
+            repository.saveIsFirstAppRun(false)
         }
 
         if (firstLaunch.get()) {
-            Ometria.instance().trackEvent(OmetriaEventType.LAUNCH_APPLICATION)
+            Ometria.instance().trackAppLaunchedEvent()
         }
-        Ometria.instance().trackEvent(OmetriaEventType.BRING_APPLICATION_TO_FOREGROUND)
+        Ometria.instance().trackAppForegroundedEvent()
 
         !firstLaunch.getAndSet(false)
     }
@@ -53,7 +52,7 @@ internal class OmetriaActivityLifecycleHelper(private val localCache: LocalCache
      * Using lifecycle's observer onStop callback to track Application Backgrounded event
      */
     override fun onStop(owner: LifecycleOwner) {
-        Ometria.instance().trackEvent(OmetriaEventType.SEND_APPLICATION_TO_BACKGROUND)
+        Ometria.instance().trackAppBackgroundedEvent()
     }
 
     //////////////////////////////////////////////////////////////////////////////////////////////////
@@ -71,7 +70,8 @@ internal class OmetriaActivityLifecycleHelper(private val localCache: LocalCache
             return
         }
 
-        Ometria.instance().trackEvent(OmetriaEventType.OPEN_DEEP_LINK)
+        // ToDo extract link and page
+        Ometria.instance().trackDeepLinkOpenedEvent("link", "page")
     }
 
     /**
@@ -79,7 +79,7 @@ internal class OmetriaActivityLifecycleHelper(private val localCache: LocalCache
      */
     override fun onActivityStarted(activity: Activity) {
         Ometria.instance()
-            .trackEvent(OmetriaEventType.VIEW_SCREEN, activity::class.simpleName)
+            .trackScreenViewedEvent(activity::class.simpleName)
     }
 
     /**

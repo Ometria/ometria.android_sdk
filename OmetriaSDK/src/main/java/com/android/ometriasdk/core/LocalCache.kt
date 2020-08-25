@@ -2,8 +2,10 @@ package com.android.ometriasdk.core
 
 import android.content.Context
 import android.content.SharedPreferences
-import com.android.ometriasdk.core.event.CachedEvent
-import com.android.ometriasdk.core.event.toJson
+import com.android.ometriasdk.core.event.OmetriaEvent
+import com.android.ometriasdk.core.network.toJson
+import com.android.ometriasdk.core.network.toOmetriaEventList
+import org.json.JSONArray
 
 /**
  * Created by cristiandregan
@@ -12,8 +14,9 @@ import com.android.ometriasdk.core.event.toJson
 
 private const val LOCAL_CACHE_PREFERENCES = "LOCAL_CACHE_PREFERENCES"
 private const val IS_FIRST_APP_RUN_KEY = "IS_FIRST_APP_RUN_KEY"
-private const val INSTALLMENT_ID_KEY = "INSTALLMENT_ID_KEY"
+private const val INSTALLATION_ID_KEY = "INSTALLATION_ID_KEY"
 private const val EVENTS_KEY = "EVENTS_KEY"
+private const val JSON_ARRAY = "[]"
 
 internal class LocalCache(private val context: Context) {
 
@@ -25,25 +28,51 @@ internal class LocalCache(private val context: Context) {
         return getLocalCachePreferences().getBoolean(IS_FIRST_APP_RUN_KEY, true)
     }
 
-    fun saveInstallmentID(installmentID: String) {
-        getLocalCachePreferences().edit().putString(INSTALLMENT_ID_KEY, installmentID).apply()
+    fun saveInstallationId(installationId: String) {
+        getLocalCachePreferences().edit().putString(INSTALLATION_ID_KEY, installationId).apply()
     }
 
-    fun getInstallmentID(): String? {
-        return getLocalCachePreferences().getString(INSTALLMENT_ID_KEY, null)
+    fun getInstallationId(): String? {
+        return getLocalCachePreferences().getString(INSTALLATION_ID_KEY, null)
     }
 
-    fun saveEvent(cachedEvent: CachedEvent) {
-        val eventsHashSet: HashSet<String> = getLocalCachePreferences()
-            .getStringSet(EVENTS_KEY, null) as HashSet<String>? ?: HashSet()
+    fun saveEvent(ometriaEvent: OmetriaEvent) {
+        val eventsString = getLocalCachePreferences()
+            .getString(EVENTS_KEY, JSON_ARRAY) ?: JSON_ARRAY
 
-        eventsHashSet.add(cachedEvent.toJson().toString())
+        val eventsList = eventsString.toOmetriaEventList()
 
-        getLocalCachePreferences().edit().putStringSet(EVENTS_KEY, eventsHashSet).apply()
+        eventsList.add(ometriaEvent)
+
+        getLocalCachePreferences().edit().putString(EVENTS_KEY, eventsList.toJson().toString())
+            .apply()
     }
 
-    fun getEvents(): Set<String>? {
-        return getLocalCachePreferences().getStringSet(EVENTS_KEY, null)
+    fun getEvents(): List<OmetriaEvent> {
+        val eventsString = getLocalCachePreferences().getString(EVENTS_KEY, null) ?: ""
+
+        return eventsString.toOmetriaEventList()
+    }
+
+    fun updateEvents(events: List<OmetriaEvent>) {
+        val cachedEvents = getEvents()
+
+        events.forEach { event ->
+            cachedEvents.first { it.eventId == event.eventId }.isBeingFlushed = true
+        }
+
+        getLocalCachePreferences().edit()
+            .putString(EVENTS_KEY, cachedEvents.toJson().toString())
+            .apply()
+    }
+
+    fun removeEvents(eventsToRemove: List<OmetriaEvent>) {
+        val eventsList = getEvents().toMutableList()
+
+        eventsToRemove.forEach { eventsList.remove(it) }
+
+        getLocalCachePreferences().edit().putString(EVENTS_KEY, eventsList.toJson().toString())
+            .apply()
     }
 
     private fun getLocalCachePreferences(): SharedPreferences {
