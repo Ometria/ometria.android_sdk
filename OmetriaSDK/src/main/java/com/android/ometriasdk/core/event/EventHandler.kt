@@ -23,18 +23,16 @@ internal class EventHandler(
     private val context: Context,
     private val repository: Repository
 ) {
+    private val dateFormat: DateFormat =
+        SimpleDateFormat(Constants.Date.API_DATE_FORMAT, Locale.getDefault())
+    private val appId = context.packageName
+    private val packageInfo = context.packageManager.getPackageInfo(context.packageName, 0)
 
     fun processEvent(
         type: OmetriaEventType,
         data: Map<String, Any>? = null
     ) {
-        val dateFormat: DateFormat =
-            SimpleDateFormat(Constants.Date.API_DATE_FORMAT, Locale.getDefault())
-
-        val appId = context.packageName
         val installationId = repository.getInstallationId()
-
-        val packageInfo = context.packageManager.getPackageInfo(context.packageName, 0)
         val appVersion = packageInfo.versionName
         val appBuildNumber = PackageInfoCompat.getLongVersionCode(packageInfo).toString()
 
@@ -80,7 +78,5 @@ internal class EventHandler(
         }
     }
 
-    private fun shouldFlush(events: List<OmetriaEvent>): Boolean =
-        events.isNotEmpty() && events.size >= BATCH_LIMIT
-
+    private fun shouldFlush(events: List<OmetriaEvent>): Boolean = events.size >= BATCH_LIMIT
 }

@@ -5,7 +5,7 @@ package com.android.ometriasdk.core.event
  * on 12/08/2020.
  */
 
-open class OmetriaBasketItem(
+class OmetriaBasketItem(
     val productId: String,
     val sku: String,
     val quantity: Int,

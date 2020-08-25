@@ -28,9 +28,7 @@ internal class Repository(
     private fun postEvents(apiRequest: OmetriaApiRequest) {
         executor.execute {
             client.postEvents(apiRequest, success = {
-                Logger.d(
-                    TAG, "Successfully flushed ${apiRequest.events?.size} events"
-                )
+                Logger.d(TAG, "Successfully flushed ${apiRequest.events?.size} events")
 
                 removeEvents(apiRequest.events)
             }, error = {

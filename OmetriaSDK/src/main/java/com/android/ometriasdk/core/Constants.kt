@@ -23,4 +23,15 @@ internal object Constants {
         const val LINK = "link"
         const val CUSTOM_EVENT_TYPE = "customEventType"
     }
+
+    object Common {
+        const val PLATFORM = "Android"
+    }
+
+    object API {
+        const val HEADER_CONTENT_TYPE = "content-type"
+        const val APPLICATION_JSON = "application/json"
+        const val HEADER_AUTHENTICATION = "X-Ometria-Auth"
+        const val API_ENDPOINT = "https://mobile-events.ometria.com/v1/mobile-events"
+    }
 }

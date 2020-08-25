@@ -2,6 +2,7 @@ package com.android.ometriasdk.core.event
 
 import android.os.Build
 import com.android.ometriasdk.BuildConfig
+import com.android.ometriasdk.core.Constants.Common.PLATFORM
 import java.util.*
 
 /**
@@ -19,7 +20,7 @@ internal data class OmetriaEvent(
     val appVersion: String? = null,
     val appBuildNumber: String? = null,
     val sdkVersion: String? = BuildConfig.VERSION_NAME,
-    val platform: String = "Android",
+    val platform: String = PLATFORM,
     val osVersion: String? = Build.VERSION.RELEASE,
     val deviceManufacturer: String? = Build.MANUFACTURER,
     val deviceModel: String? = Build.MODEL,
