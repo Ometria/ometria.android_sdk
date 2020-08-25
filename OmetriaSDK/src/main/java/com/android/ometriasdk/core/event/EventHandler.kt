@@ -17,6 +17,7 @@ import java.util.*
  */
 
 private const val BATCH_LIMIT = 20
+private const val CHUNK_SIZE = 100
 
 internal class EventHandler(
     private val context: Context,
@@ -73,7 +74,11 @@ internal class EventHandler(
         val events = repository.getEvents().filter { !it.isBeingFlushed }
 
         if (shouldFlush(events)) {
-            events.groupBy { it.batchIdentifier() }.forEach { repository.flushEvents(it.value) }
+            events.groupBy { it.batchIdentifier() }.forEach { group ->
+                group.value
+                    .chunked(CHUNK_SIZE)
+                    .forEach { repository.flushEvents(it) }
+            }
         }
     }
 
