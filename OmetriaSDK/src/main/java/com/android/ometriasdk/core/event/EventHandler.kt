@@ -16,7 +16,6 @@ import java.util.*
  * on 27/07/2020.
  */
 
-private val TAG = EventHandler::class.simpleName
 private const val BATCH_LIMIT = 20
 
 internal class EventHandler(
@@ -51,7 +50,7 @@ internal class EventHandler(
     }
 
     private fun sendEvent(ometriaEvent: OmetriaEvent) {
-        Logger.d(TAG, "Track event: ", ometriaEvent)
+        Logger.d(Constants.Logger.EVENTS, "Track event - ", ometriaEvent)
 
         repository.saveEvent(ometriaEvent)
         flushEventsIfNeeded()

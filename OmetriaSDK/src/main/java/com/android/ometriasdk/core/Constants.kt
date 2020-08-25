@@ -34,4 +34,14 @@ internal object Constants {
         const val HEADER_AUTHENTICATION = "X-Ometria-Auth"
         const val API_ENDPOINT = "https://mobile-events.ometria.com/v1/mobile-events"
     }
+
+    object Logger {
+        const val UI = "UI"
+        const val NETWORK = "Network"
+        const val CACHE = "Cache"
+        const val PUSH_NOTIFICATIONS = "PushNotifications"
+        const val APPLICATION = "Application"
+        const val EVENTS = "Events"
+        const val GENERAL = "General"
+    }
 }
