@@ -19,7 +19,7 @@ internal class Repository(
 
     fun flushEvents(events: List<OmetriaEvent>) {
         val apiRequest = events.toApiRequest()
-        updateEvents(events)
+        updateEvents(events, true)
         postEvents(apiRequest)
     }
 
@@ -33,6 +33,7 @@ internal class Repository(
 
                 removeEvents(apiRequest.events)
             }, error = {
+                updateEvents(apiRequest.events, false)
                 Logger.e(Constants.Logger.EVENTS, it.detail ?: "Unknown error")
             })
         }
@@ -62,8 +63,8 @@ internal class Repository(
         return localCache.getEvents()
     }
 
-    private fun updateEvents(events: List<OmetriaEvent>) {
-        localCache.updateEvents(events)
+    private fun updateEvents(events: List<OmetriaEvent>?, isBeingFlushed: Boolean) {
+        localCache.updateEvents(events, isBeingFlushed)
     }
 
     private fun removeEvents(events: List<OmetriaEvent>?) {

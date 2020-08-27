@@ -16,8 +16,8 @@ import java.util.*
  * on 27/07/2020.
  */
 
-private const val BATCH_LIMIT = 20
-private const val CHUNK_SIZE = 100
+private const val FLUSH_LIMIT = 10
+private const val BATCH_LIMIT = 100
 
 internal class EventHandler(
     private val context: Context,
@@ -76,11 +76,11 @@ internal class EventHandler(
         if (shouldFlush(events)) {
             events.groupBy { it.batchIdentifier() }.forEach { group ->
                 group.value
-                    .chunked(CHUNK_SIZE)
+                    .chunked(BATCH_LIMIT)
                     .forEach { repository.flushEvents(it) }
             }
         }
     }
 
-    private fun shouldFlush(events: List<OmetriaEvent>): Boolean = events.size >= BATCH_LIMIT
+    private fun shouldFlush(events: List<OmetriaEvent>): Boolean = events.size >= FLUSH_LIMIT
 }

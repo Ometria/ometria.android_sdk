@@ -54,11 +54,13 @@ internal class LocalCache(private val context: Context) {
         return eventsString.toOmetriaEventList()
     }
 
-    fun updateEvents(events: List<OmetriaEvent>) {
+    fun updateEvents(events: List<OmetriaEvent>?, isBeingFlushed: Boolean) {
+        events ?: return
+
         val cachedEvents = getEvents()
 
         events.forEach { event ->
-            cachedEvents.first { it.eventId == event.eventId }.isBeingFlushed = true
+            cachedEvents.first { it.eventId == event.eventId }.isBeingFlushed = isBeingFlushed
         }
 
         getLocalCachePreferences().edit()
