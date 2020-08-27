@@ -78,18 +78,23 @@ internal fun String.toOmetriaApiError(): OmetriaApiError {
 internal fun String.toOmetriaNotification(): OmetriaNotification? {
     val jsonObject = JSONObject(this)
 
-    return try {
-        OmetriaNotification(
-            jsonObject.getString("imageUrl"),
-            jsonObject.getString("deepLinkActionUrl"),
-            jsonObject.getString("context")
-        )
+    var context: String? = null
+    var deepLinkActionUrl: String? = null
+    var imageUrl: String? = null
+    try {
+        context = jsonObject.getString("context")
+        deepLinkActionUrl = jsonObject.getString("deepLinkActionUrl")
+        imageUrl = jsonObject.getString("imageUrl")
     } catch (e: JSONException) {
         Logger.e(
             Constants.Logger.PUSH_NOTIFICATIONS,
             "The notification content has missing fields or is incorrectly formatted."
         )
-
-        null
     }
+
+    return OmetriaNotification(
+        imageUrl,
+        deepLinkActionUrl,
+        context
+    )
 }
