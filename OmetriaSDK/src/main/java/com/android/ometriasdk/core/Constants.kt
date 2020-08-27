@@ -19,7 +19,7 @@ internal object Constants {
         const val BASKET = "basket"
         const val ORDER_ID = "orderId"
         const val PUSH_TOKEN = "pushToken"
-        const val NOTIFICATION_ID = "notificationId"
+        const val NOTIFICATION_CONTEXT = "context"
         const val LINK = "link"
         const val CUSTOM_EVENT_TYPE = "customEventType"
     }

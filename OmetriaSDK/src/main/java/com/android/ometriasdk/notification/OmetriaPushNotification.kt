@@ -1,6 +1,5 @@
 package com.android.ometriasdk.notification
 
-import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
@@ -25,9 +24,11 @@ internal class OmetriaPushNotification(
     private val notificationIcon: Int
 ) {
 
-    fun createPushNotification(intent: Intent): Notification {
-        val channelId = OMETRIA_CHANNEL_ID
-
+    fun createPushNotification(
+        title: String?,
+        body: String?,
+        ometriaNotification: OmetriaNotification?
+    ) {
         val contentIntent = PendingIntent.getBroadcast(
             context,
             System.currentTimeMillis().toInt(),
@@ -42,10 +43,10 @@ internal class OmetriaPushNotification(
             0
         )
 
-        val notificationBuilder = NotificationCompat.Builder(context, channelId)
+        val notificationBuilder = NotificationCompat.Builder(context, OMETRIA_CHANNEL_ID)
             .setSmallIcon(notificationIcon)
-            .setContentTitle("Title")
-            .setContentText("Text")
+            .setContentTitle(title)
+            .setContentText(body)
             .setAutoCancel(true)
             .setContentIntent(contentIntent)
             .setDeleteIntent(deleteIntent)
@@ -54,16 +55,15 @@ internal class OmetriaPushNotification(
             context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val channelName = OMETRIA_CHANNEL_NAME
-            val channel =
-                NotificationChannel(channelId, channelName, NotificationManager.IMPORTANCE_HIGH)
+            val channel = NotificationChannel(
+                OMETRIA_CHANNEL_ID, OMETRIA_CHANNEL_NAME,
+                NotificationManager.IMPORTANCE_HIGH
+            )
             notificationManager.createNotificationChannel(channel)
         }
 
         val notification = notificationBuilder.build()
         notificationManager.notify(System.currentTimeMillis().toInt(), notification)
-
-        return notification
     }
 
     private fun getRoutingIntent(): Intent {

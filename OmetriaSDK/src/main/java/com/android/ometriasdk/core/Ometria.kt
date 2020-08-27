@@ -8,7 +8,7 @@ import com.android.ometriasdk.core.Constants.Params.CUSTOMER_ID
 import com.android.ometriasdk.core.Constants.Params.CUSTOM_EVENT_TYPE
 import com.android.ometriasdk.core.Constants.Params.EMAIL
 import com.android.ometriasdk.core.Constants.Params.LINK
-import com.android.ometriasdk.core.Constants.Params.NOTIFICATION_ID
+import com.android.ometriasdk.core.Constants.Params.NOTIFICATION_CONTEXT
 import com.android.ometriasdk.core.Constants.Params.ORDER_ID
 import com.android.ometriasdk.core.Constants.Params.PAGE
 import com.android.ometriasdk.core.Constants.Params.PRODUCT_ID
@@ -38,6 +38,7 @@ class Ometria private constructor() {
     private lateinit var localCache: LocalCache
     private lateinit var eventHandler: EventHandler
     private lateinit var repository: Repository
+    private lateinit var notificationHandler: NotificationHandler
 
     /**
      * Kotlin Object ensures thread safety.
@@ -55,8 +56,6 @@ class Ometria private constructor() {
             return instance.also {
                 it.ometriaConfig = OmetriaConfig(application, apiKey, notificationIcon)
                 it.localCache = LocalCache(application)
-                it.isInitialized = true
-
                 it.repository =
                     Repository(
                         Client(ConnectionFactory(it.ometriaConfig)),
@@ -64,6 +63,8 @@ class Ometria private constructor() {
                         OmetriaThreadPoolExecutor()
                     )
                 it.eventHandler = EventHandler(application, it.repository)
+                it.notificationHandler = NotificationHandler()
+                it.isInitialized = true
 
                 it.generateInstallationId()
 
@@ -102,13 +103,11 @@ class Ometria private constructor() {
     }
 
     fun onMessageReceived(remoteMessage: RemoteMessage) {
-        NotificationHandler.showNotification(
+        notificationHandler.handleNotification(
             remoteMessage,
             ometriaConfig.context,
             ometriaConfig.notificationIcon
         )
-
-        trackNotificationReceivedEvent(remoteMessage.messageId)
     }
 
     fun onNewToken(token: String) {
@@ -194,17 +193,17 @@ class Ometria private constructor() {
         trackEvent(OmetriaEventType.PUSH_TOKEN_REFRESHED, mapOf(PUSH_TOKEN to pushToken))
     }
 
-    fun trackNotificationReceivedEvent(notificationId: String?) {
+    fun trackNotificationReceivedEvent(context: String) {
         trackEvent(
             OmetriaEventType.NOTIFICATION_RECEIVED,
-            mapOf(NOTIFICATION_ID to (notificationId ?: ""))
+            mapOf(NOTIFICATION_CONTEXT to context)
         )
     }
 
-    fun trackNotificationInteractedEvent(notificationId: String) {
+    fun trackNotificationInteractedEvent(context: String) {
         trackEvent(
             OmetriaEventType.NOTIFICATION_INTERACTED,
-            mapOf(NOTIFICATION_ID to notificationId)
+            mapOf(NOTIFICATION_CONTEXT to context)
         )
     }
 
