@@ -235,4 +235,8 @@ class Ometria private constructor() {
             data
         )
     }
+
+    fun clear() {
+        localCache.clear()
+    }
 }

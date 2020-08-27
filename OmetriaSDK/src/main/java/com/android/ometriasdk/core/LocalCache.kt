@@ -78,4 +78,10 @@ internal class LocalCache(private val context: Context) {
     private fun getLocalCachePreferences(): SharedPreferences {
         return context.getSharedPreferences(LOCAL_CACHE_PREFERENCES, Context.MODE_PRIVATE)
     }
+
+    fun clear() {
+        getLocalCachePreferences().edit()
+            .clear()
+            .apply()
+    }
 }
