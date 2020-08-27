@@ -18,6 +18,7 @@ import java.util.*
 
 private const val FLUSH_LIMIT = 10
 private const val BATCH_LIMIT = 100
+private const val THROTTLE_LIMIT = 10
 
 internal class EventHandler(
     private val context: Context,
@@ -27,6 +28,7 @@ internal class EventHandler(
         SimpleDateFormat(Constants.Date.API_DATE_FORMAT, Locale.getDefault())
     private val appId = context.packageName
     private val packageInfo = context.packageManager.getPackageInfo(context.packageName, 0)
+    private var throttleCalendar = Calendar.getInstance()
 
     fun processEvent(
         type: OmetriaEventType,
@@ -71,16 +73,28 @@ internal class EventHandler(
     }
 
     private fun flushEventsIfNeeded() {
-        val events = repository.getEvents().filter { !it.isBeingFlushed }
-
-        if (shouldFlush(events)) {
-            events.groupBy { it.batchIdentifier() }.forEach { group ->
-                group.value
-                    .chunked(BATCH_LIMIT)
-                    .forEach { repository.flushEvents(it) }
-            }
+        if (shouldFlush()) {
+            flushEvents()
         }
     }
 
-    private fun shouldFlush(events: List<OmetriaEvent>): Boolean = events.size >= FLUSH_LIMIT
+    fun flushEvents() {
+        val currentTimeCalendar = Calendar.getInstance()
+        if (currentTimeCalendar.timeInMillis < throttleCalendar.timeInMillis) return
+
+        throttleCalendar.time = currentTimeCalendar.time
+        throttleCalendar.add(Calendar.SECOND, THROTTLE_LIMIT)
+
+        val events = repository.getEvents().filter { !it.isBeingFlushed }
+
+        events.groupBy { it.batchIdentifier() }.forEach { group ->
+            group.value
+                .chunked(BATCH_LIMIT)
+                .forEach {
+                    repository.flushEvents(it)
+                }
+        }
+    }
+
+    private fun shouldFlush(): Boolean = repository.getEvents().size >= FLUSH_LIMIT
 }
