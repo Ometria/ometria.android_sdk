@@ -1,12 +1,10 @@
 package com.android.ometriasdk.notification
 
 import android.content.Context
-import com.android.ometriasdk.core.Constants
-import com.android.ometriasdk.core.Logger
 import com.android.ometriasdk.core.Ometria
+import com.android.ometriasdk.core.network.OmetriaThreadPoolExecutor
 import com.android.ometriasdk.core.network.toOmetriaNotification
 import com.google.firebase.messaging.RemoteMessage
-import org.json.JSONException
 
 /**
  * Created by cristiandregan
@@ -19,7 +17,12 @@ const val KEY_OMETRIA = "ometria"
 
 internal class NotificationHandler {
 
-    fun handleNotification(remoteMessage: RemoteMessage, context: Context, notificationIcon: Int) {
+    fun handleNotification(
+        remoteMessage: RemoteMessage,
+        context: Context,
+        notificationIcon: Int,
+        executor: OmetriaThreadPoolExecutor
+    ) {
         val ometriaNotificationString = remoteMessage.data[KEY_OMETRIA]
         ometriaNotificationString ?: return
 
@@ -31,7 +34,7 @@ internal class NotificationHandler {
         val title = remoteMessage.data[KEY_TITLE]
         val body = remoteMessage.data[KEY_BODY]
 
-        val ometriaPushNotification = OmetriaPushNotification(context, notificationIcon)
+        val ometriaPushNotification = OmetriaPushNotification(context, notificationIcon, executor)
         ometriaPushNotification.createPushNotification(title, body, ometriaNotification)
     }
 }

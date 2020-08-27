@@ -5,9 +5,16 @@ import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.os.Build
 import android.os.Bundle
 import androidx.core.app.NotificationCompat
+import com.android.ometriasdk.core.Constants.Logger.PUSH_NOTIFICATIONS
+import com.android.ometriasdk.core.Logger
+import com.android.ometriasdk.core.network.OmetriaThreadPoolExecutor
+import java.io.IOException
+import java.net.URL
 
 /**
  * Created by cristiandregan
@@ -21,7 +28,8 @@ const val OMETRIA_CHANNEL_NAME = "ometria"
 
 internal class OmetriaPushNotification(
     private val context: Context,
-    private val notificationIcon: Int
+    private val notificationIcon: Int,
+    private val executor: OmetriaThreadPoolExecutor
 ) {
 
     fun createPushNotification(
@@ -29,6 +37,14 @@ internal class OmetriaPushNotification(
         body: String?,
         ometriaNotification: OmetriaNotification?
     ) {
+        if (ometriaNotification?.imageUrl != null) {
+            displayNotificationWithImage(title, body, ometriaNotification.imageUrl)
+        } else {
+            displayNotification(title, body)
+        }
+    }
+
+    private fun displayNotification(title: String?, body: String?, largeIcon: Bitmap? = null) {
         val contentIntent = PendingIntent.getBroadcast(
             context,
             System.currentTimeMillis().toInt(),
@@ -50,6 +66,7 @@ internal class OmetriaPushNotification(
             .setAutoCancel(true)
             .setContentIntent(contentIntent)
             .setDeleteIntent(deleteIntent)
+            .setLargeIcon(largeIcon)
 
         val notificationManager =
             context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
@@ -83,5 +100,23 @@ internal class OmetriaPushNotification(
                 context,
                 PushDismissBroadcastReceiver::class.java
             ).putExtras(options)
+    }
+
+    private fun displayNotificationWithImage(title: String?, body: String?, stringUrl: String?) {
+        executor.execute {
+            val url = URL(stringUrl)
+            try {
+                BitmapFactory.decodeStream(url.openConnection().getInputStream())?.also { bitmap ->
+                    displayNotification(title, body, bitmap)
+                } ?: run {
+                    Logger.e(
+                        PUSH_NOTIFICATIONS,
+                        "The notification content has missing fields or is incorrectly formatted."
+                    )
+                }
+            } catch (e: IOException) {
+                Logger.e(PUSH_NOTIFICATIONS, e.message, e)
+            }
+        }
     }
 }

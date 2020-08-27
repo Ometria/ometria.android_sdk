@@ -39,6 +39,7 @@ class Ometria private constructor() {
     private lateinit var eventHandler: EventHandler
     private lateinit var repository: Repository
     private lateinit var notificationHandler: NotificationHandler
+    private lateinit var executor: OmetriaThreadPoolExecutor
 
     /**
      * Kotlin Object ensures thread safety.
@@ -56,11 +57,12 @@ class Ometria private constructor() {
             return instance.also {
                 it.ometriaConfig = OmetriaConfig(application, apiKey, notificationIcon)
                 it.localCache = LocalCache(application)
+                it.executor = OmetriaThreadPoolExecutor()
                 it.repository =
                     Repository(
                         Client(ConnectionFactory(it.ometriaConfig)),
                         it.localCache,
-                        OmetriaThreadPoolExecutor()
+                        it.executor
                     )
                 it.eventHandler = EventHandler(application, it.repository)
                 it.notificationHandler = NotificationHandler()
@@ -106,7 +108,8 @@ class Ometria private constructor() {
         notificationHandler.handleNotification(
             remoteMessage,
             ometriaConfig.context,
-            ometriaConfig.notificationIcon
+            ometriaConfig.notificationIcon,
+            executor
         )
     }
 
