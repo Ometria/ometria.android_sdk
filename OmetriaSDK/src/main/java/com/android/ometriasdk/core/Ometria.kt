@@ -138,11 +138,23 @@ class Ometria private constructor() {
         trackEvent(OmetriaEventType.APP_BACKGROUNDED)
     }
 
-    fun trackScreenViewedEvent(screenName: String?, additionalInfo: Map<String, Any> = mapOf()) {
+    fun trackScreenViewedEvent(screenName: String, additionalInfo: Map<String, Any> = mapOf()) {
         val data = additionalInfo.toMutableMap()
         data[PAGE] = screenName ?: ""
         trackEvent(
             OmetriaEventType.SCREEN_VIEWED,
+            data
+        )
+    }
+
+    internal fun trackAutomatedScreenViewedEvent(
+        screenName: String?,
+        additionalInfo: Map<String, Any> = mapOf()
+    ) {
+        val data = additionalInfo.toMutableMap()
+        data[PAGE] = screenName ?: ""
+        trackEvent(
+            OmetriaEventType.AUTOMATED_SCREEN_VIEWED,
             data
         )
     }
