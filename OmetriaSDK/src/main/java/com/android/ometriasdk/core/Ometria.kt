@@ -236,6 +236,10 @@ class Ometria private constructor() {
         )
     }
 
+    fun flush() {
+        eventHandler.flushEvents()
+    }
+
     fun clear() {
         localCache.clear()
     }
