@@ -5,6 +5,5 @@
 
     <application>
         <receiver android:name=".notification.PushClickBroadcastReceiver" />
-        <receiver android:name=".notification.PushDismissBroadcastReceiver" />
     </application>
 </manifest>

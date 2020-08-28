@@ -22,7 +22,6 @@ import java.net.URL
  */
 
 const val PUSH_TAP_ACTION = "com.android.ometriasdk.push_notification_tap"
-const val PUSH_DISMISS_ACTION = "com.android.ometriasdk.push_notification_dismissed"
 const val OMETRIA_CHANNEL_ID = "ometria"
 const val OMETRIA_CHANNEL_NAME = "ometria"
 
@@ -52,20 +51,12 @@ internal class OmetriaPushNotification(
             PendingIntent.FLAG_UPDATE_CURRENT
         )
 
-        val deleteIntent = PendingIntent.getBroadcast(
-            context,
-            0,
-            getDeleteIntent(),
-            0
-        )
-
         val notificationBuilder = NotificationCompat.Builder(context, OMETRIA_CHANNEL_ID)
             .setSmallIcon(notificationIcon)
             .setContentTitle(title)
             .setContentText(body)
             .setAutoCancel(true)
             .setContentIntent(contentIntent)
-            .setDeleteIntent(deleteIntent)
             .setLargeIcon(largeIcon)
 
         val notificationManager =
@@ -90,15 +81,6 @@ internal class OmetriaPushNotification(
             .setClass(
                 context,
                 PushClickBroadcastReceiver::class.java
-            ).putExtras(options)
-    }
-
-    private fun getDeleteIntent(): Intent {
-        val options = Bundle()
-        return Intent().setAction(PUSH_DISMISS_ACTION)
-            .setClass(
-                context,
-                PushDismissBroadcastReceiver::class.java
             ).putExtras(options)
     }
 
