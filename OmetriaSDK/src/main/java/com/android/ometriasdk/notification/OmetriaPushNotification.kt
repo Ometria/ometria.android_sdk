@@ -34,16 +34,22 @@ internal class OmetriaPushNotification(
     fun createPushNotification(
         title: String?,
         body: String?,
-        ometriaNotification: OmetriaNotification?
+        ometriaNotification: OmetriaNotification?,
+        collapseId: String?
     ) {
         if (ometriaNotification?.imageUrl != null) {
-            displayNotificationWithImage(title, body, ometriaNotification.imageUrl)
+            displayNotificationWithImage(title, body, ometriaNotification.imageUrl, collapseId)
         } else {
-            displayNotification(title, body)
+            displayNotification(title = title, body = body, collapseId = collapseId)
         }
     }
 
-    private fun displayNotification(title: String?, body: String?, largeIcon: Bitmap? = null) {
+    private fun displayNotification(
+        title: String?,
+        body: String?,
+        largeIcon: Bitmap? = null,
+        collapseId: String?
+    ) {
         val contentIntent = PendingIntent.getBroadcast(
             context,
             System.currentTimeMillis().toInt(),
@@ -57,6 +63,7 @@ internal class OmetriaPushNotification(
             .setContentText(body)
             .setAutoCancel(true)
             .setContentIntent(contentIntent)
+            .setGroup(collapseId)
             .setLargeIcon(largeIcon)
 
         val notificationManager =
@@ -71,7 +78,7 @@ internal class OmetriaPushNotification(
         }
 
         val notification = notificationBuilder.build()
-        notificationManager.notify(System.currentTimeMillis().toInt(), notification)
+        notificationManager.notify(collapseId.hashCode(), notification)
     }
 
     private fun getRoutingIntent(): Intent {
@@ -84,12 +91,17 @@ internal class OmetriaPushNotification(
             ).putExtras(options)
     }
 
-    private fun displayNotificationWithImage(title: String?, body: String?, stringUrl: String?) {
+    private fun displayNotificationWithImage(
+        title: String?,
+        body: String?,
+        stringUrl: String?,
+        collapseId: String?
+    ) {
         executor.execute {
             val url = URL(stringUrl)
             try {
                 BitmapFactory.decodeStream(url.openConnection().getInputStream())?.also { bitmap ->
-                    displayNotification(title, body, bitmap)
+                    displayNotification(title, body, bitmap, collapseId)
                 } ?: run {
                     Logger.e(
                         PUSH_NOTIFICATIONS,
