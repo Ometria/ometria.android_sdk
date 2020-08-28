@@ -16,7 +16,7 @@ import java.util.*
  * on 27/07/2020.
  */
 
-private const val FLUSH_LIMIT = 10
+private const val FLUSH_LIMIT = 2
 private const val BATCH_LIMIT = 100
 private const val THROTTLE_LIMIT = 10
 
@@ -91,7 +91,17 @@ internal class EventHandler(
             group.value
                 .chunked(BATCH_LIMIT)
                 .forEach {
-                    repository.flushEvents(it)
+                    repository.flushEvents(it, success = {
+                        Logger.d(
+                            Constants.Logger.EVENTS,
+                            "Successfully flushed ${it.size} events"
+                        )
+                    }, error = {
+                        Logger.d(
+                            Constants.Logger.EVENTS,
+                            "Failed to flush ${it.size} events"
+                        )
+                    })
                 }
         }
     }

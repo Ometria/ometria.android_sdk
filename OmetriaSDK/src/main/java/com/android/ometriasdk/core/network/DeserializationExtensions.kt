@@ -3,6 +3,7 @@ package com.android.ometriasdk.core.network
 import com.android.ometriasdk.core.event.OmetriaEvent
 import com.android.ometriasdk.core.network.model.OmetriaApiError
 import org.json.JSONArray
+import org.json.JSONException
 import org.json.JSONObject
 
 /**
@@ -59,7 +60,7 @@ internal fun JSONObject?.toMap(): Map<String, Any> {
     return map
 }
 
-
+@Throws(JSONException::class)
 internal fun String.toOmetriaApiError(): OmetriaApiError {
     val jsonObject = JSONObject(this)
     return OmetriaApiError(
