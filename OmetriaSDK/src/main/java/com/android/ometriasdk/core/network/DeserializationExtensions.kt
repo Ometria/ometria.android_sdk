@@ -27,7 +27,6 @@ internal fun String.toOmetriaEvent(): OmetriaEvent {
         jsonObject.getString("eventId"),
         jsonObject.getBoolean("isBeingFlushed"),
         jsonObject.getString("timestampOccurred"),
-        jsonObject.getBoolean("isAutomaticallyTracked"),
         jsonObject.getString("appId"),
         jsonObject.getString("installationId"),
         jsonObject.getString("appVersion"),
