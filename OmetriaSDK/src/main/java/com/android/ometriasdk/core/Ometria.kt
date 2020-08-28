@@ -29,8 +29,6 @@ import java.util.*
  * on 08/07/2020.
  */
 
-private val TAG = Ometria::class.simpleName
-
 class Ometria private constructor() {
 
     private lateinit var ometriaConfig: OmetriaConfig
@@ -65,7 +63,9 @@ class Ometria private constructor() {
                     )
                 it.eventHandler = EventHandler(application, it.repository)
 
-                it.generateInstallationId()
+                if (it.shouldGenerateInstallationId()) {
+                    it.generateInstallationId()
+                }
 
                 val activityLifecycleHelper = OmetriaActivityLifecycleHelper(it.repository)
 
@@ -86,9 +86,9 @@ class Ometria private constructor() {
         }
     }
 
-    internal fun generateInstallationId() {
-        if (repository.getInstallationId() != null) return
+    private fun shouldGenerateInstallationId(): Boolean = repository.getInstallationId() == null
 
+    private fun generateInstallationId() {
         val installationId = UUID.randomUUID().toString()
 
         repository.saveInstallationId(installationId)
@@ -169,6 +169,8 @@ class Ometria private constructor() {
 
     fun trackProfileDeidentifiedEvent() {
         trackEvent(OmetriaEventType.PROFILE_DEIDENTIFIED)
+
+        generateInstallationId()
     }
 
     fun trackProductViewedEvent(productId: String) {

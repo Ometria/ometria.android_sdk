@@ -28,7 +28,7 @@ internal class LocalCache(private val context: Context) {
         return getLocalCachePreferences().getBoolean(IS_FIRST_APP_RUN_KEY, true)
     }
 
-    fun saveInstallationId(installationId: String) {
+    fun saveInstallationId(installationId: String?) {
         getLocalCachePreferences().edit().putString(INSTALLATION_ID_KEY, installationId).apply()
     }
 
