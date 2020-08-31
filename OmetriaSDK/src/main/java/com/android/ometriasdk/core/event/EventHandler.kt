@@ -5,8 +5,6 @@ import androidx.core.content.pm.PackageInfoCompat
 import com.android.ometriasdk.core.Constants
 import com.android.ometriasdk.core.Logger
 import com.android.ometriasdk.core.Repository
-import java.io.File
-import java.io.FileOutputStream
 import java.text.DateFormat
 import java.text.SimpleDateFormat
 import java.util.*
@@ -21,7 +19,7 @@ private const val BATCH_LIMIT = 100
 private const val THROTTLE_LIMIT = 10
 
 internal class EventHandler(
-    private val context: Context,
+    context: Context,
     private val repository: Repository
 ) {
     private val dateFormat: DateFormat =
@@ -56,19 +54,11 @@ internal class EventHandler(
         Logger.d(Constants.Logger.EVENTS, "Track event - ", ometriaEvent)
 
         repository.saveEvent(ometriaEvent)
-        flushEventsIfNeeded()
-        writeEventToFile(ometriaEvent)
-    }
-
-    private fun writeEventToFile(event: OmetriaEvent) {
-        val path = context.getExternalFilesDir(null)
-
-        val letDirectory = File(path, "Events")
-        letDirectory.mkdirs()
-        val file = File(letDirectory, "Events.txt")
-
-        FileOutputStream(file, true).use {
-            it.write("- $event\n".toByteArray())
+        when (ometriaEvent.type) {
+            OmetriaEventType.PUSH_TOKEN_REFRESHED.id,
+            OmetriaEventType.APP_FOREGROUNDED.id,
+            OmetriaEventType.APP_BACKGROUNDED.id -> flushEvents()
+            else -> flushEventsIfNeeded()
         }
     }
 
