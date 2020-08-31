@@ -38,7 +38,7 @@ internal class EventHandler(
 
         val event = OmetriaEvent(
             eventId = UUID.randomUUID().toString(),
-            timestampOccurred = dateFormat.format(Calendar.getInstance().time),
+            dtOccurred = dateFormat.format(Calendar.getInstance().time),
             appId = appId,
             installationId = installationId,
             appVersion = appVersion,

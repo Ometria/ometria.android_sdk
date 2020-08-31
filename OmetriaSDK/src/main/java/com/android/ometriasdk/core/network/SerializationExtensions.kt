@@ -26,7 +26,7 @@ internal fun OmetriaEvent.toJson(): JSONObject {
     val jsonObject = JSONObject()
     jsonObject.put("eventId", eventId)
     jsonObject.put("isBeingFlushed", isBeingFlushed)
-    jsonObject.put("timestampOccurred", timestampOccurred)
+    jsonObject.put("dtOccurred", dtOccurred)
     jsonObject.put("isAutomaticallyTracked", isAutomaticallyTracked)
     jsonObject.put("appId", appId)
     jsonObject.put("installationId", installationId)
@@ -90,7 +90,7 @@ internal fun OmetriaApiRequest.toJson(): JSONObject {
     jsonObject.put("osVersion", osVersion)
     jsonObject.put("deviceManufacturer", deviceManufacturer)
     jsonObject.put("deviceModel", deviceModel)
-    jsonObject.put("timestampSent", timestampSent)
+    jsonObject.put("dtSent", dtSent)
     jsonObject.put("events", events?.toAPIJson())
 
     return jsonObject
@@ -109,7 +109,7 @@ internal fun Collection<OmetriaEvent>.toAPIJson(): JSONArray {
 internal fun OmetriaEvent.toAPIJson(): JSONObject {
     val jsonObject = JSONObject()
     jsonObject.put("eventId", eventId)
-    jsonObject.put("timestampOccurred", timestampOccurred)
+    jsonObject.put("dtOccurred", dtOccurred)
     jsonObject.put("type", type)
     jsonObject.put("data", data?.dataToJson())
 

@@ -17,6 +17,6 @@ internal data class OmetriaApiRequest(
     val osVersion: String? = null,
     val deviceManufacturer: String? = Build.MANUFACTURER,
     val deviceModel: String? = Build.MODEL,
-    val timestampSent: String? = null,
+    val dtSent: String? = null,
     val events: List<OmetriaEvent>? = null
 )

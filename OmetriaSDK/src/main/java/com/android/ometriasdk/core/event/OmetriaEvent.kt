@@ -13,7 +13,7 @@ import java.util.*
 internal data class OmetriaEvent(
     val eventId: String,
     var isBeingFlushed: Boolean = false,
-    val timestampOccurred: String = Date().toString(),
+    val dtOccurred: String = Date().toString(),
     val isAutomaticallyTracked: Boolean? = false,
     val appId: String? = null,
     val installationId: String? = null,
