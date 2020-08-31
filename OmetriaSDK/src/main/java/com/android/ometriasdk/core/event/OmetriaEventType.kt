@@ -11,8 +11,8 @@ internal enum class OmetriaEventType(var id: String) {
     APP_LAUNCHED("appLaunched"),
     APP_FOREGROUNDED("appForegrounded"),
     APP_BACKGROUNDED("appBackgrounded"),
-    SCREEN_VIEWED("screenViewed"),
-    AUTOMATED_SCREEN_VIEWED("automatedScreenViewed"),
+    SCREEN_VIEWED("screenViewedExplicit"),
+    SCREEN_VIEWED_AUTOMATIC("screenViewedAutomatic"),
     PROFILE_IDENTIFIED("profileIdentified"),
     PROFILE_DEIDENTIFIED("profileDeidentified"),
 

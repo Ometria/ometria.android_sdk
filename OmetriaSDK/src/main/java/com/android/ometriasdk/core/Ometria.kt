@@ -154,7 +154,7 @@ class Ometria private constructor() {
         val data = additionalInfo.toMutableMap()
         data[PAGE] = screenName ?: ""
         trackEvent(
-            OmetriaEventType.AUTOMATED_SCREEN_VIEWED,
+            OmetriaEventType.SCREEN_VIEWED_AUTOMATIC,
             data
         )
     }
