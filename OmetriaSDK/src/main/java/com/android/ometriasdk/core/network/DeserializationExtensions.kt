@@ -30,7 +30,7 @@ internal fun String.toOmetriaEvent(): OmetriaEvent {
     return OmetriaEvent(
         jsonObject.getString("eventId"),
         jsonObject.getBoolean("isBeingFlushed"),
-        jsonObject.getString("timestampOccurred"),
+        jsonObject.getString("dtOccurred"),
         jsonObject.getBoolean("isAutomaticallyTracked"),
         jsonObject.getString("appId"),
         jsonObject.getString("installationId"),
