@@ -35,6 +35,11 @@ internal class NotificationHandler {
         val body = remoteMessage.data[KEY_BODY]
 
         val ometriaPushNotification = OmetriaPushNotification(context, notificationIcon, executor)
-        ometriaPushNotification.createPushNotification(title, body, ometriaNotification, remoteMessage.collapseKey)
+        ometriaPushNotification.createPushNotification(
+            title,
+            body,
+            ometriaNotification,
+            remoteMessage.collapseKey
+        )
     }
 }

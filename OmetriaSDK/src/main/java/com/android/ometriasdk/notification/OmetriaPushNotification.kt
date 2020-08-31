@@ -13,6 +13,7 @@ import androidx.core.app.NotificationCompat
 import com.android.ometriasdk.core.Constants.Logger.PUSH_NOTIFICATIONS
 import com.android.ometriasdk.core.Logger
 import com.android.ometriasdk.core.network.OmetriaThreadPoolExecutor
+import com.android.ometriasdk.core.network.dataToJson
 import java.io.IOException
 import java.net.URL
 
@@ -38,9 +39,20 @@ internal class OmetriaPushNotification(
         collapseId: String?
     ) {
         if (ometriaNotification?.imageUrl != null) {
-            displayNotificationWithImage(title, body, ometriaNotification.imageUrl, collapseId)
+            displayNotificationWithImage(
+                title,
+                body,
+                ometriaNotification.imageUrl,
+                collapseId,
+                ometriaNotification
+            )
         } else {
-            displayNotification(title = title, body = body, collapseId = collapseId)
+            displayNotification(
+                title = title,
+                body = body,
+                collapseId = collapseId,
+                ometriaNotification = ometriaNotification
+            )
         }
     }
 
@@ -48,12 +60,13 @@ internal class OmetriaPushNotification(
         title: String?,
         body: String?,
         largeIcon: Bitmap? = null,
-        collapseId: String?
+        collapseId: String?,
+        ometriaNotification: OmetriaNotification?
     ) {
         val contentIntent = PendingIntent.getBroadcast(
             context,
             System.currentTimeMillis().toInt(),
-            getRoutingIntent(),
+            getRoutingIntent(ometriaNotification),
             PendingIntent.FLAG_UPDATE_CURRENT
         )
 
@@ -81,27 +94,33 @@ internal class OmetriaPushNotification(
         notificationManager.notify(collapseId.hashCode(), notification)
     }
 
-    private fun getRoutingIntent(): Intent {
+    private fun getRoutingIntent(ometriaNotification: OmetriaNotification?): Intent {
         val options = Bundle()
+        ometriaNotification?.context?.let {
+            options.putString(
+                KEY_OMETRIA_CONTEXT,
+                it.dataToJson().toString()
+            )
+        }
 
-        return Intent().setAction(PUSH_TAP_ACTION)
-            .setClass(
-                context,
-                PushClickBroadcastReceiver::class.java
-            ).putExtras(options)
+        return Intent()
+            .setAction(PUSH_TAP_ACTION)
+            .setClass(context, PushClickBroadcastReceiver::class.java)
+            .putExtras(options)
     }
 
     private fun displayNotificationWithImage(
         title: String?,
         body: String?,
         stringUrl: String?,
-        collapseId: String?
+        collapseId: String?,
+        ometriaNotification: OmetriaNotification?
     ) {
         executor.execute {
             val url = URL(stringUrl)
             try {
                 BitmapFactory.decodeStream(url.openConnection().getInputStream())?.also { bitmap ->
-                    displayNotification(title, body, bitmap, collapseId)
+                    displayNotification(title, body, bitmap, collapseId, ometriaNotification)
                 } ?: run {
                     Logger.e(
                         PUSH_NOTIFICATIONS,

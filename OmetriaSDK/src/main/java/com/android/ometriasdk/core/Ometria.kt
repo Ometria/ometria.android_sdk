@@ -210,14 +210,14 @@ class Ometria private constructor() {
         trackEvent(OmetriaEventType.PUSH_TOKEN_REFRESHED, mapOf(PUSH_TOKEN to pushToken))
     }
 
-    fun trackNotificationReceivedEvent(context: String) {
+    fun trackNotificationReceivedEvent(context: Map<String, Any>) {
         trackEvent(
             OmetriaEventType.NOTIFICATION_RECEIVED,
             mapOf(NOTIFICATION_CONTEXT to context)
         )
     }
 
-    fun trackNotificationInteractedEvent(context: String) {
+    fun trackNotificationInteractedEvent(context: Map<String, Any>) {
         trackEvent(
             OmetriaEventType.NOTIFICATION_INTERACTED,
             mapOf(NOTIFICATION_CONTEXT to context)

@@ -78,11 +78,11 @@ internal fun String.toOmetriaApiError(): OmetriaApiError {
 internal fun String.toOmetriaNotification(): OmetriaNotification? {
     val jsonObject = JSONObject(this)
 
-    var context: String? = null
+    var context: Map<String, Any>? = null
     var deepLinkActionUrl: String? = null
     var imageUrl: String? = null
     try {
-        context = jsonObject.getString("context")
+        context = jsonObject.getJSONObject("context").toMap()
         deepLinkActionUrl = jsonObject.getString("deepLinkActionUrl")
         imageUrl = jsonObject.getString("imageUrl")
     } catch (e: JSONException) {

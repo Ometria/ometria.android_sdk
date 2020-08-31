@@ -4,12 +4,15 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import com.android.ometriasdk.core.Ometria
-import com.android.ometriasdk.core.event.OmetriaEventType.NOTIFICATION_INTERACTED
+import com.android.ometriasdk.core.network.toMap
+import org.json.JSONObject
 
 /**
  * Created by cristiandregan
  * on 30/07/2020.
  */
+
+const val KEY_OMETRIA_CONTEXT = "key_ometria_context"
 
 internal class PushClickBroadcastReceiver : BroadcastReceiver() {
 
@@ -20,8 +23,10 @@ internal class PushClickBroadcastReceiver : BroadcastReceiver() {
             mainIntent?.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
             context.startActivity(mainIntent)
 
-            // ToDo extract notificationId
-            Ometria.instance().trackNotificationInteractedEvent("notificationId")
+            val ometriaContextString = intent.getStringExtra(KEY_OMETRIA_CONTEXT)
+            ometriaContextString?.let {
+                Ometria.instance().trackNotificationInteractedEvent(JSONObject(it).toMap())
+            }
         }
     }
 }

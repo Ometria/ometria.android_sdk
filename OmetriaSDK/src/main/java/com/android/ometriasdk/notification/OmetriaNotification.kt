@@ -7,5 +7,5 @@ package com.android.ometriasdk.notification
 internal data class OmetriaNotification(
     val imageUrl: String?,
     val deepLinkActionUrl: String?,
-    val context: String?,
+    val context: Map<String, Any>?,
 )
