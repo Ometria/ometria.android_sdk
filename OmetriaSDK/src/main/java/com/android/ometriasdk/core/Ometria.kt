@@ -29,8 +29,6 @@ import java.util.*
  * on 08/07/2020.
  */
 
-private val TAG = Ometria::class.simpleName
-
 class Ometria private constructor() {
 
     private lateinit var ometriaConfig: OmetriaConfig
@@ -202,8 +200,8 @@ class Ometria private constructor() {
         )
     }
 
-    fun trackPushTokenRefreshedEvent(pushToken: String) {
-        trackEvent(OmetriaEventType.PUSH_TOKEN_REFRESHED, mapOf(PUSH_TOKEN to pushToken))
+    fun trackPushTokenRefreshedEvent(pushToken: String?) {
+        trackEvent(OmetriaEventType.PUSH_TOKEN_REFRESHED, mapOf(PUSH_TOKEN to (pushToken ?: "")))
     }
 
     fun trackNotificationReceivedEvent(notificationId: String?) {

@@ -93,4 +93,12 @@ internal class Repository(
 
         localCache.removeEvents(events)
     }
+
+    fun savePushToken(pushToken: String) {
+        localCache.savePushToken(pushToken)
+    }
+
+    fun getPushToken(): String? {
+        return localCache.getPushToken()
+    }
 }

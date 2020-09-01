@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.core.content.pm.PackageInfoCompat
 import com.android.ometriasdk.core.Constants
 import com.android.ometriasdk.core.Logger
+import com.android.ometriasdk.core.Ometria
 import com.android.ometriasdk.core.Repository
 import java.text.DateFormat
 import java.text.SimpleDateFormat
@@ -46,6 +47,16 @@ internal class EventHandler(
             type = type.id,
             data = data
         )
+
+        when (event.type) {
+            OmetriaEventType.PUSH_TOKEN_REFRESHED.id -> {
+                data?.let {
+                    repository.savePushToken(it[Constants.Params.PUSH_TOKEN] as String)
+                }
+            }
+            OmetriaEventType.PROFILE_IDENTIFIED.id ->
+                Ometria.instance().trackPushTokenRefreshedEvent(repository.getPushToken())
+        }
 
         sendEvent(event)
     }
