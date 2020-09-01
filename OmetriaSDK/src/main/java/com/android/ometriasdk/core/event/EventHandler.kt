@@ -16,7 +16,7 @@ import java.util.*
  * on 27/07/2020.
  */
 
-private const val BATCH_LIMIT = 20
+private const val BATCH_LIMIT = 2
 private const val CHUNK_SIZE = 100
 
 internal class EventHandler(

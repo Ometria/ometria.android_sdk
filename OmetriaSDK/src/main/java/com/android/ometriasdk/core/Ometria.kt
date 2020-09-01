@@ -4,12 +4,15 @@ import android.app.Application
 import androidx.lifecycle.ProcessLifecycleOwner
 import com.android.ometriasdk.core.Constants.Params.BASKET
 import com.android.ometriasdk.core.Constants.Params.CATEGORY
+import com.android.ometriasdk.core.Constants.Params.CLASS
 import com.android.ometriasdk.core.Constants.Params.CUSTOMER_ID
 import com.android.ometriasdk.core.Constants.Params.CUSTOM_EVENT_TYPE
 import com.android.ometriasdk.core.Constants.Params.EMAIL
 import com.android.ometriasdk.core.Constants.Params.LINK
+import com.android.ometriasdk.core.Constants.Params.MESSAGE
 import com.android.ometriasdk.core.Constants.Params.NOTIFICATION_CONTEXT
 import com.android.ometriasdk.core.Constants.Params.ORDER_ID
+import com.android.ometriasdk.core.Constants.Params.ORIGINAL_MESSAGE
 import com.android.ometriasdk.core.Constants.Params.PAGE
 import com.android.ometriasdk.core.Constants.Params.PRODUCT_ID
 import com.android.ometriasdk.core.Constants.Params.PUSH_TOKEN
@@ -142,7 +145,7 @@ class Ometria private constructor() {
 
     fun trackScreenViewedEvent(screenName: String, additionalInfo: Map<String, Any> = mapOf()) {
         val data = additionalInfo.toMutableMap()
-        data[PAGE] = screenName ?: ""
+        data[PAGE] = screenName
         trackEvent(
             OmetriaEventType.SCREEN_VIEWED,
             data
@@ -228,6 +231,20 @@ class Ometria private constructor() {
         trackEvent(
             OmetriaEventType.DEEP_LINK_OPENED,
             mapOf(LINK to link, PAGE to page)
+        )
+    }
+
+    fun trackErrorOccurredEvent(
+        errorClass: String,
+        errorMessage: String?,
+        originalMessage: Map<String, Any>
+    ) {
+        trackEvent(
+            OmetriaEventType.ERROR_OCCURRED, mapOf(
+                CLASS to errorClass,
+                MESSAGE to (errorMessage ?: ""),
+                ORIGINAL_MESSAGE to originalMessage
+            )
         )
     }
 

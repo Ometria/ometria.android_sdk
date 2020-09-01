@@ -1,14 +1,14 @@
 package com.android.ometriasdk.core.network
 
-import com.android.ometriasdk.core.Constants
+import com.android.ometriasdk.core.Constants.Logger.PUSH_NOTIFICATIONS
 import com.android.ometriasdk.core.Logger
+import com.android.ometriasdk.core.Ometria
 import com.android.ometriasdk.core.event.OmetriaEvent
 import com.android.ometriasdk.core.network.model.OmetriaApiError
 import com.android.ometriasdk.notification.OmetriaNotification
 import org.json.JSONArray
 import org.json.JSONException
 import org.json.JSONObject
-import java.io.IOException
 
 /**
  * Created by cristiandregan
@@ -86,10 +86,8 @@ internal fun String.toOmetriaNotification(): OmetriaNotification? {
         deepLinkActionUrl = jsonObject.getString("deepLinkActionUrl")
         imageUrl = jsonObject.getString("imageUrl")
     } catch (e: JSONException) {
-        Logger.e(
-            Constants.Logger.PUSH_NOTIFICATIONS,
-            "The notification content has missing fields or is incorrectly formatted."
-        )
+        Logger.e(PUSH_NOTIFICATIONS, e.message, e)
+        Ometria.instance().trackErrorOccurredEvent(e.javaClass.name, e.message, jsonObject.toMap())
     }
 
     return OmetriaNotification(

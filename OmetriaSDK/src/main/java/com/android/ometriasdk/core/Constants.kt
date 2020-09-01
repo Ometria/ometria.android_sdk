@@ -22,6 +22,9 @@ internal object Constants {
         const val NOTIFICATION_CONTEXT = "context"
         const val LINK = "link"
         const val CUSTOM_EVENT_TYPE = "customEventType"
+        const val CLASS = "class"
+        const val MESSAGE = "message"
+        const val ORIGINAL_MESSAGE = "originalMessage"
     }
 
     object Common {
