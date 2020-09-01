@@ -177,8 +177,8 @@ class Ometria private constructor() {
         trackEvent(OmetriaEventType.PRODUCT_VIEWED, mapOf(PRODUCT_ID to productId))
     }
 
-    fun trackProductCategoryViewedEvent(category: String) {
-        trackEvent(OmetriaEventType.PRODUCT_CATEGORY_VIEWED, mapOf(CATEGORY to category))
+    fun trackProductListingViewedEvent(category: String) {
+        trackEvent(OmetriaEventType.PRODUCT_LISTING_VIEWED, mapOf(CATEGORY to category))
     }
 
     fun trackWishlistAddedToEvent(productId: String) {
