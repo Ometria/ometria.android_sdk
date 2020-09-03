@@ -203,7 +203,7 @@ class Ometria private constructor() {
         )
     }
 
-    fun homeScreenViewed() {
+    fun trackHomeScreenViewedEvent() {
         trackEvent(OmetriaEventType.HOME_SCREEN_VIEWED)
     }
 
