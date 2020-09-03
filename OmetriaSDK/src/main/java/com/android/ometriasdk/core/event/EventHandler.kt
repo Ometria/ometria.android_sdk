@@ -4,9 +4,8 @@ import android.content.Context
 import androidx.core.content.pm.PackageInfoCompat
 import com.android.ometriasdk.core.Constants
 import com.android.ometriasdk.core.Logger
+import com.android.ometriasdk.core.Ometria
 import com.android.ometriasdk.core.Repository
-import java.io.File
-import java.io.FileOutputStream
 import java.text.DateFormat
 import java.text.SimpleDateFormat
 import java.util.*
@@ -16,17 +15,19 @@ import java.util.*
  * on 27/07/2020.
  */
 
-private const val BATCH_LIMIT = 20
-private const val CHUNK_SIZE = 100
+private const val FLUSH_LIMIT = 20
+private const val BATCH_LIMIT = 100
+private const val THROTTLE_LIMIT = 10
 
 internal class EventHandler(
-    private val context: Context,
+    context: Context,
     private val repository: Repository
 ) {
     private val dateFormat: DateFormat =
         SimpleDateFormat(Constants.Date.API_DATE_FORMAT, Locale.getDefault())
     private val appId = context.packageName
     private val packageInfo = context.packageManager.getPackageInfo(context.packageName, 0)
+    private var throttleCalendar = Calendar.getInstance()
 
     fun processEvent(
         type: OmetriaEventType,
@@ -47,6 +48,16 @@ internal class EventHandler(
             data = data
         )
 
+        when (event.type) {
+            OmetriaEventType.PUSH_TOKEN_REFRESHED.id -> {
+                data?.let {
+                    repository.savePushToken(it[Constants.Params.PUSH_TOKEN] as String)
+                }
+            }
+            OmetriaEventType.PROFILE_IDENTIFIED.id ->
+                Ometria.instance().trackPushTokenRefreshedEvent(repository.getPushToken())
+        }
+
         sendEvent(event)
     }
 
@@ -54,33 +65,45 @@ internal class EventHandler(
         Logger.d(Constants.Logger.EVENTS, "Track event - ", ometriaEvent)
 
         repository.saveEvent(ometriaEvent)
-        flushEventsIfNeeded()
-        writeEventToFile(ometriaEvent)
-    }
-
-    private fun writeEventToFile(event: OmetriaEvent) {
-        val path = context.getExternalFilesDir(null)
-
-        val letDirectory = File(path, "Events")
-        letDirectory.mkdirs()
-        val file = File(letDirectory, "Events.txt")
-
-        FileOutputStream(file, true).use {
-            it.write("- $event\n".toByteArray())
+        when (ometriaEvent.type) {
+            OmetriaEventType.PUSH_TOKEN_REFRESHED.id,
+            OmetriaEventType.APP_FOREGROUNDED.id,
+            OmetriaEventType.APP_BACKGROUNDED.id -> flushEvents()
+            else -> flushEventsIfNeeded()
         }
     }
 
     private fun flushEventsIfNeeded() {
-        val events = repository.getEvents().filter { !it.isBeingFlushed }
+        if (shouldFlush()) {
+            throttleCalendar.timeInMillis = System.currentTimeMillis()
+            throttleCalendar.add(Calendar.SECOND, THROTTLE_LIMIT)
 
-        if (shouldFlush(events)) {
-            events.groupBy { it.batchIdentifier() }.forEach { group ->
-                group.value
-                    .chunked(CHUNK_SIZE)
-                    .forEach { repository.flushEvents(it) }
-            }
+            flushEvents()
         }
     }
 
-    private fun shouldFlush(events: List<OmetriaEvent>): Boolean = events.size >= BATCH_LIMIT
+    fun flushEvents() {
+        val events = repository.getEvents().filter { !it.isBeingFlushed }
+
+        events.groupBy { it.batchIdentifier() }.forEach { group ->
+            group.value
+                .chunked(BATCH_LIMIT)
+                .forEach {
+                    repository.flushEvents(it, success = {
+                        Logger.d(
+                            Constants.Logger.EVENTS,
+                            "Successfully flushed ${it.size} events"
+                        )
+                    }, error = {
+                        Logger.d(
+                            Constants.Logger.EVENTS,
+                            "Failed to flush ${it.size} events"
+                        )
+                    })
+                }
+        }
+    }
+
+    private fun shouldFlush(): Boolean = repository.getEvents().size >= FLUSH_LIMIT
+            && System.currentTimeMillis() >= throttleCalendar.timeInMillis
 }

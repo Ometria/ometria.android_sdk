@@ -14,7 +14,6 @@ internal data class OmetriaEvent(
     val eventId: String,
     var isBeingFlushed: Boolean = false,
     val dtOccurred: String = Date().toString(),
-    val isAutomaticallyTracked: Boolean? = false,
     val appId: String? = null,
     val installationId: String? = null,
     val appVersion: String? = null,

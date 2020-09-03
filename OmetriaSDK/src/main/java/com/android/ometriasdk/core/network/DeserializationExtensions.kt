@@ -31,7 +31,6 @@ internal fun String.toOmetriaEvent(): OmetriaEvent {
         jsonObject.getString("eventId"),
         jsonObject.getBoolean("isBeingFlushed"),
         jsonObject.getString("dtOccurred"),
-        jsonObject.getBoolean("isAutomaticallyTracked"),
         jsonObject.getString("appId"),
         jsonObject.getString("installationId"),
         jsonObject.getString("appVersion"),
@@ -64,7 +63,7 @@ internal fun JSONObject?.toMap(): Map<String, Any> {
     return map
 }
 
-
+@Throws(JSONException::class)
 internal fun String.toOmetriaApiError(): OmetriaApiError {
     val jsonObject = JSONObject(this)
     return OmetriaApiError(

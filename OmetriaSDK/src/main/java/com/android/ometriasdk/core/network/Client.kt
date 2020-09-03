@@ -1,7 +1,10 @@
 package com.android.ometriasdk.core.network
 
+import com.android.ometriasdk.core.Constants.Logger.NETWORK
+import com.android.ometriasdk.core.Logger
 import com.android.ometriasdk.core.network.model.OmetriaApiError
 import com.android.ometriasdk.core.network.model.OmetriaApiRequest
+import org.json.JSONException
 import java.io.*
 import java.net.HttpURLConnection
 import java.nio.charset.Charset
@@ -39,7 +42,11 @@ internal class Client(private val connectionFactory: ConnectionFactory) {
             success()
         } else if (responseCode >= ERROR_RESPONSE_CODE_START_RANGE) {
             val body = BufferedReader(InputStreamReader(connection.errorStream)).readText()
-            error(body.toOmetriaApiError())
+            try {
+                error(body.toOmetriaApiError())
+            } catch (e: JSONException) {
+                Logger.e(NETWORK, e.message, e)
+            }
         }
     }
 }

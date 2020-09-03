@@ -5,7 +5,6 @@ import android.content.SharedPreferences
 import com.android.ometriasdk.core.event.OmetriaEvent
 import com.android.ometriasdk.core.network.toJson
 import com.android.ometriasdk.core.network.toOmetriaEventList
-import org.json.JSONArray
 
 /**
  * Created by cristiandregan
@@ -16,6 +15,7 @@ private const val LOCAL_CACHE_PREFERENCES = "LOCAL_CACHE_PREFERENCES"
 private const val IS_FIRST_APP_RUN_KEY = "IS_FIRST_APP_RUN_KEY"
 private const val INSTALLATION_ID_KEY = "INSTALLATION_ID_KEY"
 private const val EVENTS_KEY = "EVENTS_KEY"
+private const val PUSH_TOKEN_KEY = "PUSH_TOKEN_KEY"
 private const val JSON_ARRAY = "[]"
 
 internal class LocalCache(private val context: Context) {
@@ -54,11 +54,13 @@ internal class LocalCache(private val context: Context) {
         return eventsString.toOmetriaEventList()
     }
 
-    fun updateEvents(events: List<OmetriaEvent>) {
+    fun updateEvents(events: List<OmetriaEvent>?, isBeingFlushed: Boolean) {
+        events ?: return
+
         val cachedEvents = getEvents()
 
         events.forEach { event ->
-            cachedEvents.first { it.eventId == event.eventId }.isBeingFlushed = true
+            cachedEvents.first { it.eventId == event.eventId }.isBeingFlushed = isBeingFlushed
         }
 
         getLocalCachePreferences().edit()
@@ -77,6 +79,14 @@ internal class LocalCache(private val context: Context) {
 
     private fun getLocalCachePreferences(): SharedPreferences {
         return context.getSharedPreferences(LOCAL_CACHE_PREFERENCES, Context.MODE_PRIVATE)
+    }
+
+    fun savePushToken(pushToken: String) {
+        getLocalCachePreferences().edit().putString(PUSH_TOKEN_KEY, pushToken).apply()
+    }
+
+    fun getPushToken(): String? {
+        return getLocalCachePreferences().getString(PUSH_TOKEN_KEY, null)
     }
 
     fun clear() {

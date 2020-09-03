@@ -27,7 +27,6 @@ internal fun OmetriaEvent.toJson(): JSONObject {
     jsonObject.put("eventId", eventId)
     jsonObject.put("isBeingFlushed", isBeingFlushed)
     jsonObject.put("dtOccurred", dtOccurred)
-    jsonObject.put("isAutomaticallyTracked", isAutomaticallyTracked)
     jsonObject.put("appId", appId)
     jsonObject.put("installationId", installationId)
     jsonObject.put("appVersion", appVersion)

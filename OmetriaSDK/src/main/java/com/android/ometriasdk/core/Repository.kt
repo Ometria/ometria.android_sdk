@@ -1,15 +1,19 @@
 package com.android.ometriasdk.core
 
+import com.android.ometriasdk.core.Constants.Logger.NETWORK
 import com.android.ometriasdk.core.event.OmetriaEvent
 import com.android.ometriasdk.core.event.toApiRequest
 import com.android.ometriasdk.core.network.Client
 import com.android.ometriasdk.core.network.OmetriaThreadPoolExecutor
 import com.android.ometriasdk.core.network.model.OmetriaApiRequest
+import java.io.IOException
 
 /**
  * Created by cristiandregan
  * on 06/08/2020.
  */
+
+private const val TOO_MANY_REQUESTS_STATUS_CODE = 429
 
 internal class Repository(
     private val client: Client,
@@ -17,24 +21,42 @@ internal class Repository(
     private val executor: OmetriaThreadPoolExecutor
 ) {
 
-    fun flushEvents(events: List<OmetriaEvent>) {
+    private val dropStatusCodesRange = 400..499
+
+    fun flushEvents(
+        events: List<OmetriaEvent>,
+        success: () -> Unit,
+        error: () -> Unit
+    ) {
         val apiRequest = events.toApiRequest()
-        updateEvents(events)
-        postEvents(apiRequest)
+        updateEvents(events, true)
+        postEvents(apiRequest, success, error)
     }
 
-    private fun postEvents(apiRequest: OmetriaApiRequest) {
+    private fun postEvents(
+        apiRequest: OmetriaApiRequest,
+        success: () -> Unit,
+        error: () -> Unit
+    ) {
         executor.execute {
-            client.postEvents(apiRequest, success = {
-                Logger.d(
-                    Constants.Logger.EVENTS,
-                    "Successfully flushed ${apiRequest.events?.size} events"
-                )
+            try {
+                client.postEvents(apiRequest, success = {
+                    success()
+                    removeEvents(apiRequest.events)
+                }, error = {
+                    Logger.e(NETWORK, it.detail ?: "Unknown error")
+                    error()
 
-                removeEvents(apiRequest.events)
-            }, error = {
-                Logger.e(Constants.Logger.EVENTS, it.detail ?: "Unknown error")
-            })
+                    if (it.status in (dropStatusCodesRange).minus(TOO_MANY_REQUESTS_STATUS_CODE)) {
+                        removeEvents(apiRequest.events)
+                    } else {
+                        updateEvents(apiRequest.events, false)
+                    }
+                })
+            } catch (e: IOException) {
+                Logger.e(NETWORK, e.message, e)
+                error()
+            }
         }
     }
 
@@ -62,13 +84,21 @@ internal class Repository(
         return localCache.getEvents()
     }
 
-    private fun updateEvents(events: List<OmetriaEvent>) {
-        localCache.updateEvents(events)
+    private fun updateEvents(events: List<OmetriaEvent>?, isBeingFlushed: Boolean) {
+        localCache.updateEvents(events, isBeingFlushed)
     }
 
     private fun removeEvents(events: List<OmetriaEvent>?) {
         events ?: return
 
         localCache.removeEvents(events)
+    }
+
+    fun savePushToken(pushToken: String) {
+        localCache.savePushToken(pushToken)
+    }
+
+    fun getPushToken(): String? {
+        return localCache.getPushToken()
     }
 }

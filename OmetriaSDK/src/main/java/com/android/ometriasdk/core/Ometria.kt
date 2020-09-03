@@ -204,8 +204,8 @@ class Ometria private constructor() {
         )
     }
 
-    fun trackPushTokenRefreshedEvent(pushToken: String) {
-        trackEvent(OmetriaEventType.PUSH_TOKEN_REFRESHED, mapOf(PUSH_TOKEN to pushToken))
+    fun trackPushTokenRefreshedEvent(pushToken: String?) {
+        trackEvent(OmetriaEventType.PUSH_TOKEN_REFRESHED, mapOf(PUSH_TOKEN to (pushToken ?: "")))
     }
 
     fun trackNotificationReceivedEvent(context: Map<String, Any>) {
@@ -250,6 +250,10 @@ class Ometria private constructor() {
             OmetriaEventType.CUSTOM,
             data
         )
+    }
+
+    fun flush() {
+        eventHandler.flushEvents()
     }
 
     fun clear() {
