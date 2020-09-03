@@ -3,7 +3,6 @@ package com.android.ometriasdk.core
 import android.app.Application
 import androidx.lifecycle.ProcessLifecycleOwner
 import com.android.ometriasdk.core.Constants.Params.BASKET
-import com.android.ometriasdk.core.Constants.Params.CATEGORY
 import com.android.ometriasdk.core.Constants.Params.CLASS
 import com.android.ometriasdk.core.Constants.Params.CUSTOMER_ID
 import com.android.ometriasdk.core.Constants.Params.CUSTOM_EVENT_TYPE
@@ -177,8 +176,8 @@ class Ometria private constructor() {
         trackEvent(OmetriaEventType.PRODUCT_VIEWED, mapOf(PRODUCT_ID to productId))
     }
 
-    fun trackProductListingViewedEvent(category: String) {
-        trackEvent(OmetriaEventType.PRODUCT_LISTING_VIEWED, mapOf(CATEGORY to category))
+    fun trackProductListingViewedEvent() {
+        trackEvent(OmetriaEventType.PRODUCT_LISTING_VIEWED)
     }
 
     fun trackWishlistAddedToEvent(productId: String) {
@@ -202,6 +201,10 @@ class Ometria private constructor() {
             OmetriaEventType.ORDER_COMPLETED,
             mapOf(ORDER_ID to orderId, BASKET to basket)
         )
+    }
+
+    fun homeScreenViewed() {
+        trackEvent(OmetriaEventType.HOME_SCREEN_VIEWED)
     }
 
     fun trackPushTokenRefreshedEvent(pushToken: String?) {

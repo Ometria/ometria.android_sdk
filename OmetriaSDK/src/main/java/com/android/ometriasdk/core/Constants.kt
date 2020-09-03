@@ -15,7 +15,6 @@ internal object Constants {
         const val EMAIL = "email"
         const val CUSTOMER_ID = "customerId"
         const val PRODUCT_ID = "productId"
-        const val CATEGORY = "category"
         const val BASKET = "basket"
         const val ORDER_ID = "orderId"
         const val PUSH_TOKEN = "pushToken"

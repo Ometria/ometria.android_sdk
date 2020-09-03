@@ -24,6 +24,7 @@ internal enum class OmetriaEventType(var id: String) {
     BASKET_VIEWED("basketViewed"),
     BASKET_UPDATED("basketUpdated"),
     ORDER_COMPLETED("orderCompleted"),
+    HOME_SCREEN_VIEWED("homeScreenViewed"),
 
     // Notification related events
     PUSH_TOKEN_REFRESHED("pushTokenRefreshed"),
