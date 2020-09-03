@@ -1,8 +1,13 @@
 package com.android.ometriasdk.core.network
 
+import com.android.ometriasdk.core.Constants.Logger.PUSH_NOTIFICATIONS
+import com.android.ometriasdk.core.Logger
+import com.android.ometriasdk.core.Ometria
 import com.android.ometriasdk.core.event.OmetriaEvent
 import com.android.ometriasdk.core.network.model.OmetriaApiError
+import com.android.ometriasdk.notification.OmetriaNotification
 import org.json.JSONArray
+import org.json.JSONException
 import org.json.JSONObject
 
 /**
@@ -67,5 +72,27 @@ internal fun String.toOmetriaApiError(): OmetriaApiError {
         jsonObject.getInt("status"),
         jsonObject.getString("title"),
         jsonObject.getString("type")
+    )
+}
+
+internal fun String.toOmetriaNotification(): OmetriaNotification? {
+    val jsonObject = JSONObject(this)
+
+    var context: Map<String, Any>? = null
+    var deepLinkActionUrl: String? = null
+    var imageUrl: String? = null
+    try {
+        context = jsonObject.getJSONObject("context").toMap()
+        deepLinkActionUrl = jsonObject.getString("deepLinkActionUrl")
+        imageUrl = jsonObject.getString("imageUrl")
+    } catch (e: JSONException) {
+        Logger.e(PUSH_NOTIFICATIONS, e.message, e)
+        Ometria.instance().trackErrorOccurredEvent(e.javaClass.name, e.message, jsonObject.toMap())
+    }
+
+    return OmetriaNotification(
+        imageUrl,
+        deepLinkActionUrl,
+        context
     )
 }

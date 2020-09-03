@@ -43,7 +43,7 @@ internal fun OmetriaEvent.toJson(): JSONObject {
     return jsonObject
 }
 
-private fun Map<String, Any>.dataToJson(): JSONObject {
+internal fun Map<String, Any>.dataToJson(): JSONObject {
     val mapJsonObject = JSONObject()
     this.forEach { (key, value) ->
         val dataValue = if (value is OmetriaBasket) value.toJson() else JSONObject.wrap(value)

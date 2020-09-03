@@ -4,12 +4,15 @@ import android.app.Application
 import androidx.lifecycle.ProcessLifecycleOwner
 import com.android.ometriasdk.core.Constants.Params.BASKET
 import com.android.ometriasdk.core.Constants.Params.CATEGORY
+import com.android.ometriasdk.core.Constants.Params.CLASS
 import com.android.ometriasdk.core.Constants.Params.CUSTOMER_ID
 import com.android.ometriasdk.core.Constants.Params.CUSTOM_EVENT_TYPE
 import com.android.ometriasdk.core.Constants.Params.EMAIL
 import com.android.ometriasdk.core.Constants.Params.LINK
-import com.android.ometriasdk.core.Constants.Params.NOTIFICATION_ID
+import com.android.ometriasdk.core.Constants.Params.MESSAGE
+import com.android.ometriasdk.core.Constants.Params.NOTIFICATION_CONTEXT
 import com.android.ometriasdk.core.Constants.Params.ORDER_ID
+import com.android.ometriasdk.core.Constants.Params.ORIGINAL_MESSAGE
 import com.android.ometriasdk.core.Constants.Params.PAGE
 import com.android.ometriasdk.core.Constants.Params.PRODUCT_ID
 import com.android.ometriasdk.core.Constants.Params.PUSH_TOKEN
@@ -36,6 +39,8 @@ class Ometria private constructor() {
     private lateinit var localCache: LocalCache
     private lateinit var eventHandler: EventHandler
     private lateinit var repository: Repository
+    private lateinit var notificationHandler: NotificationHandler
+    private lateinit var executor: OmetriaThreadPoolExecutor
 
     /**
      * Kotlin Object ensures thread safety.
@@ -53,15 +58,16 @@ class Ometria private constructor() {
             return instance.also {
                 it.ometriaConfig = OmetriaConfig(application, apiKey, notificationIcon)
                 it.localCache = LocalCache(application)
-                it.isInitialized = true
-
-                it.repository =
-                    Repository(
-                        Client(ConnectionFactory(it.ometriaConfig)),
-                        it.localCache,
-                        OmetriaThreadPoolExecutor()
-                    )
+                it.executor = OmetriaThreadPoolExecutor()
+                it.repository = Repository(
+                    Client(ConnectionFactory(it.ometriaConfig)),
+                    it.localCache,
+                    it.executor
+                )
                 it.eventHandler = EventHandler(application, it.repository)
+                it.notificationHandler =
+                    NotificationHandler(application, notificationIcon, it.executor)
+                it.isInitialized = true
 
                 if (it.shouldGenerateInstallationId()) {
                     it.generateInstallationId()
@@ -102,13 +108,7 @@ class Ometria private constructor() {
     }
 
     fun onMessageReceived(remoteMessage: RemoteMessage) {
-        NotificationHandler.showNotification(
-            remoteMessage,
-            ometriaConfig.context,
-            ometriaConfig.notificationIcon
-        )
-
-        trackNotificationReceivedEvent(remoteMessage.messageId)
+        notificationHandler.handleNotification(remoteMessage)
     }
 
     fun onNewToken(token: String) {
@@ -140,7 +140,7 @@ class Ometria private constructor() {
 
     fun trackScreenViewedEvent(screenName: String, additionalInfo: Map<String, Any> = mapOf()) {
         val data = additionalInfo.toMutableMap()
-        data[PAGE] = screenName ?: ""
+        data[PAGE] = screenName
         trackEvent(
             OmetriaEventType.SCREEN_VIEWED,
             data
@@ -208,17 +208,17 @@ class Ometria private constructor() {
         trackEvent(OmetriaEventType.PUSH_TOKEN_REFRESHED, mapOf(PUSH_TOKEN to pushToken))
     }
 
-    fun trackNotificationReceivedEvent(notificationId: String?) {
+    fun trackNotificationReceivedEvent(context: Map<String, Any>) {
         trackEvent(
             OmetriaEventType.NOTIFICATION_RECEIVED,
-            mapOf(NOTIFICATION_ID to (notificationId ?: ""))
+            mapOf(NOTIFICATION_CONTEXT to context)
         )
     }
 
-    fun trackNotificationInteractedEvent(notificationId: String) {
+    fun trackNotificationInteractedEvent(context: Map<String, Any>) {
         trackEvent(
             OmetriaEventType.NOTIFICATION_INTERACTED,
-            mapOf(NOTIFICATION_ID to notificationId)
+            mapOf(NOTIFICATION_CONTEXT to context)
         )
     }
 
@@ -226,6 +226,20 @@ class Ometria private constructor() {
         trackEvent(
             OmetriaEventType.DEEP_LINK_OPENED,
             mapOf(LINK to link, PAGE to page)
+        )
+    }
+
+    fun trackErrorOccurredEvent(
+        errorClass: String,
+        errorMessage: String?,
+        originalMessage: Map<String, Any>
+    ) {
+        trackEvent(
+            OmetriaEventType.ERROR_OCCURRED, mapOf(
+                CLASS to errorClass,
+                MESSAGE to (errorMessage ?: ""),
+                ORIGINAL_MESSAGE to originalMessage
+            )
         )
     }
 

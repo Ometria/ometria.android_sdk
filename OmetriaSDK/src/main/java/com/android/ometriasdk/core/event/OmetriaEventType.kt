@@ -32,5 +32,6 @@ internal enum class OmetriaEventType(var id: String) {
 
     // Other event types
     DEEP_LINK_OPENED("deepLinkOpened"),
+    ERROR_OCCURRED("errorOccurred"),
     CUSTOM("customEvent")
 }
