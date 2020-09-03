@@ -93,7 +93,7 @@ class Ometria private constructor() {
 
     private fun shouldGenerateInstallationId(): Boolean = repository.getInstallationId() == null
 
-    private fun generateInstallationId() {
+    internal fun generateInstallationId() {
         val installationId = UUID.randomUUID().toString()
 
         repository.saveInstallationId(installationId)
@@ -168,8 +168,6 @@ class Ometria private constructor() {
 
     fun trackProfileDeidentifiedEvent() {
         trackEvent(OmetriaEventType.PROFILE_DEIDENTIFIED)
-
-        generateInstallationId()
     }
 
     fun trackProductViewedEvent(productId: String) {
@@ -207,32 +205,32 @@ class Ometria private constructor() {
         trackEvent(OmetriaEventType.HOME_SCREEN_VIEWED)
     }
 
-    fun trackPushTokenRefreshedEvent(pushToken: String?) {
+    internal fun trackPushTokenRefreshedEvent(pushToken: String?) {
         trackEvent(OmetriaEventType.PUSH_TOKEN_REFRESHED, mapOf(PUSH_TOKEN to (pushToken ?: "")))
     }
 
-    fun trackNotificationReceivedEvent(context: Map<String, Any>) {
+    internal fun trackNotificationReceivedEvent(context: Map<String, Any>) {
         trackEvent(
             OmetriaEventType.NOTIFICATION_RECEIVED,
             mapOf(NOTIFICATION_CONTEXT to context)
         )
     }
 
-    fun trackNotificationInteractedEvent(context: Map<String, Any>) {
+    internal fun trackNotificationInteractedEvent(context: Map<String, Any>) {
         trackEvent(
             OmetriaEventType.NOTIFICATION_INTERACTED,
             mapOf(NOTIFICATION_CONTEXT to context)
         )
     }
 
-    fun trackDeepLinkOpenedEvent(link: String, page: String) {
+    internal fun trackDeepLinkOpenedEvent(link: String, page: String) {
         trackEvent(
             OmetriaEventType.DEEP_LINK_OPENED,
             mapOf(LINK to link, PAGE to page)
         )
     }
 
-    fun trackErrorOccurredEvent(
+    internal fun trackErrorOccurredEvent(
         errorClass: String,
         errorMessage: String?,
         originalMessage: Map<String, Any>

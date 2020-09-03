@@ -56,6 +56,8 @@ internal class EventHandler(
             }
             OmetriaEventType.PROFILE_IDENTIFIED.id ->
                 Ometria.instance().trackPushTokenRefreshedEvent(repository.getPushToken())
+            OmetriaEventType.PROFILE_DEIDENTIFIED.id ->
+                Ometria.instance().generateInstallationId()
         }
 
         sendEvent(event)
