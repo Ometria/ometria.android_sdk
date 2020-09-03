@@ -75,16 +75,14 @@ internal class EventHandler(
 
     private fun flushEventsIfNeeded() {
         if (shouldFlush()) {
+            throttleCalendar.timeInMillis = System.currentTimeMillis()
+            throttleCalendar.add(Calendar.SECOND, THROTTLE_LIMIT)
+
             flushEvents()
         }
     }
 
     fun flushEvents() {
-        if (System.currentTimeMillis() < throttleCalendar.timeInMillis) return
-
-        throttleCalendar.timeInMillis = System.currentTimeMillis()
-        throttleCalendar.add(Calendar.SECOND, THROTTLE_LIMIT)
-
         val events = repository.getEvents().filter { !it.isBeingFlushed }
 
         events.groupBy { it.batchIdentifier() }.forEach { group ->
@@ -107,4 +105,5 @@ internal class EventHandler(
     }
 
     private fun shouldFlush(): Boolean = repository.getEvents().size >= FLUSH_LIMIT
+            && System.currentTimeMillis() >= throttleCalendar.timeInMillis
 }
