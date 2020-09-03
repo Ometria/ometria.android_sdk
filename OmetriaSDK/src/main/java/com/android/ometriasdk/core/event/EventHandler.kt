@@ -80,10 +80,9 @@ internal class EventHandler(
     }
 
     fun flushEvents() {
-        val currentTimeCalendar = Calendar.getInstance()
-        if (currentTimeCalendar.timeInMillis < throttleCalendar.timeInMillis) return
+        if (System.currentTimeMillis() < throttleCalendar.timeInMillis) return
 
-        throttleCalendar.time = currentTimeCalendar.time
+        throttleCalendar.timeInMillis = System.currentTimeMillis()
         throttleCalendar.add(Calendar.SECOND, THROTTLE_LIMIT)
 
         val events = repository.getEvents().filter { !it.isBeingFlushed }
