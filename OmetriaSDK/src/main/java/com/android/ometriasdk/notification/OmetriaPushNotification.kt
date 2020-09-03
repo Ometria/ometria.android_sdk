@@ -6,16 +6,10 @@ import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
-import android.graphics.BitmapFactory
 import android.os.Build
 import android.os.Bundle
 import androidx.core.app.NotificationCompat
-import com.android.ometriasdk.core.Constants.Logger.PUSH_NOTIFICATIONS
-import com.android.ometriasdk.core.Logger
-import com.android.ometriasdk.core.network.OmetriaThreadPoolExecutor
 import com.android.ometriasdk.core.network.dataToJson
-import java.io.IOException
-import java.net.URL
 
 /**
  * Created by cristiandregan
@@ -28,40 +22,15 @@ const val OMETRIA_CHANNEL_NAME = "ometria"
 
 internal class OmetriaPushNotification(
     private val context: Context,
-    private val notificationIcon: Int,
-    private val executor: OmetriaThreadPoolExecutor
+    private val notificationIcon: Int
 ) {
 
     fun createPushNotification(
         title: String?,
         body: String?,
+        image: Bitmap? = null,
         ometriaNotification: OmetriaNotification?,
         collapseId: String?
-    ) {
-        if (ometriaNotification?.imageUrl != null) {
-            displayNotificationWithImage(
-                title,
-                body,
-                ometriaNotification.imageUrl,
-                collapseId,
-                ometriaNotification
-            )
-        } else {
-            displayNotification(
-                title = title,
-                body = body,
-                collapseId = collapseId,
-                ometriaNotification = ometriaNotification
-            )
-        }
-    }
-
-    private fun displayNotification(
-        title: String?,
-        body: String?,
-        largeIcon: Bitmap? = null,
-        collapseId: String?,
-        ometriaNotification: OmetriaNotification?
     ) {
         val contentIntent = PendingIntent.getBroadcast(
             context,
@@ -76,8 +45,7 @@ internal class OmetriaPushNotification(
             .setContentText(body)
             .setAutoCancel(true)
             .setContentIntent(contentIntent)
-            .setGroup(collapseId)
-            .setLargeIcon(largeIcon)
+            .setLargeIcon(image)
 
         val notificationManager =
             context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
@@ -107,29 +75,5 @@ internal class OmetriaPushNotification(
             .setAction(PUSH_TAP_ACTION)
             .setClass(context, PushClickBroadcastReceiver::class.java)
             .putExtras(options)
-    }
-
-    private fun displayNotificationWithImage(
-        title: String?,
-        body: String?,
-        stringUrl: String?,
-        collapseId: String?,
-        ometriaNotification: OmetriaNotification?
-    ) {
-        executor.execute {
-            val url = URL(stringUrl)
-            try {
-                BitmapFactory.decodeStream(url.openConnection().getInputStream())?.also { bitmap ->
-                    displayNotification(title, body, bitmap, collapseId, ometriaNotification)
-                } ?: run {
-                    Logger.e(
-                        PUSH_NOTIFICATIONS,
-                        "The notification content has missing fields or is incorrectly formatted."
-                    )
-                }
-            } catch (e: IOException) {
-                Logger.e(PUSH_NOTIFICATIONS, e.message, e)
-            }
-        }
     }
 }

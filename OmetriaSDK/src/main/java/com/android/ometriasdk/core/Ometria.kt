@@ -59,14 +59,14 @@ class Ometria private constructor() {
                 it.ometriaConfig = OmetriaConfig(application, apiKey, notificationIcon)
                 it.localCache = LocalCache(application)
                 it.executor = OmetriaThreadPoolExecutor()
-                it.repository =
-                    Repository(
-                        Client(ConnectionFactory(it.ometriaConfig)),
-                        it.localCache,
-                        it.executor
-                    )
+                it.repository = Repository(
+                    Client(ConnectionFactory(it.ometriaConfig)),
+                    it.localCache,
+                    it.executor
+                )
                 it.eventHandler = EventHandler(application, it.repository)
-                it.notificationHandler = NotificationHandler()
+                it.notificationHandler =
+                    NotificationHandler(application, notificationIcon, it.executor)
                 it.isInitialized = true
 
                 if (it.shouldGenerateInstallationId()) {
@@ -108,12 +108,7 @@ class Ometria private constructor() {
     }
 
     fun onMessageReceived(remoteMessage: RemoteMessage) {
-        notificationHandler.handleNotification(
-            remoteMessage,
-            ometriaConfig.context,
-            ometriaConfig.notificationIcon,
-            executor
-        )
+        notificationHandler.handleNotification(remoteMessage)
     }
 
     fun onNewToken(token: String) {
