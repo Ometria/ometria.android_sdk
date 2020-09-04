@@ -9,25 +9,24 @@ import com.android.ometriasdk.core.Repository
 import java.text.DateFormat
 import java.text.SimpleDateFormat
 import java.util.*
+import java.util.concurrent.TimeUnit
 
 /**
  * Created by cristiandregan
  * on 27/07/2020.
  */
 
-private const val FLUSH_LIMIT = 20
+private const val FLUSH_LIMIT = 2
 private const val BATCH_LIMIT = 100
-private const val THROTTLE_LIMIT = 10
+private const val THROTTLE_LIMIT = 10L
+private const val NO_VALUE = -1L
 
-internal class EventHandler(
-    context: Context,
-    private val repository: Repository
-) {
+internal class EventHandler(context: Context, private val repository: Repository) {
     private val dateFormat: DateFormat =
         SimpleDateFormat(Constants.Date.API_DATE_FORMAT, Locale.getDefault())
     private val appId = context.packageName
     private val packageInfo = context.packageManager.getPackageInfo(context.packageName, 0)
-    private var throttleCalendar = Calendar.getInstance()
+    private var syncTimestamp: Long = NO_VALUE
 
     fun processEvent(
         type: OmetriaEventType,
@@ -77,9 +76,7 @@ internal class EventHandler(
 
     private fun flushEventsIfNeeded() {
         if (shouldFlush()) {
-            throttleCalendar.timeInMillis = System.currentTimeMillis()
-            throttleCalendar.add(Calendar.SECOND, THROTTLE_LIMIT)
-
+            syncTimestamp = System.currentTimeMillis()
             flushEvents()
         }
     }
@@ -107,5 +104,7 @@ internal class EventHandler(
     }
 
     private fun shouldFlush(): Boolean = repository.getEvents().size >= FLUSH_LIMIT
-            && System.currentTimeMillis() >= throttleCalendar.timeInMillis
+            && System.currentTimeMillis() >= syncTimestamp + TimeUnit.SECONDS.toMillis(
+        THROTTLE_LIMIT
+    )
 }
