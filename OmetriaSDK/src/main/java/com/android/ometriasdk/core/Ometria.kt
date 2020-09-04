@@ -31,6 +31,7 @@ import java.util.*
  * on 08/07/2020.
  */
 
+@Suppress("unused")
 class Ometria private constructor() {
 
     private lateinit var ometriaConfig: OmetriaConfig
@@ -52,33 +53,34 @@ class Ometria private constructor() {
         private val instance: Ometria by lazy { HOLDER.INSTANCE }
 
         @JvmStatic
-        fun initialize(application: Application, apiKey: String, notificationIcon: Int): Ometria {
+        fun initialize(
+            application: Application,
+            apiKey: String,
+            notificationIcon: Int
+        ) = instance.also {
+            it.ometriaConfig = OmetriaConfig(apiKey)
+            it.localCache = LocalCache(application)
+            it.executor = OmetriaThreadPoolExecutor()
+            it.repository = Repository(
+                Client(ConnectionFactory(it.ometriaConfig)),
+                it.localCache,
+                it.executor
+            )
+            it.eventHandler = EventHandler(application, it.repository)
+            it.notificationHandler =
+                NotificationHandler(application, notificationIcon, it.executor)
+            it.isInitialized = true
 
-            return instance.also {
-                it.ometriaConfig = OmetriaConfig(application, apiKey, notificationIcon)
-                it.localCache = LocalCache(application)
-                it.executor = OmetriaThreadPoolExecutor()
-                it.repository = Repository(
-                    Client(ConnectionFactory(it.ometriaConfig)),
-                    it.localCache,
-                    it.executor
-                )
-                it.eventHandler = EventHandler(application, it.repository)
-                it.notificationHandler =
-                    NotificationHandler(application, notificationIcon, it.executor)
-                it.isInitialized = true
-
-                if (it.shouldGenerateInstallationId()) {
-                    it.generateInstallationId()
-                }
-
-                val activityLifecycleHelper = OmetriaActivityLifecycleHelper(it.repository)
-
-                val lifecycle = ProcessLifecycleOwner.get().lifecycle
-                lifecycle.addObserver(activityLifecycleHelper)
-
-                application.registerActivityLifecycleCallbacks(activityLifecycleHelper)
+            if (it.shouldGenerateInstallationId()) {
+                it.generateInstallationId()
             }
+
+            val activityLifecycleHelper = OmetriaActivityLifecycleHelper(it.repository)
+
+            val lifecycle = ProcessLifecycleOwner.get().lifecycle
+            lifecycle.addObserver(activityLifecycleHelper)
+
+            application.registerActivityLifecycleCallbacks(activityLifecycleHelper)
         }
 
         @JvmStatic

@@ -21,85 +21,85 @@ internal object Logger {
         this.minLevel = minLevel
     }
 
-    private fun makeFinalTag(tag: String): String {
+    private fun createTag(tag: String): String {
         return "OmetriaSDK $tag"
     }
 
     fun v(tag: String, message: String) {
         if (shouldLog(VERBOSE)) {
-            Log.v(makeFinalTag(tag), message)
+            Log.v(createTag(tag), message)
         }
     }
 
     fun v(tag: String, message: String, throwable: Throwable) {
         if (shouldLog(VERBOSE)) {
-            Log.v(makeFinalTag(tag), message, throwable)
+            Log.v(createTag(tag), message, throwable)
         }
     }
 
     fun d(tag: String, message: String) {
         if (shouldLog(DEBUG)) {
-            Log.d(makeFinalTag(tag), message)
+            Log.d(createTag(tag), message)
         }
     }
 
     fun d(tag: String, message: String, any: Any) {
         if (shouldLog(DEBUG)) {
-            Log.d(makeFinalTag(tag), "$message $any")
+            Log.d(createTag(tag), "$message $any")
         }
     }
 
     fun d(tag: String, message: String, throwable: Throwable) {
         if (shouldLog(DEBUG)) {
-            Log.d(makeFinalTag(tag), message, throwable)
+            Log.d(createTag(tag), message, throwable)
         }
     }
 
     fun i(tag: String, message: String) {
         if (shouldLog(INFO)) {
-            Log.i(makeFinalTag(tag), message)
+            Log.i(createTag(tag), message)
         }
     }
 
     fun i(tag: String, message: String, throwable: Throwable) {
         if (shouldLog(INFO)) {
-            Log.i(makeFinalTag(tag), message, throwable)
+            Log.i(createTag(tag), message, throwable)
         }
     }
 
     fun w(tag: String, message: String) {
         if (shouldLog(WARN)) {
-            Log.w(makeFinalTag(tag), message)
+            Log.w(createTag(tag), message)
         }
     }
 
     fun w(tag: String, message: String, throwable: Throwable) {
         if (shouldLog(WARN)) {
-            Log.w(makeFinalTag(tag), message, throwable)
+            Log.w(createTag(tag), message, throwable)
         }
     }
 
     fun e(tag: String, message: String) {
         if (shouldLog(ERROR)) {
-            Log.e(makeFinalTag(tag), message)
+            Log.e(createTag(tag), message)
         }
     }
 
     fun e(tag: String, message: String?, throwable: Throwable?) {
         if (shouldLog(ERROR)) {
-            Log.e(makeFinalTag(tag), message, throwable)
+            Log.e(createTag(tag), message, throwable)
         }
     }
 
     fun wtf(tag: String, message: String) {
         if (shouldLog(ERROR)) {
-            Log.wtf(makeFinalTag(tag), message)
+            Log.wtf(createTag(tag), message)
         }
     }
 
     fun wtf(tag: String, message: String, throwable: Throwable) {
         if (shouldLog(ERROR)) {
-            Log.wtf(makeFinalTag(tag), message, throwable)
+            Log.wtf(createTag(tag), message, throwable)
         }
     }
 

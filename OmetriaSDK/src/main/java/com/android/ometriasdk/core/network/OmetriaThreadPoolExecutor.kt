@@ -29,5 +29,5 @@ class OmetriaThreadPoolExecutor : ThreadPoolExecutor(
     MAX_POOL_SIZE,
     KEEP_ALIVE_TIME_MILLISECONDS,
     TimeUnit.MILLISECONDS,
-    LinkedBlockingQueue<Runnable>()
+    LinkedBlockingQueue()
 )

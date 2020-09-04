@@ -25,11 +25,12 @@ internal class NotificationHandler(
     context: Context,
     notificationIcon: Int,
     private val executor: OmetriaThreadPoolExecutor,
+) {
+
     private val ometriaPushNotification: OmetriaPushNotification = OmetriaPushNotification(
         context,
         notificationIcon
     )
-) {
 
     fun handleNotification(remoteMessage: RemoteMessage) {
         val ometriaNotificationString = remoteMessage.data[KEY_OMETRIA]
@@ -44,13 +45,15 @@ internal class NotificationHandler(
         val body = remoteMessage.data[KEY_BODY]
 
         if (ometriaNotification?.imageUrl != null) {
-            loadNotificationWithIcon(
-                ometriaNotification.imageUrl,
-                title,
-                body,
-                ometriaNotification,
-                remoteMessage.collapseKey
-            )
+            loadImage(ometriaNotification.imageUrl) {
+                ometriaPushNotification.createPushNotification(
+                    title,
+                    body,
+                    it,
+                    ometriaNotification,
+                    remoteMessage.collapseKey
+                )
+            }
         } else {
             ometriaPushNotification.createPushNotification(
                 title = title,
@@ -61,13 +64,7 @@ internal class NotificationHandler(
         }
     }
 
-    private fun loadNotificationWithIcon(
-        stringUrl: String?,
-        title: String?,
-        body: String?,
-        ometriaNotification: OmetriaNotification?,
-        collapseId: String?
-    ) {
+    private fun loadImage(stringUrl: String?, success: (Bitmap?) -> Unit) {
         executor.execute {
             val url = URL(stringUrl)
             var bitmap: Bitmap? = null
@@ -75,22 +72,10 @@ internal class NotificationHandler(
                 bitmap = BitmapFactory.decodeStream(url.openConnection().getInputStream())
             } catch (e: IOException) {
                 Logger.e(Constants.Logger.PUSH_NOTIFICATIONS, e.message, e)
+                success(null)
             }
 
-            bitmap?.let {
-                ometriaPushNotification.createPushNotification(
-                    title,
-                    body,
-                    bitmap,
-                    ometriaNotification,
-                    collapseId
-                )
-            } ?: run {
-                Logger.e(
-                    Constants.Logger.PUSH_NOTIFICATIONS,
-                    "The notification content has missing fields or is incorrectly formatted."
-                )
-            }
+            success(bitmap)
         }
     }
 }

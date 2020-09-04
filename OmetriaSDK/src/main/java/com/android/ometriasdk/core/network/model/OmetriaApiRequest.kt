@@ -1,6 +1,7 @@
 package com.android.ometriasdk.core.network.model
 
 import android.os.Build
+import com.android.ometriasdk.core.Constants.Common.PLATFORM
 import com.android.ometriasdk.core.event.OmetriaEvent
 
 /**
@@ -13,7 +14,7 @@ internal data class OmetriaApiRequest(
     val installationId: String? = null,
     val appBuildNumber: String? = null,
     val sdkVersion: String? = null,
-    val platform: String = "Android",
+    val platform: String = PLATFORM,
     val osVersion: String? = null,
     val deviceManufacturer: String? = Build.MANUFACTURER,
     val deviceModel: String? = Build.MODEL,

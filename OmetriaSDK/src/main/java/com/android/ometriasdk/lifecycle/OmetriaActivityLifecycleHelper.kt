@@ -21,6 +21,8 @@ internal class OmetriaActivityLifecycleHelper(private val repository: Repository
     private val firstLaunch = AtomicBoolean(false)
     private val trackedApplicationLifecycleEvents = AtomicBoolean(false)
 
+    // DefaultLifecycleObserver
+
     /**
      * Using lifecycle's observer onCreate callback to decide if is first launch
      */
@@ -55,7 +57,7 @@ internal class OmetriaActivityLifecycleHelper(private val repository: Repository
         Ometria.instance().trackAppBackgroundedEvent()
     }
 
-    //////////////////////////////////////////////////////////////////////////////////////////////////
+    // ActivityLifecycleCallbacks
 
     /**
      * Using activity created callback to track Open Deep Link event
