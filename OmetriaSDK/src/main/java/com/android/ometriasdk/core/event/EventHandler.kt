@@ -16,7 +16,7 @@ import java.util.concurrent.TimeUnit
  * on 27/07/2020.
  */
 
-private const val FLUSH_LIMIT = 2
+private const val FLUSH_LIMIT = 20
 private const val BATCH_LIMIT = 100
 private const val THROTTLE_LIMIT = 10L
 private const val NO_VALUE = -1L

@@ -23,11 +23,8 @@ internal class Repository(
 
     private val dropStatusCodesRange = 400..499
 
-    fun flushEvents(
-        events: List<OmetriaEvent>,
-        success: () -> Unit,
-        error: () -> Unit
-    ) {
+    fun flushEvents(events: List<OmetriaEvent>, success: () -> Unit, error: () -> Unit) {
+        events.forEach { it.isBeingFlushed = true }
         val apiRequest = events.toApiRequest()
         updateEvents(events, true)
         postEvents(apiRequest, success, error)
