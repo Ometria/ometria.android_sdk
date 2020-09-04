@@ -35,7 +35,7 @@ internal class ConnectionFactory(private val ometriaConfig: OmetriaConfig) {
         connection.connectTimeout = timeout
         connection.readTimeout = timeout
         connection.requestMethod = POST
-        connection.addRequestProperty(HEADER_AUTHENTICATION, ometriaConfig.apiKey)
+        connection.addRequestProperty(HEADER_AUTHENTICATION, ometriaConfig.apiToken)
         connection.setRequestProperty(HEADER_CONTENT_TYPE, APPLICATION_JSON)
         connection.doInput = true
         connection.doOutput = true

@@ -6,7 +6,7 @@ package com.android.ometriasdk.core
  */
 
 internal class OmetriaConfig(
-    var apiKey: String,
+    var apiToken: String,
 ) {
     var enableDebugging: Boolean = false
 }
