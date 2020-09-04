@@ -65,10 +65,7 @@ internal class OmetriaPushNotification(
     private fun getRoutingIntent(ometriaNotification: OmetriaNotification?): Intent {
         val options = Bundle()
         ometriaNotification?.context?.let {
-            options.putString(
-                KEY_OMETRIA_CONTEXT,
-                it.dataToJson().toString()
-            )
+            options.putString(KEY_OMETRIA_CONTEXT, it.dataToJson().toString())
         }
 
         return Intent()
