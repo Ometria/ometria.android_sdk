@@ -1,6 +1,7 @@
 package com.android.sample
 
 import android.app.Application
+import android.os.Handler
 import com.android.ometriasdk.core.Ometria
 
 /**
@@ -22,5 +23,7 @@ class SampleApp : Application() {
             "pk_test_IY2XfgrRsIlRGBP0rH2ks9dAbG1Ov24BsdggNTqP",
             R.mipmap.ic_launcher
         ).loggingEnabled(true)
+
+        Handler().postDelayed({ Ometria.instance().clear() }, 10000)
     }
 }

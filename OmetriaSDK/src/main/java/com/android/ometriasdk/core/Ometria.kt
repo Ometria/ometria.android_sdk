@@ -366,6 +366,6 @@ class Ometria private constructor() {
      * Clears all the events from local cache.
      */
     fun clear() {
-        localCache.clear()
+        localCache.clearEvents()
     }
 }

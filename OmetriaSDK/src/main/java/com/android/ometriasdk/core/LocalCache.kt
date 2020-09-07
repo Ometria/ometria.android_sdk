@@ -37,8 +37,8 @@ internal class LocalCache(private val context: Context) {
     }
 
     fun saveEvent(ometriaEvent: OmetriaEvent) {
-        val eventsString = getLocalCachePreferences()
-            .getString(EVENTS_KEY, JSON_ARRAY) ?: JSON_ARRAY
+        val eventsString =
+            getLocalCachePreferences().getString(EVENTS_KEY, JSON_ARRAY) ?: JSON_ARRAY
 
         val eventsList = eventsString.toOmetriaEventList()
 
@@ -49,7 +49,7 @@ internal class LocalCache(private val context: Context) {
     }
 
     fun getEvents(): List<OmetriaEvent> {
-        val eventsString = getLocalCachePreferences().getString(EVENTS_KEY, null) ?: ""
+        val eventsString = getLocalCachePreferences().getString(EVENTS_KEY, null) ?: JSON_ARRAY
 
         return eventsString.toOmetriaEventList()
     }
@@ -89,9 +89,7 @@ internal class LocalCache(private val context: Context) {
         return getLocalCachePreferences().getString(PUSH_TOKEN_KEY, null)
     }
 
-    fun clear() {
-        getLocalCachePreferences().edit()
-            .clear()
-            .apply()
+    fun clearEvents() {
+        getLocalCachePreferences().edit().remove(EVENTS_KEY).apply()
     }
 }
