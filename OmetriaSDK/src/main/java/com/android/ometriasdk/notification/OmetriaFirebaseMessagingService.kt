@@ -15,7 +15,7 @@ open class OmetriaFirebaseMessagingService : FirebaseMessagingService() {
 
     override fun onMessageReceived(remoteMessage: RemoteMessage) {
         super.onMessageReceived(remoteMessage)
-        Logger.d(Constants.Logger.PUSH_NOTIFICATIONS, "$remoteMessage")
+        Logger.d(Constants.Logger.PUSH_NOTIFICATIONS, "Notification received")
 
         Ometria.instance().onMessageReceived(remoteMessage)
     }

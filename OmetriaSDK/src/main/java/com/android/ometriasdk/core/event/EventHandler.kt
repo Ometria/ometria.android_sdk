@@ -16,7 +16,7 @@ import java.util.concurrent.TimeUnit
  * on 27/07/2020.
  */
 
-private const val FLUSH_LIMIT = 20
+private const val FLUSH_LIMIT = 10
 private const val BATCH_LIMIT = 100
 private const val THROTTLE_LIMIT = 10L
 private const val NO_VALUE = -1L
@@ -47,6 +47,8 @@ internal class EventHandler(context: Context, private val repository: Repository
             data = data
         )
 
+        sendEvent(event)
+
         when (event.type) {
             OmetriaEventType.PUSH_TOKEN_REFRESHED.id -> {
                 data?.let {
@@ -58,8 +60,6 @@ internal class EventHandler(context: Context, private val repository: Repository
             OmetriaEventType.PROFILE_DEIDENTIFIED.id ->
                 Ometria.instance().generateInstallationId()
         }
-
-        sendEvent(event)
     }
 
     private fun sendEvent(ometriaEvent: OmetriaEvent) {
