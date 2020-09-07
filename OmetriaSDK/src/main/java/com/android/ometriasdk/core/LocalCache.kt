@@ -71,7 +71,9 @@ internal class LocalCache(private val context: Context) {
     fun removeEvents(eventsToRemove: List<OmetriaEvent>) {
         val eventsList = getEvents().toMutableList()
 
-        eventsToRemove.forEach { eventsList.remove(it) }
+        eventsToRemove.forEach { event ->
+            eventsList.remove(eventsList.first { it.eventId == event.eventId })
+        }
 
         getLocalCachePreferences().edit().putString(EVENTS_KEY, eventsList.toJson().toString())
             .apply()
