@@ -71,9 +71,6 @@ internal class OmetriaActivityLifecycleHelper(private val repository: Repository
         if (intent == null || intent.data == null) {
             return
         }
-
-        // ToDo extract link and page
-        Ometria.instance().trackDeepLinkOpenedEvent("link", "page")
     }
 
     /**

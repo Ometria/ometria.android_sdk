@@ -49,7 +49,9 @@ class HomeFragment : Fragment() {
         screenPosition = arguments?.getInt(POSITION_KEY)!!
 
         detailsBTN.setOnClickListener {
-            startActivity(Intent(requireContext(), DetailsActivity::class.java))
+            val intent = Intent(requireContext(), DetailsActivity::class.java)
+            intent.putExtra("asd", "asd")
+            startActivity(intent)
         }
     }
 
