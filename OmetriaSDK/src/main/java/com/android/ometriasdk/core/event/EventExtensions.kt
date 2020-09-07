@@ -12,7 +12,7 @@ import java.util.*
  */
 
 internal fun OmetriaEvent.batchIdentifier(): Int {
-    return (appId + appBuildNumber + appVersion + osVersion).hashCode()
+    return (appId + appBuildNumber + appVersion + osVersion + installationId).hashCode()
 }
 
 internal fun List<OmetriaEvent>.toApiRequest(): OmetriaApiRequest {
