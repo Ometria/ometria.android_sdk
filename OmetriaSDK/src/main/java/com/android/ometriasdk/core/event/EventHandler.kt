@@ -103,8 +103,9 @@ internal class EventHandler(context: Context, private val repository: Repository
         }
     }
 
-    private fun shouldFlush(): Boolean = repository.getEvents().size >= FLUSH_LIMIT
-            && System.currentTimeMillis() >= syncTimestamp + TimeUnit.SECONDS.toMillis(
-        THROTTLE_LIMIT
-    )
+    private fun shouldFlush(): Boolean =
+        repository.getEvents().filter { !it.isBeingFlushed }.size >= FLUSH_LIMIT
+                && System.currentTimeMillis() >= syncTimestamp + TimeUnit.SECONDS.toMillis(
+            THROTTLE_LIMIT
+        )
 }
