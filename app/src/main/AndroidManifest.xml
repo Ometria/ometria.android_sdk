@@ -18,7 +18,9 @@
             </intent-filter>
         </activity>
 
-        <activity android:name=".presentation.DetailsActivity" />
+        <activity
+            android:name=".presentation.DetailsActivity"
+            android:theme="@style/DetailsTheme" />
 
         <service
             android:name=".service.SampleFirebaseMessagingService"

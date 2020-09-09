@@ -9,7 +9,7 @@ import androidx.fragment.app.FragmentPagerAdapter
  * on 17/07/2020.
  */
 
-private const val SCREENS_NO = 3
+private const val SCREENS_NO = 2
 
 class ViewPagerAdapter(manager: FragmentManager) :
     FragmentPagerAdapter(manager, BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT) {
@@ -17,7 +17,6 @@ class ViewPagerAdapter(manager: FragmentManager) :
         return when (position) {
             FIRST_FRAGMENT_POS -> HomeFragment.newInstance(TAB_ONE)
             SECOND_FRAGMENT_POS -> HomeFragment.newInstance(TAB_TWO)
-            THIRD_FRAGMENT_POS -> HomeFragment.newInstance(TAB_THREE)
 
             else -> HomeFragment.newInstance(TAB_ONE)
         }

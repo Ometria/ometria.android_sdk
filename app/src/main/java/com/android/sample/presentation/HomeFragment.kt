@@ -7,9 +7,17 @@ import android.view.View
 import android.view.View.GONE
 import android.view.View.VISIBLE
 import android.view.ViewGroup
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
+import androidx.recyclerview.widget.DividerItemDecoration
+import androidx.recyclerview.widget.LinearLayoutManager
+import com.android.ometriasdk.core.Ometria
+import com.android.ometriasdk.core.event.OmetriaBasket
+import com.android.ometriasdk.core.event.OmetriaBasketItem
 import com.android.sample.R
+import com.android.sample.data.EventType
 import kotlinx.android.synthetic.main.fragment_home.*
+
 
 /**
  * Created by cristiandregan
@@ -19,7 +27,6 @@ import kotlinx.android.synthetic.main.fragment_home.*
 private const val POSITION_KEY = "position_key"
 const val TAB_ONE = 0
 const val TAB_TWO = 1
-const val TAB_THREE = 2
 
 class HomeFragment : Fragment() {
 
@@ -48,31 +55,71 @@ class HomeFragment : Fragment() {
 
         screenPosition = arguments?.getInt(POSITION_KEY)!!
 
+        setUpViews()
+        initEventsRV()
+    }
+
+    private fun setUpViews() {
+        detailsBTN.isVisible = screenPosition == TAB_ONE
+        eventsRV.isVisible = screenPosition != TAB_ONE
+
         detailsBTN.setOnClickListener {
-            val intent = Intent(requireContext(), DetailsActivity::class.java)
-            intent.putExtra("asd", "asd")
-            startActivity(intent)
+            startActivity(Intent(requireContext(), DetailsActivity::class.java))
         }
     }
 
-    override fun onResume() {
-        super.onResume()
-
-        when (screenPosition) {
-            TAB_ONE -> {
-                screenTitleTV.text = "List of Products"
-                detailsBTN.visibility = VISIBLE
-            }
-
-            TAB_TWO -> {
-                screenTitleTV.text = "Orders"
-                detailsBTN.visibility = GONE
-            }
-
-            TAB_THREE -> {
-                screenTitleTV.text = "My Profile"
-                detailsBTN.visibility = GONE
-            }
+    private fun initEventsRV() {
+        eventsRV.layoutManager = LinearLayoutManager(requireContext())
+        eventsRV.adapter = EventsAdapter {
+            sendEvent(it)
         }
+        eventsRV.addItemDecoration(
+            DividerItemDecoration(eventsRV.context, DividerItemDecoration.VERTICAL)
+        )
+    }
+
+    private fun sendEvent(eventType: EventType) {
+        when (eventType) {
+            EventType.SCREEN_VIEWED -> Ometria.instance()
+                .trackScreenViewedEvent("TestScreenName")
+            EventType.PROFILE_IDENTIFIED_BY_EMAIL -> Ometria.instance()
+                .trackProfileIdentifiedByEmailEvent("test@gmail.com")
+            EventType.PROFILE_IDENTIFIED_BY_CUSTOMER_ID -> Ometria.instance()
+                .trackProfileIdentifiedByCustomerIdEvent("test_customer_id")
+            EventType.PROFILE_DEIDENTIFIED -> Ometria.instance()
+                .trackProfileDeidentifiedEvent()
+            EventType.PRODUCT_VIEWED -> Ometria.instance()
+                .trackProductViewedEvent("product_1")
+            EventType.PRODUCT_LISTING_VIEWED -> Ometria.instance()
+                .trackProductListingViewedEvent()
+            EventType.WISH_LIST_ADDED_TO -> Ometria.instance()
+                .trackWishlistAddedToEvent("product_1")
+            EventType.WISHLIST_REMOVED_FROM -> Ometria.instance()
+                .trackWishlistRemovedFromEvent("product_1")
+            EventType.BASKET_VIEWED -> Ometria.instance()
+                .trackBasketViewedEvent()
+            EventType.BASKET_UPDATED -> Ometria.instance()
+                .trackBasketUpdatedEvent(getBasket())
+            EventType.ORDER_COMPLETED -> Ometria.instance()
+                .trackOrderCompletedEvent("orderId_1", getBasket())
+            EventType.HOME_SCREEN_VIEWED -> Ometria.instance()
+                .trackHomeScreenViewedEvent()
+            EventType.CUSTOM -> Ometria.instance()
+                .trackCustomEvent("my_custom_type", mapOf(Pair("param_key", "param_value")))
+            EventType.FLUSH -> Ometria.instance().flush()
+            EventType.CLEAR -> Ometria.instance().clear()
+        }
+    }
+
+    private fun getBasket(): OmetriaBasket {
+        val myItem = OmetriaBasketItem(
+            productId = "product-1",
+            sku = "sku-product-1",
+            quantity = 1,
+            price = 12.0f
+        )
+        val myItems = listOf(myItem)
+
+        return OmetriaBasket(totalPrice = 12.0f, currency = "USD", items = myItems)
     }
 }

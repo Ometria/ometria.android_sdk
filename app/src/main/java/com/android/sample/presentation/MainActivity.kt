@@ -6,12 +6,9 @@ import androidx.viewpager.widget.ViewPager
 import com.android.sample.R
 import kotlinx.android.synthetic.main.activity_main.*
 
-private val TAG = MainActivity::class.simpleName
-
 private const val OFF_SCREEN_PAGE_LIMIT = 3
 const val FIRST_FRAGMENT_POS = 0
 const val SECOND_FRAGMENT_POS = 1
-const val THIRD_FRAGMENT_POS = 2
 
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -34,9 +31,6 @@ class MainActivity : AppCompatActivity() {
                 }
                 R.id.my_orders -> {
                     switchFragment(SECOND_FRAGMENT_POS)
-                }
-                R.id.my_profile -> {
-                    switchFragment(THIRD_FRAGMENT_POS)
                 }
             }
             false
