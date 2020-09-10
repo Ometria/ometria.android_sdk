@@ -3,6 +3,8 @@ package com.android.ometriasdk.core.event
 import android.content.Context
 import androidx.core.content.pm.PackageInfoCompat
 import com.android.ometriasdk.core.Constants
+import com.android.ometriasdk.core.Constants.Logger.EVENTS
+import com.android.ometriasdk.core.Constants.Logger.NETWORK
 import com.android.ometriasdk.core.Logger
 import com.android.ometriasdk.core.Ometria
 import com.android.ometriasdk.core.Repository
@@ -63,7 +65,7 @@ internal class EventHandler(context: Context, private val repository: Repository
     }
 
     private fun sendEvent(ometriaEvent: OmetriaEvent) {
-        Logger.d(Constants.Logger.EVENTS, "Track event - ", ometriaEvent)
+        Logger.d(EVENTS, "Track event - ", ometriaEvent)
 
         repository.saveEvent(ometriaEvent)
         when (ometriaEvent.type) {
@@ -75,7 +77,7 @@ internal class EventHandler(context: Context, private val repository: Repository
     }
 
     private fun flushEventsIfNeeded() {
-        if (shouldFlush()) {
+        if (shouldFlush() && canFlush()) {
             syncTimestamp = System.currentTimeMillis()
             flushEvents()
         }
@@ -90,12 +92,12 @@ internal class EventHandler(context: Context, private val repository: Repository
                 .forEach {
                     repository.flushEvents(it, success = {
                         Logger.d(
-                            Constants.Logger.EVENTS,
+                            EVENTS,
                             "Successfully flushed ${it.size} events"
                         )
                     }, error = {
                         Logger.d(
-                            Constants.Logger.EVENTS,
+                            EVENTS,
                             "Failed to flush ${it.size} events"
                         )
                     })
@@ -103,9 +105,19 @@ internal class EventHandler(context: Context, private val repository: Repository
         }
     }
 
+    private fun canFlush(): Boolean {
+        return (System.currentTimeMillis() >= syncTimestamp + TimeUnit.SECONDS.toMillis(
+            THROTTLE_LIMIT
+        )).also {
+            if (!it) {
+                Logger.d(
+                    NETWORK,
+                    "Attempted to flush events but not enough time has passed since the last flush."
+                )
+            }
+        }
+    }
+
     private fun shouldFlush(): Boolean =
         repository.getEvents().filter { !it.isBeingFlushed }.size >= FLUSH_LIMIT
-                && System.currentTimeMillis() >= syncTimestamp + TimeUnit.SECONDS.toMillis(
-            THROTTLE_LIMIT
-        )
 }
