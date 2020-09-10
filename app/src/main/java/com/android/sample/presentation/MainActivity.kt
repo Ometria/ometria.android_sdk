@@ -6,7 +6,7 @@ import androidx.viewpager.widget.ViewPager
 import com.android.sample.R
 import kotlinx.android.synthetic.main.activity_main.*
 
-private const val OFF_SCREEN_PAGE_LIMIT = 3
+private const val OFF_SCREEN_PAGE_LIMIT = 2
 const val FIRST_FRAGMENT_POS = 0
 const val SECOND_FRAGMENT_POS = 1
 

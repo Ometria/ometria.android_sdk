@@ -1,7 +1,6 @@
 package com.android.sample
 
 import android.app.Application
-import android.os.Handler
 import com.android.ometriasdk.core.Ometria
 
 /**
@@ -18,12 +17,12 @@ class SampleApp : Application() {
         super.onCreate()
         instance = this
 
+        // Initializing Ometria SDK with application context, api token and notifications icon resource id
+        // Note: Replace api token with your own
         Ometria.initialize(
             this,
             "pk_test_IY2XfgrRsIlRGBP0rH2ks9dAbG1Ov24BsdggNTqP",
             R.mipmap.ic_launcher
         ).loggingEnabled(true)
-
-        Handler().postDelayed({ Ometria.instance().clear() }, 10000)
     }
 }

@@ -21,15 +21,15 @@ internal class PushClickBroadcastReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context?, intent: Intent?) {
         val action = intent?.action
         if (action != null && action == PUSH_TAP_ACTION && context != null) {
-            val mainIntent = context.packageManager.getLaunchIntentForPackage(context.packageName)
+            val launchIntent = context.packageManager.getLaunchIntentForPackage(context.packageName)
             val extras = Bundle()
             extras.putString(
                 NOTIFICATION_ACTION_URL_KEY,
                 intent.getStringExtra(NOTIFICATION_ACTION_URL_KEY)
             )
-            mainIntent?.putExtras(extras)
-            mainIntent?.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-            context.startActivity(mainIntent)
+            launchIntent?.putExtras(extras)
+            launchIntent?.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+            context.startActivity(launchIntent)
 
             val ometriaContextString = intent.getStringExtra(OMETRIA_CONTEXT_KEY)
             ometriaContextString?.let {

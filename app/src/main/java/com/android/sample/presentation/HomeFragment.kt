@@ -111,6 +111,9 @@ class HomeFragment : Fragment() {
         }
     }
 
+    /**
+     * Mocking a basket object
+     */
     private fun getBasket(): OmetriaBasket {
         val myItem = OmetriaBasketItem(
             productId = "product-1",

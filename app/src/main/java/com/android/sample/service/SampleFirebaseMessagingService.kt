@@ -1,6 +1,5 @@
 package com.android.sample.service
 
-import android.util.Log
 import com.android.ometriasdk.notification.OmetriaFirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
 
@@ -9,17 +8,18 @@ import com.google.firebase.messaging.RemoteMessage
  * on 09/07/2020.
  */
 
-private val TAG = SampleFirebaseMessagingService::class.simpleName
-
+/**
+ * A service that intercepts Firebase's push messages and new token generation
+ * Note: Extends OmetriaFirebaseMessagingService and calls super on overridden base methods, needed be Ometria SDK
+ * in order to automatically track push notifications related events.
+ */
 class SampleFirebaseMessagingService : OmetriaFirebaseMessagingService() {
 
     override fun onMessageReceived(remoteMessage: RemoteMessage) {
         super.onMessageReceived(remoteMessage)
-        Log.d(TAG, "$remoteMessage")
     }
 
     override fun onNewToken(token: String) {
         super.onNewToken(token)
-        Log.d(TAG, "Token: $token")
     }
 }

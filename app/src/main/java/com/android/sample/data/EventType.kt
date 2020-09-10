@@ -4,7 +4,10 @@ package com.android.sample.data
  * Created by cristiandregan
  * on 17/08/2020.
  */
-
+/**
+ * An enum for manually tracked events.
+ * Note: Please check Ometria SDK official documentation in order to see all events.
+ */
 enum class EventType {
     SCREEN_VIEWED,
     PROFILE_IDENTIFIED_BY_EMAIL,
