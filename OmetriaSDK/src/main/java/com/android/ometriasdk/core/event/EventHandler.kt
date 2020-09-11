@@ -23,6 +23,9 @@ private const val BATCH_LIMIT = 100
 private const val THROTTLE_LIMIT = 10L
 private const val NO_VALUE = -1L
 
+/**
+ * Class used to process logged or intercepted events.
+ */
 internal class EventHandler(context: Context, private val repository: Repository) {
     private val dateFormat: DateFormat =
         SimpleDateFormat(Constants.Date.API_DATE_FORMAT, Locale.getDefault())
@@ -105,6 +108,9 @@ internal class EventHandler(context: Context, private val repository: Repository
         }
     }
 
+    /**
+     * Checks if enough time passed between two consecutive flushes
+     */
     private fun canFlush(): Boolean {
         return (System.currentTimeMillis() >= syncTimestamp + TimeUnit.SECONDS.toMillis(
             THROTTLE_LIMIT
@@ -118,6 +124,10 @@ internal class EventHandler(context: Context, private val repository: Repository
         }
     }
 
+    /**
+     * Checks if the size of cached events list, which are not currently being flushed, is greater than
+     * the [FLUSH_LIMIT]
+     */
     private fun shouldFlush(): Boolean =
         repository.getEvents().filter { !it.isBeingFlushed }.size >= FLUSH_LIMIT
 }

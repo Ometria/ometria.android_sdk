@@ -11,6 +11,10 @@ import com.google.firebase.messaging.RemoteMessage
  * on 17/07/2020.
  */
 
+/**
+ * A Service that extends the [FirebaseMessagingService] used to intercept push notifications and push token generation.
+ * Use this as default push notifications service in your AndroidManifest file or extend it in your own Service.
+ */
 open class OmetriaFirebaseMessagingService : FirebaseMessagingService() {
 
     override fun onMessageReceived(remoteMessage: RemoteMessage) {

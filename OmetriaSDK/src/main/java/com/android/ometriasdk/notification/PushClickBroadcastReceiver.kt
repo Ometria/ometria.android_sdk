@@ -5,6 +5,7 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import com.android.ometriasdk.core.Ometria
+import com.android.ometriasdk.core.event.OmetriaEventType
 import com.android.ometriasdk.core.network.toMap
 import org.json.JSONObject
 
@@ -16,6 +17,10 @@ import org.json.JSONObject
 internal const val OMETRIA_CONTEXT_KEY = "key_ometria_context"
 const val NOTIFICATION_ACTION_URL_KEY = "deep_link_action_url_key"
 
+/**
+ * Used by Push notification's routing intent.
+ * The purpose of using a BroadcastReceiver is to intercept [OmetriaEventType.NOTIFICATION_INTERACTED] event.
+ */
 internal class PushClickBroadcastReceiver : BroadcastReceiver() {
 
     override fun onReceive(context: Context?, intent: Intent?) {

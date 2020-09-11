@@ -11,10 +11,19 @@ import java.util.*
  * on 28/07/2020.
  */
 
+/**
+ * @return A hashcode used to compare and group cached events in batches when performing flush.
+ */
 internal fun OmetriaEvent.batchIdentifier(): Int {
     return (appId + appBuildNumber + appVersion + osVersion + installationId).hashCode()
 }
 
+/**
+ * Used to convert a list of events into an [OmetriaApiRequest] object, which is the model used when
+ * performing flush.
+ *
+ * @return An [OmetriaApiRequest]
+ */
 internal fun List<OmetriaEvent>.toApiRequest(): OmetriaApiRequest {
     val dateFormat: DateFormat =
         SimpleDateFormat(Constants.Date.API_DATE_FORMAT, Locale.getDefault())
