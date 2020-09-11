@@ -4,13 +4,12 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".presentation.MainActivity">
+    tools:context="com.android.sample.presentation.MainActivity">
 
     <androidx.viewpager.widget.ViewPager
         android:id="@+id/containerVP"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_marginTop="20dp"
         app:layout_constraintBottom_toTopOf="@+id/bottomMenuBnv"
         app:layout_constraintTop_toTopOf="parent" />
 

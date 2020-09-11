@@ -1,4 +1,4 @@
-package com.android.ometriapoc.presentation
+package com.android.sample.presentation
 
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
@@ -8,18 +8,21 @@ import androidx.fragment.app.FragmentPagerAdapter
  * Created by cristiandregan
  * on 17/07/2020.
  */
+
+private const val SCREENS_NO = 2
+
 class ViewPagerAdapter(manager: FragmentManager) :
     FragmentPagerAdapter(manager, BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT) {
-    private val mFragmentList = mutableListOf<Fragment>()
     override fun getItem(position: Int): Fragment {
-        return mFragmentList[position]
+        return when (position) {
+            FIRST_FRAGMENT_POS -> HomeFragment.newInstance(TAB_ONE)
+            SECOND_FRAGMENT_POS -> HomeFragment.newInstance(TAB_TWO)
+
+            else -> HomeFragment.newInstance(TAB_ONE)
+        }
     }
 
     override fun getCount(): Int {
-        return mFragmentList.size
-    }
-
-    fun addFragment(fragment: Fragment) {
-        mFragmentList.add(fragment)
+        return SCREENS_NO
     }
 }

@@ -2,13 +2,11 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item
         android:id="@+id/restaurants"
-        android:title="@string/tab_one" />
+        android:icon="@drawable/ic_home_24px"
+        android:title="@string/home" />
 
     <item
         android:id="@+id/my_orders"
-        android:title="@string/tab_two" />
-
-    <item
-        android:id="@+id/my_profile"
-        android:title="@string/tab_three" />
+        android:icon="@drawable/ic_list_24px"
+        android:title="@string/events" />
 </menu>

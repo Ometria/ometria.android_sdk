@@ -1,6 +1,8 @@
 <resources>
-    <string name="app_name">Ometria</string>
+    <string name="app_name">Ometria Sample</string>
     <string name="tab_one">TAB ONE</string>
     <string name="tab_two">TAB TWO</string>
     <string name="tab_three">TAB THREE</string>
+    <string name="home">Home</string>
+    <string name="events">Events</string>
 </resources>
