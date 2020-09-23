@@ -9,7 +9,7 @@ android {
         minSdkVersion 21
         targetSdkVersion 29
         versionCode 1
-        versionName "1.0"
+        versionName "1.0.2"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles "consumer-rules.pro"
@@ -43,3 +43,12 @@ dependencies {
     androidTestImplementation 'androidx.test.ext:junit:1.1.2'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
 }
+
+// Publishing
+ext {
+    PUBLISH_GROUP_ID = 'com.ometria'
+    PUBLISH_ARTIFACT_ID = 'android-sdk'
+    PUBLISH_VERSION = android.defaultConfig.versionName
+}
+
+apply from: "${rootProject.projectDir}/scripts/publish-mavencentral.gradle"
