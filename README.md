@@ -29,7 +29,7 @@ We publish builds of our library to the Maven central repository as an .aar file
 
 ```gradle
 dependencies {
-    implementation 'com.android.ometria:ometria-android:1.+'
+    implementation 'com.ometria:android-sdk:1.+'
 }
 ```
 ### Step 2 - Perform Gradle Sync:
