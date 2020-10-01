@@ -98,4 +98,24 @@ internal class Repository(
     fun getPushToken(): String? {
         return localCache.getPushToken()
     }
+
+    fun saveCustomerId(customerId: String) {
+        localCache.saveCustomerId(customerId)
+    }
+
+    fun getCustomerId(): String? {
+        return localCache.getCustomerId()
+    }
+
+    fun saveEmail(email: String) {
+        localCache.saveEmail(email)
+    }
+
+    fun getEmail(): String? {
+        return localCache.getEmail()
+    }
+
+    fun clearProfileIdentifiedData(){
+        localCache.clearProfileIdentifiedData()
+    }
 }

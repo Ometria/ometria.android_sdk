@@ -142,7 +142,7 @@ class Ometria private constructor() {
         type: OmetriaEventType,
         data: Map<String, Any>? = null
     ) {
-        eventHandler.processEvent(type, data)
+        eventHandler.processEvent(type, data?.toMutableMap())
     }
 
     internal fun trackAppInstalledEvent() {

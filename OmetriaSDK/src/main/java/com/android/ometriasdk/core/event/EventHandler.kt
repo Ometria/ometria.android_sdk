@@ -5,6 +5,8 @@ import androidx.core.content.pm.PackageInfoCompat
 import com.android.ometriasdk.core.Constants
 import com.android.ometriasdk.core.Constants.Logger.EVENTS
 import com.android.ometriasdk.core.Constants.Logger.NETWORK
+import com.android.ometriasdk.core.Constants.Params.CUSTOMER_ID
+import com.android.ometriasdk.core.Constants.Params.EMAIL
 import com.android.ometriasdk.core.Logger
 import com.android.ometriasdk.core.Ometria
 import com.android.ometriasdk.core.Repository
@@ -35,11 +37,25 @@ internal class EventHandler(context: Context, private val repository: Repository
 
     fun processEvent(
         type: OmetriaEventType,
-        data: Map<String, Any>? = null
+        data: MutableMap<String, Any>? = null
     ) {
         val installationId = repository.getInstallationId()
         val appVersion = packageInfo.versionName
         val appBuildNumber = PackageInfoCompat.getLongVersionCode(packageInfo).toString()
+
+        if (type == OmetriaEventType.PUSH_TOKEN_REFRESHED) {
+            data?.let {
+                repository.savePushToken(it[Constants.Params.PUSH_TOKEN] as String)
+
+                repository.getCustomerId()?.let { customerId ->
+                    data[CUSTOMER_ID] = customerId
+                }
+
+                repository.getEmail()?.let { customerId ->
+                    data[EMAIL] = customerId
+                }
+            }
+        }
 
         val event = OmetriaEvent(
             eventId = UUID.randomUUID().toString(),
@@ -55,15 +71,24 @@ internal class EventHandler(context: Context, private val repository: Repository
         sendEvent(event)
 
         when (event.type) {
-            OmetriaEventType.PUSH_TOKEN_REFRESHED.id -> {
-                data?.let {
-                    repository.savePushToken(it[Constants.Params.PUSH_TOKEN] as String)
-                }
-            }
-            OmetriaEventType.PROFILE_IDENTIFIED.id ->
+            OmetriaEventType.PROFILE_IDENTIFIED.id -> {
+                cacheProfileIdentifiedData(data)
                 Ometria.instance().trackPushTokenRefreshedEvent(repository.getPushToken())
-            OmetriaEventType.PROFILE_DEIDENTIFIED.id ->
+            }
+            OmetriaEventType.PROFILE_DEIDENTIFIED.id -> {
                 Ometria.instance().generateInstallationId()
+                repository.clearProfileIdentifiedData()
+            }
+        }
+    }
+
+    private fun cacheProfileIdentifiedData(data: Map<String, Any>?) {
+        data?.let {
+            if (it[CUSTOMER_ID] != null) {
+                repository.saveCustomerId(it[CUSTOMER_ID] as String)
+            } else {
+                repository.saveEmail(it[EMAIL] as String)
+            }
         }
     }
 
