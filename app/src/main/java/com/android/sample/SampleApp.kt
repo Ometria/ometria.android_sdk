@@ -1,14 +1,16 @@
 package com.android.sample
 
 import android.app.Application
+import android.util.Log
 import com.android.ometriasdk.core.Ometria
+import com.android.ometriasdk.notification.OmetriaNotificationInteractionHandler
 
 /**
  * Created by cristiandregan
  * on 08/07/2020.
  */
 
-class SampleApp : Application() {
+class SampleApp : Application(), OmetriaNotificationInteractionHandler {
     companion object {
         lateinit var instance: SampleApp
     }
@@ -24,5 +26,19 @@ class SampleApp : Application() {
             "YOUR_API_TOKEN",
             R.mipmap.ic_launcher
         ).loggingEnabled(true)
+
+        // Set the notificationInteractionDelegate in order to provide actions for
+        // notifications that contain a deepLink URL.
+        // The default functionality when you don't assign a delegate is opening urls in a browser
+        Ometria.instance().notificationInteractionHandler = this
+    }
+
+    /**
+     * This method will be called each time the user interacts with a notification from Ometria
+     * which contains a deepLinkURL. Write your own custom code in order to
+     * properly redirect the app to the screen that should be displayed.
+     */
+    override fun onDeepLinkInteraction(deepLink: String) {
+        Log.d(SampleApp::class.java.simpleName, "URL: $deepLink")
     }
 }

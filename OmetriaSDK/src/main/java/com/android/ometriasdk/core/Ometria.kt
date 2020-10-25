@@ -1,6 +1,9 @@
 package com.android.ometriasdk.core
 
 import android.app.Application
+import android.content.Context
+import android.content.Intent
+import android.net.Uri
 import androidx.lifecycle.ProcessLifecycleOwner
 import com.android.ometriasdk.core.Constants.Params.BASKET
 import com.android.ometriasdk.core.Constants.Params.CLASS
@@ -23,6 +26,7 @@ import com.android.ometriasdk.core.network.ConnectionFactory
 import com.android.ometriasdk.core.network.OmetriaThreadPoolExecutor
 import com.android.ometriasdk.lifecycle.OmetriaActivityLifecycleHelper
 import com.android.ometriasdk.notification.NotificationHandler
+import com.android.ometriasdk.notification.OmetriaNotificationInteractionHandler
 import com.google.firebase.messaging.RemoteMessage
 import java.util.*
 
@@ -35,7 +39,7 @@ import java.util.*
  * The primary class that allows instantiating and integrating Ometria in your application
  */
 @Suppress("unused")
-class Ometria private constructor() {
+class Ometria private constructor() : OmetriaNotificationInteractionHandler {
 
     private lateinit var ometriaConfig: OmetriaConfig
     private var isInitialized = false
@@ -44,6 +48,8 @@ class Ometria private constructor() {
     private lateinit var repository: Repository
     private lateinit var notificationHandler: NotificationHandler
     private lateinit var executor: OmetriaThreadPoolExecutor
+    private lateinit var context: Context
+    lateinit var notificationInteractionHandler: OmetriaNotificationInteractionHandler
 
     /**
      * Kotlin Object ensures thread safety.
@@ -82,6 +88,8 @@ class Ometria private constructor() {
             it.notificationHandler =
                 NotificationHandler(application, notificationIcon, it.executor)
             it.isInitialized = true
+            it.notificationInteractionHandler = instance
+            it.context = application
 
             if (it.shouldGenerateInstallationId()) {
                 it.generateInstallationId()
@@ -367,5 +375,13 @@ class Ometria private constructor() {
      */
     fun clear() {
         localCache.clearEvents()
+    }
+
+    override fun onDeepLinkInteraction(deepLink: String) {
+        Logger.d(Constants.Logger.PUSH_NOTIFICATIONS, "Open URL: $deepLink")
+        val intent = Intent(Intent.ACTION_VIEW)
+        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+        intent.data = Uri.parse(deepLink)
+        context.startActivity(intent)
     }
 }
