@@ -167,6 +167,12 @@ trackOrderCompletedEvent(orderId: String, basket: OmetriaBasket)
 
 #### Deep Link Opened
 
+Based on the implementation status of interaction with notifications that contain deeplinks, this event can be automatically tracked or not.
+
+The default implementation will automatically log a deep link opened event every time the user interacts with a notification that has a deep link. This is possible since we know that the default implementation will open the link in a browser.
+
+However, if you chose to handle deeplinks yourself (using the guide for [Handling interaction with notifications that contain URLs](#handling_interaction_with_notifications_that_contain_urls)) then you should manually track this event when you have enough information regarding the screen (or other destination) that the app will open.
+
 ```kotlin
 trackDeepLinkOpenedEvent(link: String, page: String)
 ```
