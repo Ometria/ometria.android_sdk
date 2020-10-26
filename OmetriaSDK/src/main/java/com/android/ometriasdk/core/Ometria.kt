@@ -146,10 +146,7 @@ class Ometria private constructor() : OmetriaNotificationInteractionHandler {
         trackPushTokenRefreshedEvent(token)
     }
 
-    private fun trackEvent(
-        type: OmetriaEventType,
-        data: Map<String, Any>? = null
-    ) {
+    private fun trackEvent(type: OmetriaEventType, data: Map<String, Any>? = null) {
         eventHandler.processEvent(type, data?.toMutableMap())
     }
 
@@ -181,10 +178,7 @@ class Ometria private constructor() : OmetriaNotificationInteractionHandler {
     fun trackScreenViewedEvent(screenName: String, additionalInfo: Map<String, Any> = mapOf()) {
         val data = additionalInfo.toMutableMap()
         data[PAGE] = screenName
-        trackEvent(
-            OmetriaEventType.SCREEN_VIEWED,
-            data
-        )
+        trackEvent(OmetriaEventType.SCREEN_VIEWED, data)
     }
 
     internal fun trackAutomatedScreenViewedEvent(
@@ -193,10 +187,7 @@ class Ometria private constructor() : OmetriaNotificationInteractionHandler {
     ) {
         val data = additionalInfo.toMutableMap()
         data[PAGE] = screenName ?: ""
-        trackEvent(
-            OmetriaEventType.SCREEN_VIEWED_AUTOMATIC,
-            data
-        )
+        trackEvent(OmetriaEventType.SCREEN_VIEWED_AUTOMATIC, data)
     }
 
     /**
@@ -289,10 +280,7 @@ class Ometria private constructor() : OmetriaNotificationInteractionHandler {
      * @param basket An OmetriaBasket object containing all the items in the order and also the total pricing and currency
      */
     fun trackOrderCompletedEvent(orderId: String, basket: OmetriaBasket) {
-        trackEvent(
-            OmetriaEventType.ORDER_COMPLETED,
-            mapOf(ORDER_ID to orderId, BASKET to basket)
-        )
+        trackEvent(OmetriaEventType.ORDER_COMPLETED, mapOf(ORDER_ID to orderId, BASKET to basket))
     }
 
     /**
@@ -307,10 +295,7 @@ class Ometria private constructor() : OmetriaNotificationInteractionHandler {
     }
 
     internal fun trackNotificationReceivedEvent(context: Map<String, Any>) {
-        trackEvent(
-            OmetriaEventType.NOTIFICATION_RECEIVED,
-            mapOf(NOTIFICATION_CONTEXT to context)
-        )
+        trackEvent(OmetriaEventType.NOTIFICATION_RECEIVED, mapOf(NOTIFICATION_CONTEXT to context))
     }
 
     internal fun trackNotificationInteractedEvent(context: Map<String, Any>) {
@@ -326,10 +311,7 @@ class Ometria private constructor() : OmetriaNotificationInteractionHandler {
      * @param page A string representing the name of the screen that has been opened as a result of decomposing the URL.
      */
     internal fun trackDeepLinkOpenedEvent(link: String, page: String) {
-        trackEvent(
-            OmetriaEventType.DEEP_LINK_OPENED,
-            mapOf(LINK to link, PAGE to page)
-        )
+        trackEvent(OmetriaEventType.DEEP_LINK_OPENED, mapOf(LINK to link, PAGE to page))
     }
 
     internal fun trackErrorOccurredEvent(
@@ -354,10 +336,7 @@ class Ometria private constructor() : OmetriaNotificationInteractionHandler {
     fun trackCustomEvent(customEventType: String, additionalInfo: Map<String, Any>) {
         val data = additionalInfo.toMutableMap()
         data[CUSTOM_EVENT_TYPE] = customEventType
-        trackEvent(
-            OmetriaEventType.CUSTOM,
-            data
-        )
+        trackEvent(OmetriaEventType.CUSTOM, data)
     }
 
     /**
