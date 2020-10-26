@@ -18,7 +18,7 @@ The sending and displaying of push notifications is handled by Ometria behind th
 2\. Prerequisite Steps
 ----------------------
 
-Obtaining API token information
+In order to obtain an API token please follow the instructions [here](https://support.ometria.com/hc/en-gb/articles/360013658478-Setting-up-your-mobile-app-with-Firebase-credentials)
 
 3\. Install the Library
 -----------------------
@@ -164,6 +164,19 @@ The order has been completed and paid for.
 ```kotlin
 trackOrderCompletedEvent(orderId: String, basket: OmetriaBasket)
 ```
+
+#### Deep Link Opened
+
+Based on the implementation status of interaction with notifications that contain deeplinks, this event can be automatically tracked or not.
+
+The default implementation will automatically log a deep link opened event every time the user interacts with a notification that has a deep link. This is possible since we know that the default implementation will open the link in a browser.
+
+However, if you chose to handle deeplinks yourself (using the guide for [Handling interaction with notifications that contain URLs](#handling_interaction_with_notifications_that_contain_urls)) then you should manually track this event when you have enough information regarding the screen (or other destination) that the app will open.
+
+```kotlin
+trackDeepLinkOpenedEvent(link: String, page: String)
+```
+
 
 #### View Home Page
 
@@ -312,5 +325,46 @@ override fun onNewToken(token: String) {
     super.onNewToken(token)
 
     Ometria.instance().onNewToken(token)
+}
+```
+
+### Handling interaction with notifications that contain URLs
+
+Ometria enables you to send relevant URLs alongside your push notifications and allows you to handle them on the device. By default, the Ometria SDK will automatically handle any interaction with push notifications that contain URLs by opening them in a browser. However, it enables developers to customly handle those URLs as they see fit (e.g. take the user to a specific screen in the app).
+
+In order to get access to those interactions and the URLs, you will have to implement the `OmetriaNotificationInteractionHandler`. There is only one method that is required, and it will be triggered every time the user taps on a notification that has a deepLink action URL. This is what it would look like in code:
+
+```kotlin
+class SampleApp : Application(), OmetriaNotificationInteractionHandler {
+    companion object {
+        lateinit var instance: SampleApp
+    }
+
+    override fun onCreate() {
+        super.onCreate()
+        instance = this
+
+        // Initializing Ometria SDK with application context, api token and notifications icon resource id
+        // Note: Replace api token with your own
+        Ometria.initialize(
+            this,
+            "YOUR_API_TOKEN",
+            R.mipmap.ic_launcher
+        ).loggingEnabled(true)
+
+        // Set the notificationInteractionDelegate in order to provide actions for
+        // notifications that contain a deepLink URL.
+        // The default functionality when you don't assign a delegate is opening urls in a browser
+        Ometria.instance().notificationInteractionHandler = this
+    }
+
+    /**
+     * This method will be called each time the user interacts with a notification from Ometria
+     * which contains a deepLinkURL. Write your own custom code in order to
+     * properly redirect the app to the screen that should be displayed.
+     */
+    override fun onDeepLinkInteraction(deepLink: String) {
+        Log.d(SampleApp::class.java.simpleName, "URL: $deepLink")
+    }
 }
 ```
