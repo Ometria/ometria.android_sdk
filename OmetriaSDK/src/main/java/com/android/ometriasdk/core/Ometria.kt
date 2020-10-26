@@ -1,6 +1,9 @@
 package com.android.ometriasdk.core
 
 import android.app.Application
+import android.content.Context
+import android.content.Intent
+import android.net.Uri
 import androidx.lifecycle.ProcessLifecycleOwner
 import com.android.ometriasdk.core.Constants.Params.BASKET
 import com.android.ometriasdk.core.Constants.Params.CLASS
@@ -14,6 +17,7 @@ import com.android.ometriasdk.core.Constants.Params.ORDER_ID
 import com.android.ometriasdk.core.Constants.Params.ORIGINAL_MESSAGE
 import com.android.ometriasdk.core.Constants.Params.PAGE
 import com.android.ometriasdk.core.Constants.Params.PRODUCT_ID
+import com.android.ometriasdk.core.Constants.Params.PROPERTIES
 import com.android.ometriasdk.core.Constants.Params.PUSH_TOKEN
 import com.android.ometriasdk.core.event.EventHandler
 import com.android.ometriasdk.core.event.OmetriaBasket
@@ -23,6 +27,7 @@ import com.android.ometriasdk.core.network.ConnectionFactory
 import com.android.ometriasdk.core.network.OmetriaThreadPoolExecutor
 import com.android.ometriasdk.lifecycle.OmetriaActivityLifecycleHelper
 import com.android.ometriasdk.notification.NotificationHandler
+import com.android.ometriasdk.notification.OmetriaNotificationInteractionHandler
 import com.google.firebase.messaging.RemoteMessage
 import java.util.*
 
@@ -35,7 +40,7 @@ import java.util.*
  * The primary class that allows instantiating and integrating Ometria in your application
  */
 @Suppress("unused")
-class Ometria private constructor() {
+class Ometria private constructor() : OmetriaNotificationInteractionHandler {
 
     private lateinit var ometriaConfig: OmetriaConfig
     private var isInitialized = false
@@ -44,6 +49,8 @@ class Ometria private constructor() {
     private lateinit var repository: Repository
     private lateinit var notificationHandler: NotificationHandler
     private lateinit var executor: OmetriaThreadPoolExecutor
+    private lateinit var context: Context
+    lateinit var notificationInteractionHandler: OmetriaNotificationInteractionHandler
 
     /**
      * Kotlin Object ensures thread safety.
@@ -82,6 +89,8 @@ class Ometria private constructor() {
             it.notificationHandler =
                 NotificationHandler(application, notificationIcon, it.executor)
             it.isInitialized = true
+            it.notificationInteractionHandler = instance
+            it.context = application
 
             if (it.shouldGenerateInstallationId()) {
                 it.generateInstallationId()
@@ -138,11 +147,8 @@ class Ometria private constructor() {
         trackPushTokenRefreshedEvent(token)
     }
 
-    private fun trackEvent(
-        type: OmetriaEventType,
-        data: Map<String, Any>? = null
-    ) {
-        eventHandler.processEvent(type, data)
+    private fun trackEvent(type: OmetriaEventType, data: Map<String, Any>? = null) {
+        eventHandler.processEvent(type, data?.toMutableMap())
     }
 
     internal fun trackAppInstalledEvent() {
@@ -173,10 +179,7 @@ class Ometria private constructor() {
     fun trackScreenViewedEvent(screenName: String, additionalInfo: Map<String, Any> = mapOf()) {
         val data = additionalInfo.toMutableMap()
         data[PAGE] = screenName
-        trackEvent(
-            OmetriaEventType.SCREEN_VIEWED,
-            data
-        )
+        trackEvent(OmetriaEventType.SCREEN_VIEWED, data)
     }
 
     internal fun trackAutomatedScreenViewedEvent(
@@ -185,10 +188,7 @@ class Ometria private constructor() {
     ) {
         val data = additionalInfo.toMutableMap()
         data[PAGE] = screenName ?: ""
-        trackEvent(
-            OmetriaEventType.SCREEN_VIEWED_AUTOMATIC,
-            data
-        )
+        trackEvent(OmetriaEventType.SCREEN_VIEWED_AUTOMATIC, data)
     }
 
     /**
@@ -281,10 +281,7 @@ class Ometria private constructor() {
      * @param basket An OmetriaBasket object containing all the items in the order and also the total pricing and currency
      */
     fun trackOrderCompletedEvent(orderId: String, basket: OmetriaBasket) {
-        trackEvent(
-            OmetriaEventType.ORDER_COMPLETED,
-            mapOf(ORDER_ID to orderId, BASKET to basket)
-        )
+        trackEvent(OmetriaEventType.ORDER_COMPLETED, mapOf(ORDER_ID to orderId, BASKET to basket))
     }
 
     /**
@@ -299,10 +296,7 @@ class Ometria private constructor() {
     }
 
     internal fun trackNotificationReceivedEvent(context: Map<String, Any>) {
-        trackEvent(
-            OmetriaEventType.NOTIFICATION_RECEIVED,
-            mapOf(NOTIFICATION_CONTEXT to context)
-        )
+        trackEvent(OmetriaEventType.NOTIFICATION_RECEIVED, mapOf(NOTIFICATION_CONTEXT to context))
     }
 
     internal fun trackNotificationInteractedEvent(context: Map<String, Any>) {
@@ -317,11 +311,8 @@ class Ometria private constructor() {
      * @param link A string representing the URL that has been opened.
      * @param page A string representing the name of the screen that has been opened as a result of decomposing the URL.
      */
-    internal fun trackDeepLinkOpenedEvent(link: String, page: String) {
-        trackEvent(
-            OmetriaEventType.DEEP_LINK_OPENED,
-            mapOf(LINK to link, PAGE to page)
-        )
+    fun trackDeepLinkOpenedEvent(link: String, page: String) {
+        trackEvent(OmetriaEventType.DEEP_LINK_OPENED, mapOf(LINK to link, PAGE to page))
     }
 
     internal fun trackErrorOccurredEvent(
@@ -344,12 +335,10 @@ class Ometria private constructor() {
      * @param additionalInfo A map containing any key value pairs that provide valuable information to your platform.
      */
     fun trackCustomEvent(customEventType: String, additionalInfo: Map<String, Any>) {
-        val data = additionalInfo.toMutableMap()
+        val data = mutableMapOf<String, Any>()
+        data[PROPERTIES] = additionalInfo
         data[CUSTOM_EVENT_TYPE] = customEventType
-        trackEvent(
-            OmetriaEventType.CUSTOM,
-            data
-        )
+        trackEvent(OmetriaEventType.CUSTOM, data)
     }
 
     /**
@@ -367,5 +356,15 @@ class Ometria private constructor() {
      */
     fun clear() {
         localCache.clearEvents()
+    }
+
+    override fun onDeepLinkInteraction(deepLink: String) {
+        Logger.d(Constants.Logger.PUSH_NOTIFICATIONS, "Open URL: $deepLink")
+        val intent = Intent(Intent.ACTION_VIEW)
+        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+        intent.data = Uri.parse(deepLink)
+        context.startActivity(intent)
+
+        trackDeepLinkOpenedEvent(deepLink, "Browser")
     }
 }

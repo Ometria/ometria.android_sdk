@@ -80,13 +80,21 @@ internal fun String.toOmetriaNotification(): OmetriaNotification? {
     var context: Map<String, Any>? = null
     var deepLinkActionUrl: String? = null
     var imageUrl: String? = null
+
     try {
         context = jsonObject.getJSONObject("context").toMap()
-        deepLinkActionUrl = jsonObject.getString("deepLinkActionUrl")
-        imageUrl = jsonObject.getString("imageUrl")
     } catch (e: JSONException) {
         Logger.e(PUSH_NOTIFICATIONS, e.message, e)
-        Ometria.instance().trackErrorOccurredEvent(e.javaClass.name, e.message, jsonObject.toMap())
+        Ometria.instance()
+            .trackErrorOccurredEvent(e.javaClass.name, e.message, jsonObject.toMap())
+    }
+    try {
+        deepLinkActionUrl = jsonObject.getString("deepLinkActionUrl")
+    } catch (e: JSONException) {
+    }
+    try {
+        imageUrl = jsonObject.getString("imageUrl")
+    } catch (e: JSONException) {
     }
 
     return OmetriaNotification(

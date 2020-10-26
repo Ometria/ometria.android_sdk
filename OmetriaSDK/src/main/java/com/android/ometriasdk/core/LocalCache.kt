@@ -16,6 +16,8 @@ private const val IS_FIRST_APP_RUN_KEY = "IS_FIRST_APP_RUN_KEY"
 private const val INSTALLATION_ID_KEY = "INSTALLATION_ID_KEY"
 private const val EVENTS_KEY = "EVENTS_KEY"
 private const val PUSH_TOKEN_KEY = "PUSH_TOKEN_KEY"
+private const val CUSTOMER_ID_KEY = "CUSTOMER_ID_KEY"
+private const val EMAIL_KEY = "EMAIL_KEY"
 private const val JSON_ARRAY = "[]"
 
 internal class LocalCache(private val context: Context) {
@@ -93,5 +95,26 @@ internal class LocalCache(private val context: Context) {
 
     fun clearEvents() {
         getLocalCachePreferences().edit().remove(EVENTS_KEY).apply()
+    }
+
+    fun saveCustomerId(customerId: String?) {
+        getLocalCachePreferences().edit().putString(CUSTOMER_ID_KEY, customerId).apply()
+    }
+
+    fun getCustomerId(): String? {
+        return getLocalCachePreferences().getString(CUSTOMER_ID_KEY, null)
+    }
+
+    fun saveEmail(email: String?) {
+        getLocalCachePreferences().edit().putString(EMAIL_KEY, email).apply()
+    }
+
+    fun getEmail(): String? {
+        return getLocalCachePreferences().getString(EMAIL_KEY, null)
+    }
+
+    fun clearProfileIdentifiedData() {
+        getLocalCachePreferences().edit().remove(CUSTOMER_ID_KEY).apply()
+        getLocalCachePreferences().edit().remove(EMAIL_KEY).apply()
     }
 }
