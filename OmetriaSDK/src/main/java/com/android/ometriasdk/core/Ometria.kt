@@ -17,6 +17,7 @@ import com.android.ometriasdk.core.Constants.Params.ORDER_ID
 import com.android.ometriasdk.core.Constants.Params.ORIGINAL_MESSAGE
 import com.android.ometriasdk.core.Constants.Params.PAGE
 import com.android.ometriasdk.core.Constants.Params.PRODUCT_ID
+import com.android.ometriasdk.core.Constants.Params.PROPERTIES
 import com.android.ometriasdk.core.Constants.Params.PUSH_TOKEN
 import com.android.ometriasdk.core.event.EventHandler
 import com.android.ometriasdk.core.event.OmetriaBasket
@@ -310,7 +311,7 @@ class Ometria private constructor() : OmetriaNotificationInteractionHandler {
      * @param link A string representing the URL that has been opened.
      * @param page A string representing the name of the screen that has been opened as a result of decomposing the URL.
      */
-    internal fun trackDeepLinkOpenedEvent(link: String, page: String) {
+    fun trackDeepLinkOpenedEvent(link: String, page: String) {
         trackEvent(OmetriaEventType.DEEP_LINK_OPENED, mapOf(LINK to link, PAGE to page))
     }
 
@@ -334,8 +335,11 @@ class Ometria private constructor() : OmetriaNotificationInteractionHandler {
      * @param additionalInfo A map containing any key value pairs that provide valuable information to your platform.
      */
     fun trackCustomEvent(customEventType: String, additionalInfo: Map<String, Any>) {
-        val data = additionalInfo.toMutableMap()
-        data[CUSTOM_EVENT_TYPE] = customEventType
+        val properties = additionalInfo.toMutableMap()
+        properties[CUSTOM_EVENT_TYPE] = customEventType
+
+        val data = mutableMapOf<String, Any>()
+        data[PROPERTIES] = properties
         trackEvent(OmetriaEventType.CUSTOM, data)
     }
 
@@ -362,5 +366,7 @@ class Ometria private constructor() : OmetriaNotificationInteractionHandler {
         intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
         intent.data = Uri.parse(deepLink)
         context.startActivity(intent)
+
+        trackDeepLinkOpenedEvent(deepLink, "Browser")
     }
 }

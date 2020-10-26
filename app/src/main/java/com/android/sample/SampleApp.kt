@@ -40,5 +40,6 @@ class SampleApp : Application(), OmetriaNotificationInteractionHandler {
      */
     override fun onDeepLinkInteraction(deepLink: String) {
         Log.d(SampleApp::class.java.simpleName, "URL: $deepLink")
+        Ometria.instance().trackDeepLinkOpenedEvent(deepLink, "Browser")
     }
 }
