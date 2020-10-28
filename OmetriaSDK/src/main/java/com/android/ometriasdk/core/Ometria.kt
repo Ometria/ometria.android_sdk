@@ -335,11 +335,9 @@ class Ometria private constructor() : OmetriaNotificationInteractionHandler {
      * @param additionalInfo A map containing any key value pairs that provide valuable information to your platform.
      */
     fun trackCustomEvent(customEventType: String, additionalInfo: Map<String, Any>) {
-        val properties = additionalInfo.toMutableMap()
-        properties[CUSTOM_EVENT_TYPE] = customEventType
-
         val data = mutableMapOf<String, Any>()
-        data[PROPERTIES] = properties
+        data[PROPERTIES] = additionalInfo
+        data[CUSTOM_EVENT_TYPE] = customEventType
         trackEvent(OmetriaEventType.CUSTOM, data)
     }
 
