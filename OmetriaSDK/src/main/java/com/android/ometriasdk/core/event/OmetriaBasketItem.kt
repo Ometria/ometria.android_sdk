@@ -16,7 +16,7 @@ package com.android.ometriasdk.core.event
  */
 data class OmetriaBasketItem(
     val productId: String,
-    val sku: String,
+    val sku: String? = null,
     val quantity: Int,
     val price: Float
 )
