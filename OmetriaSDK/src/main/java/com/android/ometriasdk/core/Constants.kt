@@ -25,6 +25,7 @@ internal object Constants {
         const val MESSAGE = "message"
         const val ORIGINAL_MESSAGE = "originalMessage"
         const val PROPERTIES = "properties"
+        const val EXTRA = "extra"
     }
 
     object Common {
