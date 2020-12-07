@@ -12,6 +12,8 @@ import com.android.ometriasdk.core.Constants.Params.CUSTOM_EVENT_TYPE
 import com.android.ometriasdk.core.Constants.Params.EMAIL
 import com.android.ometriasdk.core.Constants.Params.EXTRA
 import com.android.ometriasdk.core.Constants.Params.LINK
+import com.android.ometriasdk.core.Constants.Params.LISTING_ATTRIBUTES
+import com.android.ometriasdk.core.Constants.Params.LISTING_TYPE
 import com.android.ometriasdk.core.Constants.Params.MESSAGE
 import com.android.ometriasdk.core.Constants.Params.NOTIFICATION_CONTEXT
 import com.android.ometriasdk.core.Constants.Params.ORDER_ID
@@ -189,7 +191,7 @@ class Ometria private constructor() : OmetriaNotificationInteractionHandler {
         additionalInfo: Map<String, Any> = mapOf()
     ) {
         val data = additionalInfo.toMutableMap()
-        data[PAGE] = screenName ?: ""
+        data[PAGE] = screenName.orEmpty()
         trackEvent(OmetriaEventType.SCREEN_VIEWED_AUTOMATIC, data)
     }
 
@@ -241,9 +243,17 @@ class Ometria private constructor() : OmetriaNotificationInteractionHandler {
 
     /**
      * Track whenever a visitor clicks / taps / views / highlights or otherwise shows interest in a product listing.
+     * @param listingType A string representing the type of the listing. Can be category or search or other.
+     * @param listingAttributes A map containing the parameters associated with the listing. Can contain a category id or a search query for example.
      */
-    fun trackProductListingViewedEvent() {
-        trackEvent(OmetriaEventType.PRODUCT_LISTING_VIEWED)
+    fun trackProductListingViewedEvent(
+        listingType: String? = null,
+        listingAttributes: Map<String, Any>? = null
+    ) {
+        val data = mutableMapOf<String, Any>()
+        listingType?.let { data[LISTING_TYPE] = it }
+        listingAttributes?.let { data[LISTING_ATTRIBUTES] = it }
+        trackEvent(OmetriaEventType.PRODUCT_LISTING_VIEWED, data)
     }
 
     /**
@@ -282,8 +292,11 @@ class Ometria private constructor() : OmetriaNotificationInteractionHandler {
      * @param orderId The id that your system generated for the completed order.
      * @param basket An OmetriaBasket object containing all the items in the order and also the total pricing and currency
      */
-    fun trackOrderCompletedEvent(orderId: String, basket: OmetriaBasket) {
-        trackEvent(OmetriaEventType.ORDER_COMPLETED, mapOf(ORDER_ID to orderId, BASKET to basket))
+    fun trackOrderCompletedEvent(orderId: String, basket: OmetriaBasket? = null) {
+        val data = mutableMapOf<String, Any>()
+        data[ORDER_ID] = orderId
+        basket?.let { data[BASKET] = it }
+        trackEvent(OmetriaEventType.ORDER_COMPLETED, data)
     }
 
     /**
@@ -294,7 +307,10 @@ class Ometria private constructor() : OmetriaNotificationInteractionHandler {
     }
 
     internal fun trackPushTokenRefreshedEvent(pushToken: String?) {
-        trackEvent(OmetriaEventType.PUSH_TOKEN_REFRESHED, mapOf(PUSH_TOKEN to (pushToken ?: "")))
+        trackEvent(
+            OmetriaEventType.PUSH_TOKEN_REFRESHED,
+            mapOf(PUSH_TOKEN to (pushToken.orEmpty()))
+        )
     }
 
     internal fun trackNotificationReceivedEvent(context: Map<String, Any>) {
@@ -325,7 +341,7 @@ class Ometria private constructor() : OmetriaNotificationInteractionHandler {
         trackEvent(
             OmetriaEventType.ERROR_OCCURRED, mapOf(
                 CLASS to errorClass,
-                MESSAGE to (errorMessage ?: ""),
+                MESSAGE to errorMessage.orEmpty(),
                 ORIGINAL_MESSAGE to originalMessage
             )
         )
@@ -336,9 +352,9 @@ class Ometria private constructor() : OmetriaNotificationInteractionHandler {
      * @param customEventType A string representing the name of the custom event.
      * @param additionalInfo A map containing any key value pairs that provide valuable information to your platform.
      */
-    fun trackCustomEvent(customEventType: String, additionalInfo: Map<String, Any>) {
+    fun trackCustomEvent(customEventType: String, additionalInfo: Map<String, Any>? = null) {
         val data = mutableMapOf<String, Any>()
-        data[PROPERTIES] = additionalInfo
+        additionalInfo?.let { data[PROPERTIES] = it }
         data[CUSTOM_EVENT_TYPE] = customEventType
         trackEvent(OmetriaEventType.CUSTOM, data)
     }

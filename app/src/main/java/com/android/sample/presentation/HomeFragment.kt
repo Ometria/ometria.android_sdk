@@ -88,8 +88,10 @@ class HomeFragment : Fragment() {
                 .trackProfileDeidentifiedEvent()
             EventType.PRODUCT_VIEWED -> Ometria.instance()
                 .trackProductViewedEvent("product_1")
-            EventType.PRODUCT_LISTING_VIEWED -> Ometria.instance()
-                .trackProductListingViewedEvent()
+            EventType.PRODUCT_LISTING_VIEWED -> Ometria.instance().trackProductListingViewedEvent(
+                "search",
+                mapOf("searchQuery" to "some search terms")
+            )
             EventType.WISH_LIST_ADDED_TO -> Ometria.instance()
                 .trackWishlistAddedToEvent("product_1")
             EventType.WISHLIST_REMOVED_FROM -> Ometria.instance()
