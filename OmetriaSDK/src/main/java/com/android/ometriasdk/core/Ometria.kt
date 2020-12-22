@@ -248,11 +248,11 @@ class Ometria private constructor() : OmetriaNotificationInteractionHandler {
      */
     fun trackProductListingViewedEvent(
         listingType: String? = null,
-        listingAttributes: Map<String, Any>? = null
+        listingAttributes: Map<String, Any> = mapOf()
     ) {
         val data = mutableMapOf<String, Any>()
         listingType?.let { data[LISTING_TYPE] = it }
-        listingAttributes?.let { data[LISTING_ATTRIBUTES] = it }
+        data[LISTING_ATTRIBUTES] = listingAttributes
         trackEvent(OmetriaEventType.PRODUCT_LISTING_VIEWED, data)
     }
 
@@ -352,9 +352,9 @@ class Ometria private constructor() : OmetriaNotificationInteractionHandler {
      * @param customEventType A string representing the name of the custom event.
      * @param additionalInfo A map containing any key value pairs that provide valuable information to your platform.
      */
-    fun trackCustomEvent(customEventType: String, additionalInfo: Map<String, Any>? = null) {
+    fun trackCustomEvent(customEventType: String, additionalInfo: Map<String, Any> = mapOf()) {
         val data = mutableMapOf<String, Any>()
-        additionalInfo?.let { data[PROPERTIES] = it }
+        data[PROPERTIES] = additionalInfo
         data[CUSTOM_EVENT_TYPE] = customEventType
         trackEvent(OmetriaEventType.CUSTOM, data)
     }
