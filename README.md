@@ -29,7 +29,7 @@ We publish builds of our library to the Maven central repository as an .aar file
 
 ```gradle
 dependencies {
-    implementation 'com.ometria:android-sdk:1.0.4'
+    implementation 'com.ometria:android-sdk:1.0.5'
 }
 ```
 ### Step 2 - Perform Gradle Sync:
@@ -198,8 +198,9 @@ Concretely, this event should at least be triggered on:
 * search results
 * category lists
 * any similar such screen
+
 ```kotlin
-trackProductListingViewedEvent()
+trackProductListingViewedEvent(listingType: String? = null, listingAttributes: Map<String, Any> = mapOf())
 ```
 
 #### Screen viewed
@@ -225,7 +226,7 @@ Your app may have specific flows or pages that are of interest to the marketing 
 Check with the marketing team about the specifics, and what they might need. Especially if they're already using Ometria for e-mail, they will know about automation campaigns and custom events.
 
 ```kotlin
-trackCustomEvent(customEventType: String, additionalInfo: Map<String, Any>)
+trackCustomEvent(customEventType: String, additionalInfo: Map<String, Any> = mapOf())
 ```
 
 ### Automatically Tracked Events
