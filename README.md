@@ -1,6 +1,8 @@
-# ometria.template.github-repo
+# ometria.android_sdk_internal
 
 ### Purpose
+
+Ometria can integrate with customer's Android mobile applications through an Android SDK. This repository was created to store internal/experimental versions of it.
 
 ### Development
 
