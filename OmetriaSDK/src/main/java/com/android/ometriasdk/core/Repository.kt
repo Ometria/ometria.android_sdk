@@ -115,7 +115,7 @@ internal class Repository(
         return localCache.getEmail()
     }
 
-    fun clearProfileIdentifiedData(){
+    fun clearProfileIdentifiedData() {
         localCache.clearProfileIdentifiedData()
     }
 }
