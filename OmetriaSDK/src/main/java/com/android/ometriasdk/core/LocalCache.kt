@@ -62,7 +62,8 @@ internal class LocalCache(private val context: Context) {
         val cachedEvents = getEvents()
 
         events.forEach { event ->
-            cachedEvents.first { it.eventId == event.eventId }.isBeingFlushed = isBeingFlushed
+            cachedEvents.firstOrNull { it.eventId == event.eventId }?.isBeingFlushed =
+                isBeingFlushed
         }
 
         getLocalCachePreferences().edit()
@@ -74,7 +75,7 @@ internal class LocalCache(private val context: Context) {
         val eventsList = getEvents().toMutableList()
 
         eventsToRemove.forEach { event ->
-            eventsList.remove(eventsList.first { it.eventId == event.eventId })
+            eventsList.remove(eventsList.firstOrNull { it.eventId == event.eventId })
         }
 
         getLocalCachePreferences().edit().putString(EVENTS_KEY, eventsList.toJson().toString())
