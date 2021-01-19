@@ -34,7 +34,9 @@ internal class PushClickBroadcastReceiver : BroadcastReceiver() {
                     deepLinkActionUrl
                 )
             } else {
-                Logger.e(Constants.Logger.PUSH_NOTIFICATIONS, "Invalid deep link action URL")
+                val launcherIntent = context.packageManager.getLaunchIntentForPackage(context.packageName)
+                launcherIntent?.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                context.startActivity(launcherIntent)
             }
 
             val ometriaContextString = intent.getStringExtra(OMETRIA_CONTEXT_KEY)
