@@ -1,9 +1,9 @@
 package com.android.ometriasdk.core
 
 import android.app.Application
-import android.content.Context
 import android.content.Intent
 import android.net.Uri
+import androidx.core.app.NotificationManagerCompat
 import androidx.lifecycle.ProcessLifecycleOwner
 import com.android.ometriasdk.core.Constants.Params.BASKET
 import com.android.ometriasdk.core.Constants.Params.CLASS
@@ -15,6 +15,7 @@ import com.android.ometriasdk.core.Constants.Params.LINK
 import com.android.ometriasdk.core.Constants.Params.LISTING_ATTRIBUTES
 import com.android.ometriasdk.core.Constants.Params.LISTING_TYPE
 import com.android.ometriasdk.core.Constants.Params.MESSAGE
+import com.android.ometriasdk.core.Constants.Params.NOTIFICATIONS
 import com.android.ometriasdk.core.Constants.Params.NOTIFICATION_CONTEXT
 import com.android.ometriasdk.core.Constants.Params.ORDER_ID
 import com.android.ometriasdk.core.Constants.Params.ORIGINAL_MESSAGE
@@ -52,7 +53,6 @@ class Ometria private constructor() : OmetriaNotificationInteractionHandler {
     private lateinit var repository: Repository
     private lateinit var notificationHandler: NotificationHandler
     private lateinit var executor: OmetriaThreadPoolExecutor
-    private lateinit var context: Context
     lateinit var notificationInteractionHandler: OmetriaNotificationInteractionHandler
 
     /**
@@ -80,7 +80,7 @@ class Ometria private constructor() : OmetriaNotificationInteractionHandler {
             apiToken: String,
             notificationIcon: Int
         ) = instance.also {
-            it.ometriaConfig = OmetriaConfig(apiToken)
+            it.ometriaConfig = OmetriaConfig(apiToken, application)
             it.localCache = LocalCache(application)
             it.executor = OmetriaThreadPoolExecutor()
             it.repository = Repository(
@@ -93,13 +93,12 @@ class Ometria private constructor() : OmetriaNotificationInteractionHandler {
                 NotificationHandler(application, notificationIcon, it.executor)
             it.isInitialized = true
             it.notificationInteractionHandler = instance
-            it.context = application
 
             if (it.shouldGenerateInstallationId()) {
                 it.generateInstallationId()
             }
 
-            val activityLifecycleHelper = OmetriaActivityLifecycleHelper(it.repository)
+            val activityLifecycleHelper = OmetriaActivityLifecycleHelper(it.repository, application)
 
             val lifecycle = ProcessLifecycleOwner.get().lifecycle
             lifecycle.addObserver(activityLifecycleHelper)
@@ -288,6 +287,14 @@ class Ometria private constructor() : OmetriaNotificationInteractionHandler {
     }
 
     /**
+     * Track when the user has started the checkout process.
+     * @param orderId The id that your system generated for the order.
+     */
+    fun trackCheckoutStartedEvent(orderId: String) {
+        trackEvent(OmetriaEventType.CHECKOUT_STARTED, mapOf(ORDER_ID to (orderId)))
+    }
+
+    /**
      * Track when an order has been completed and paid for.
      * @param orderId The id that your system generated for the completed order.
      * @param basket An OmetriaBasket object containing all the items in the order and also the total pricing and currency
@@ -307,9 +314,12 @@ class Ometria private constructor() : OmetriaNotificationInteractionHandler {
     }
 
     internal fun trackPushTokenRefreshedEvent(pushToken: String?) {
+        val hasPermission =
+            NotificationManagerCompat.from(ometriaConfig.application).areNotificationsEnabled()
+        val permissionValue = if (hasPermission) "opt-in" else "opt-out"
         trackEvent(
             OmetriaEventType.PUSH_TOKEN_REFRESHED,
-            mapOf(PUSH_TOKEN to (pushToken.orEmpty()))
+            mapOf(PUSH_TOKEN to (pushToken.orEmpty()), NOTIFICATIONS to permissionValue)
         )
     }
 
@@ -322,6 +332,11 @@ class Ometria private constructor() : OmetriaNotificationInteractionHandler {
             OmetriaEventType.NOTIFICATION_INTERACTED,
             mapOf(NOTIFICATION_CONTEXT to context)
         )
+    }
+
+    internal fun trackPermissionsUpdateEvent(hasPermission: Boolean) {
+        val permissionValue = if (hasPermission) "opt-in" else "opt-out"
+        trackEvent(OmetriaEventType.PERMISSION_UPDATE, mapOf(NOTIFICATIONS to permissionValue))
     }
 
     /**
@@ -381,7 +396,7 @@ class Ometria private constructor() : OmetriaNotificationInteractionHandler {
         val intent = Intent(Intent.ACTION_VIEW)
         intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
         intent.data = Uri.parse(deepLink)
-        context.startActivity(intent)
+        ometriaConfig.application.startActivity(intent)
 
         trackDeepLinkOpenedEvent(deepLink, "Browser")
     }
