@@ -76,7 +76,6 @@ internal class EventHandler(context: Context, private val repository: Repository
                 Ometria.instance().trackPushTokenRefreshedEvent(repository.getPushToken())
             }
             OmetriaEventType.PROFILE_DEIDENTIFIED.id -> {
-                Ometria.instance().generateInstallationId()
                 repository.clearProfileIdentifiedData()
             }
         }
