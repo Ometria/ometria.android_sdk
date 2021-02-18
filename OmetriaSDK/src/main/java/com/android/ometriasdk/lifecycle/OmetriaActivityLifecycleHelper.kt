@@ -2,7 +2,9 @@ package com.android.ometriasdk.lifecycle
 
 import android.app.Activity
 import android.app.Application
+import android.content.Context
 import android.os.Bundle
+import androidx.core.app.NotificationManagerCompat
 import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
 import com.android.ometriasdk.core.Ometria
@@ -14,7 +16,10 @@ import java.util.concurrent.atomic.AtomicBoolean
  * on 07/07/2020.
  */
 
-internal class OmetriaActivityLifecycleHelper(private val repository: Repository) :
+internal class OmetriaActivityLifecycleHelper(
+    private val repository: Repository,
+    private val context: Context
+) :
     DefaultLifecycleObserver,
     Application.ActivityLifecycleCallbacks {
 
@@ -45,6 +50,14 @@ internal class OmetriaActivityLifecycleHelper(private val repository: Repository
         if (firstLaunch.get()) {
             Ometria.instance().trackAppLaunchedEvent()
         }
+
+        val areNotificationsEnabled =
+            NotificationManagerCompat.from(context).areNotificationsEnabled()
+        if (areNotificationsEnabled != repository.areNotificationsEnabled()) {
+            repository.saveAreNotificationsEnabled(areNotificationsEnabled)
+            Ometria.instance().trackPermissionsUpdateEvent(areNotificationsEnabled)
+        }
+
         Ometria.instance().trackAppForegroundedEvent()
 
         !firstLaunch.getAndSet(false)

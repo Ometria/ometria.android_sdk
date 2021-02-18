@@ -15,6 +15,7 @@ import com.android.ometriasdk.core.Constants.Params.LINK
 import com.android.ometriasdk.core.Constants.Params.LISTING_ATTRIBUTES
 import com.android.ometriasdk.core.Constants.Params.LISTING_TYPE
 import com.android.ometriasdk.core.Constants.Params.MESSAGE
+import com.android.ometriasdk.core.Constants.Params.NOTIFICATIONS
 import com.android.ometriasdk.core.Constants.Params.NOTIFICATION_CONTEXT
 import com.android.ometriasdk.core.Constants.Params.ORDER_ID
 import com.android.ometriasdk.core.Constants.Params.ORIGINAL_MESSAGE
@@ -99,7 +100,7 @@ class Ometria private constructor() : OmetriaNotificationInteractionHandler {
                 it.generateInstallationId()
             }
 
-            val activityLifecycleHelper = OmetriaActivityLifecycleHelper(it.repository)
+            val activityLifecycleHelper = OmetriaActivityLifecycleHelper(it.repository, it.context)
 
             val lifecycle = ProcessLifecycleOwner.get().lifecycle
             lifecycle.addObserver(activityLifecycleHelper)
@@ -322,6 +323,11 @@ class Ometria private constructor() : OmetriaNotificationInteractionHandler {
             OmetriaEventType.NOTIFICATION_INTERACTED,
             mapOf(NOTIFICATION_CONTEXT to context)
         )
+    }
+
+    internal fun trackPermissionsUpdateEvent(hasPermission: Boolean) {
+        val permissionValue = if (hasPermission) "opt-in" else "opt-out"
+        trackEvent(OmetriaEventType.PERMISSION_UPDATE, mapOf(NOTIFICATIONS to permissionValue))
     }
 
     /**

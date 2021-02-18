@@ -30,6 +30,7 @@ internal enum class OmetriaEventType(var id: String) {
     PUSH_TOKEN_REFRESHED("pushTokenRefreshed"),
     NOTIFICATION_RECEIVED("notificationReceived"),
     NOTIFICATION_INTERACTED("notificationInteracted"),
+    PERMISSION_UPDATE("permissionsUpdate"),
 
     // Other event types
     DEEP_LINK_OPENED("deepLinkOpened"),

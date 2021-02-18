@@ -28,6 +28,7 @@ internal object Constants {
         const val EXTRA = "extra"
         const val LISTING_TYPE = "listingType"
         const val LISTING_ATTRIBUTES = "listingAttributes"
+        const val NOTIFICATIONS = "notifications"
     }
 
     object Common {
