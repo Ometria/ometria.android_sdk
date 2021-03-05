@@ -53,7 +53,6 @@ class Ometria private constructor() : OmetriaNotificationInteractionHandler {
     private lateinit var repository: Repository
     private lateinit var notificationHandler: NotificationHandler
     private lateinit var executor: OmetriaThreadPoolExecutor
-    private lateinit var context: Context
     lateinit var notificationInteractionHandler: OmetriaNotificationInteractionHandler
 
     /**
@@ -94,13 +93,12 @@ class Ometria private constructor() : OmetriaNotificationInteractionHandler {
                 NotificationHandler(application, notificationIcon, it.executor)
             it.isInitialized = true
             it.notificationInteractionHandler = instance
-            it.context = application
 
             if (it.shouldGenerateInstallationId()) {
                 it.generateInstallationId()
             }
 
-            val activityLifecycleHelper = OmetriaActivityLifecycleHelper(it.repository, it.context)
+            val activityLifecycleHelper = OmetriaActivityLifecycleHelper(it.repository, application)
 
             val lifecycle = ProcessLifecycleOwner.get().lifecycle
             lifecycle.addObserver(activityLifecycleHelper)
@@ -382,7 +380,7 @@ class Ometria private constructor() : OmetriaNotificationInteractionHandler {
         localCache.clearEvents()
     }
 
-    override fun onDeepLinkInteraction(deepLink: String) {
+    override fun onDeepLinkInteraction(context: Context, deepLink: String) {
         Logger.d(Constants.Logger.PUSH_NOTIFICATIONS, "Open URL: $deepLink")
         val intent = Intent(Intent.ACTION_VIEW)
         intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
