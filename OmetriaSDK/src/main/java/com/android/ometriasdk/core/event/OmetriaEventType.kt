@@ -23,6 +23,7 @@ internal enum class OmetriaEventType(var id: String) {
     WISHLIST_REMOVED_FROM("wishlistRemovedFrom"),
     BASKET_VIEWED("basketViewed"),
     BASKET_UPDATED("basketUpdated"),
+    CHECKOUT_STARTED("checkoutStarted"),
     ORDER_COMPLETED("orderCompleted"),
     HOME_SCREEN_VIEWED("homeScreenViewed"),
 

@@ -287,6 +287,14 @@ class Ometria private constructor() : OmetriaNotificationInteractionHandler {
     }
 
     /**
+     * Track when the user has started the checkout process.
+     * @param orderId The id that your system generated for the order.
+     */
+    fun trackCheckoutStartedEvent(orderId: String) {
+        trackEvent(OmetriaEventType.CHECKOUT_STARTED, mapOf(ORDER_ID to (orderId)))
+    }
+
+    /**
      * Track when an order has been completed and paid for.
      * @param orderId The id that your system generated for the completed order.
      * @param basket An OmetriaBasket object containing all the items in the order and also the total pricing and currency
