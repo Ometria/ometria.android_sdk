@@ -180,6 +180,14 @@ This event takes the full current basket as a parameter - not just the updated p
 
 This helps recover from lost or out of sync basket events: the latest update is always authoritative.
 
+#### Checkout started
+
+The user has started the checkout process.
+
+```kotlin
+trackCheckoutStartedEvent(orderId: String)
+```
+
 #### Order completed
 
 The order has been completed and paid for.
