@@ -28,10 +28,7 @@ internal class PushClickBroadcastReceiver : BroadcastReceiver() {
         if (action != null && action == PUSH_TAP_ACTION && context != null) {
             val deepLinkActionUrl = intent.getStringExtra(NOTIFICATION_ACTION_URL_KEY)
             if (deepLinkActionUrl != null && URLUtil.isValidUrl(deepLinkActionUrl)) {
-                Ometria.instance().notificationInteractionHandler.onDeepLinkInteraction(
-                    context,
-                    deepLinkActionUrl
-                )
+                Ometria.instance().notificationInteractionHandler.onDeepLinkInteraction(deepLinkActionUrl)
             } else {
                 val launcherIntent = context.packageManager.getLaunchIntentForPackage(context.packageName)
                 launcherIntent?.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK

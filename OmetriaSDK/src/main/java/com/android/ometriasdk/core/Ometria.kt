@@ -1,9 +1,9 @@
 package com.android.ometriasdk.core
 
 import android.app.Application
-import android.content.Context
 import android.content.Intent
 import android.net.Uri
+import androidx.core.app.NotificationManagerCompat
 import androidx.lifecycle.ProcessLifecycleOwner
 import com.android.ometriasdk.core.Constants.Params.BASKET
 import com.android.ometriasdk.core.Constants.Params.CLASS
@@ -80,7 +80,7 @@ class Ometria private constructor() : OmetriaNotificationInteractionHandler {
             apiToken: String,
             notificationIcon: Int
         ) = instance.also {
-            it.ometriaConfig = OmetriaConfig(apiToken)
+            it.ometriaConfig = OmetriaConfig(apiToken, application)
             it.localCache = LocalCache(application)
             it.executor = OmetriaThreadPoolExecutor()
             it.repository = Repository(
@@ -314,9 +314,12 @@ class Ometria private constructor() : OmetriaNotificationInteractionHandler {
     }
 
     internal fun trackPushTokenRefreshedEvent(pushToken: String?) {
+        val hasPermission =
+            NotificationManagerCompat.from(ometriaConfig.application).areNotificationsEnabled()
+        val permissionValue = if (hasPermission) "opt-in" else "opt-out"
         trackEvent(
             OmetriaEventType.PUSH_TOKEN_REFRESHED,
-            mapOf(PUSH_TOKEN to (pushToken.orEmpty()))
+            mapOf(PUSH_TOKEN to (pushToken.orEmpty()), NOTIFICATIONS to permissionValue)
         )
     }
 
@@ -388,12 +391,12 @@ class Ometria private constructor() : OmetriaNotificationInteractionHandler {
         localCache.clearEvents()
     }
 
-    override fun onDeepLinkInteraction(context: Context, deepLink: String) {
+    override fun onDeepLinkInteraction(deepLink: String) {
         Logger.d(Constants.Logger.PUSH_NOTIFICATIONS, "Open URL: $deepLink")
         val intent = Intent(Intent.ACTION_VIEW)
         intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
         intent.data = Uri.parse(deepLink)
-        context.startActivity(intent)
+        ometriaConfig.application.startActivity(intent)
 
         trackDeepLinkOpenedEvent(deepLink, "Browser")
     }
