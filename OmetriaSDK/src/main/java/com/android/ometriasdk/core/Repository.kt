@@ -118,4 +118,12 @@ internal class Repository(
     fun clearProfileIdentifiedData() {
         localCache.clearProfileIdentifiedData()
     }
+
+    fun saveAreNotificationsEnabled(areNotificationsEnabled: Boolean) {
+        localCache.saveAreNotificationsEnabled(areNotificationsEnabled)
+    }
+
+    fun areNotificationsEnabled(): Boolean {
+        return localCache.areNotificationsEnabled()
+    }
 }

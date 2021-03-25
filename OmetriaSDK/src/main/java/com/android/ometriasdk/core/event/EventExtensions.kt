@@ -26,7 +26,7 @@ internal fun OmetriaEvent.batchIdentifier(): Int {
  */
 internal fun List<OmetriaEvent>.toApiRequest(): OmetriaApiRequest {
     val dateFormat: DateFormat =
-        SimpleDateFormat(Constants.Date.API_DATE_FORMAT, Locale.getDefault())
+        SimpleDateFormat(Constants.Date.API_DATE_FORMAT, Locale.UK)
     val ometriaEvent = this.first()
 
     return OmetriaApiRequest(

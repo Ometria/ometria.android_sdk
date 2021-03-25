@@ -18,6 +18,7 @@ private const val EVENTS_KEY = "EVENTS_KEY"
 private const val PUSH_TOKEN_KEY = "PUSH_TOKEN_KEY"
 private const val CUSTOMER_ID_KEY = "CUSTOMER_ID_KEY"
 private const val EMAIL_KEY = "EMAIL_KEY"
+private const val ARE_NOTIFICATIONS_ENABLED_KEY = "ARE_NOTIFICATIONS_ENABLED_KEY"
 private const val JSON_ARRAY = "[]"
 
 internal class LocalCache(private val context: Context) {
@@ -117,5 +118,14 @@ internal class LocalCache(private val context: Context) {
     fun clearProfileIdentifiedData() {
         getLocalCachePreferences().edit().remove(CUSTOMER_ID_KEY).apply()
         getLocalCachePreferences().edit().remove(EMAIL_KEY).apply()
+    }
+
+    fun saveAreNotificationsEnabled(areNotificationsEnabled: Boolean) {
+        getLocalCachePreferences().edit()
+            .putBoolean(ARE_NOTIFICATIONS_ENABLED_KEY, areNotificationsEnabled).apply()
+    }
+
+    fun areNotificationsEnabled(): Boolean {
+        return getLocalCachePreferences().getBoolean(ARE_NOTIFICATIONS_ENABLED_KEY, true)
     }
 }

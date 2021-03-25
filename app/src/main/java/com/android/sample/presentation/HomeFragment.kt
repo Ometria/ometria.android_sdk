@@ -100,6 +100,8 @@ class HomeFragment : Fragment() {
                 .trackBasketViewedEvent()
             EventType.BASKET_UPDATED -> Ometria.instance()
                 .trackBasketUpdatedEvent(getBasket())
+            EventType.CHECKOUT_STARTED -> Ometria.instance()
+                .trackCheckoutStartedEvent("orderId_1")
             EventType.ORDER_COMPLETED -> Ometria.instance()
                 .trackOrderCompletedEvent("orderId_1", getBasket())
             EventType.HOME_SCREEN_VIEWED -> Ometria.instance()

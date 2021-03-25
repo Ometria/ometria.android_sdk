@@ -30,7 +30,7 @@ private const val NO_VALUE = -1L
  */
 internal class EventHandler(context: Context, private val repository: Repository) {
     private val dateFormat: DateFormat =
-        SimpleDateFormat(Constants.Date.API_DATE_FORMAT, Locale.getDefault())
+        SimpleDateFormat(Constants.Date.API_DATE_FORMAT, Locale.UK)
     private val appId = context.packageName
     private val packageInfo = context.packageManager.getPackageInfo(context.packageName, 0)
     private var syncTimestamp: Long = NO_VALUE
@@ -76,7 +76,6 @@ internal class EventHandler(context: Context, private val repository: Repository
                 Ometria.instance().trackPushTokenRefreshedEvent(repository.getPushToken())
             }
             OmetriaEventType.PROFILE_DEIDENTIFIED.id -> {
-                Ometria.instance().generateInstallationId()
                 repository.clearProfileIdentifiedData()
             }
         }
