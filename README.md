@@ -31,7 +31,7 @@ To install the library inside **Android Studio**, declare it as dependency in yo
 
 ```gradle
 dependencies {
-    implementation 'com.ometria:android-sdk:1.1.0'
+    implementation 'com.ometria:android-sdk:1.1.1'
 }
 ```
 
