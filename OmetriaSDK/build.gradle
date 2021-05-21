@@ -9,7 +9,7 @@ android {
         minSdkVersion 21
         targetSdkVersion 29
         versionCode 1
-        versionName "1.1.0"
+        versionName "1.1.1"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles "consumer-rules.pro"
@@ -32,11 +32,11 @@ dependencies {
     implementation 'androidx.appcompat:appcompat:1.2.0'
 
     // Lifecycle
-    implementation 'androidx.lifecycle:lifecycle-process:2.3.0'
-    implementation 'androidx.lifecycle:lifecycle-common-java8:2.3.0'
+    implementation 'androidx.lifecycle:lifecycle-process:2.3.1'
+    implementation 'androidx.lifecycle:lifecycle-common-java8:2.3.1'
 
     // Add the SDK for Firebase Cloud Messaging
-    implementation 'com.google.firebase:firebase-messaging:21.0.1'
+    implementation 'com.google.firebase:firebase-messaging:22.0.0'
 
     // Testing
     testImplementation 'junit:junit:4.13.1'

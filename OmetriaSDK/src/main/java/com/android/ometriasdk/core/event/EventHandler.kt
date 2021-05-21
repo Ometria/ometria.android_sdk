@@ -98,7 +98,8 @@ internal class EventHandler(context: Context, private val repository: Repository
         when (ometriaEvent.type) {
             OmetriaEventType.PUSH_TOKEN_REFRESHED.id,
             OmetriaEventType.APP_FOREGROUNDED.id,
-            OmetriaEventType.APP_BACKGROUNDED.id -> flushEvents()
+            OmetriaEventType.APP_BACKGROUNDED.id,
+            OmetriaEventType.NOTIFICATION_RECEIVED.id -> flushEvents()
             else -> flushEventsIfNeeded()
         }
     }
