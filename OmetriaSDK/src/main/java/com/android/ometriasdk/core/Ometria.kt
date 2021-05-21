@@ -223,9 +223,7 @@ class Ometria private constructor() : OmetriaNotificationInteractionHandler {
 
     /**
      * Track the current app user being deidentified.
-     * An app user has deidentified themselves. This basically means: a user has logged out.
-     *
-     * Note: calling this method will cause the installation ID to be reset, and the SDK will log an event to send the new id.
+     * An app user has deidentified themselves. This basically means: a user has logged out.*
      */
     fun trackProfileDeidentifiedEvent() {
         trackEvent(OmetriaEventType.PROFILE_DEIDENTIFIED)
