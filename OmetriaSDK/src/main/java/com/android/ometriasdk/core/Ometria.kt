@@ -295,7 +295,7 @@ class Ometria private constructor() : OmetriaNotificationInteractionHandler {
     /**
      * Track when an order has been completed and paid for.
      * @param orderId The id that your system generated for the completed order.
-     * @param basket An OmetriaBasket object containing all the items in the order and also the total pricing and currency
+     * @param basket An OmetriaBasket object containing all the items in the order and also the total pricing, currency and link
      */
     fun trackOrderCompletedEvent(orderId: String, basket: OmetriaBasket? = null) {
         val data = mutableMapOf<String, Any>()
