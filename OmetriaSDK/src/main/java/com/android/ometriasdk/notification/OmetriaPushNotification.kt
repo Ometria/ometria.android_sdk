@@ -1,5 +1,6 @@
 package com.android.ometriasdk.notification
 
+import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
@@ -22,7 +23,8 @@ const val OMETRIA_CHANNEL_NAME = "ometria"
 
 internal class OmetriaPushNotification(
     private val context: Context,
-    private val notificationIcon: Int
+    private val notificationIcon: Int,
+    private val notificationColor: Int?
 ) {
 
     fun createPushNotification(
@@ -46,6 +48,7 @@ internal class OmetriaPushNotification(
             .setAutoCancel(true)
             .setContentIntent(contentIntent)
             .setLargeIcon(image)
+            .setColor(notificationColor ?: Notification.COLOR_DEFAULT)
 
         val notificationManager =
             context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager

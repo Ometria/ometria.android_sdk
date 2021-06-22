@@ -90,7 +90,8 @@ internal class OmetriaActivityLifecycleHelper(
      * Using activity started callback to track Screen View event
      */
     override fun onActivityStarted(activity: Activity) {
-        Ometria.instance().trackAutomatedScreenViewedEvent(activity::class.simpleName)
+        // Disabled at clients request
+//        Ometria.instance().trackAutomatedScreenViewedEvent(activity::class.simpleName)
     }
 
     /**

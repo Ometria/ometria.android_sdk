@@ -1,12 +1,17 @@
 package com.android.ometriasdk.core
 
+import android.os.Handler
 import com.android.ometriasdk.core.Constants.Logger.NETWORK
 import com.android.ometriasdk.core.event.OmetriaEvent
 import com.android.ometriasdk.core.event.toApiRequest
+import com.android.ometriasdk.core.listener.ProcessAppLinkListener
 import com.android.ometriasdk.core.network.Client
 import com.android.ometriasdk.core.network.OmetriaThreadPoolExecutor
 import com.android.ometriasdk.core.network.model.OmetriaApiRequest
 import java.io.IOException
+import java.net.HttpURLConnection
+import java.net.MalformedURLException
+import java.net.URL
 
 /**
  * Created by cristiandregan
@@ -21,6 +26,7 @@ internal class Repository(
     private val executor: OmetriaThreadPoolExecutor
 ) {
 
+    private val resultHandler: Handler = Handler()
     private val dropStatusCodesRange = 400..499
 
     fun flushEvents(events: List<OmetriaEvent>, success: () -> Unit, error: () -> Unit) {
@@ -125,5 +131,29 @@ internal class Repository(
 
     fun areNotificationsEnabled(): Boolean {
         return localCache.areNotificationsEnabled()
+    }
+
+    fun getRedirectForUrl(url: String, listener: ProcessAppLinkListener) {
+        executor.execute {
+            var urlTemp: URL? = null
+            var connection: HttpURLConnection? = null
+            try {
+                urlTemp = URL(url)
+            } catch (e: MalformedURLException) {
+                listener.onProcessFailed(e.message ?: "Something went wrong")
+            }
+            try {
+                connection = urlTemp?.openConnection() as HttpURLConnection
+            } catch (e: IOException) {
+                listener.onProcessFailed(e.message ?: "Something went wrong")
+            }
+            try {
+                connection?.responseCode
+            } catch (e: IOException) {
+                listener.onProcessFailed(e.message ?: "Something went wrong")
+            }
+            resultHandler.post { listener.onProcessResult(connection?.url.toString()) }
+            connection?.disconnect()
+        }
     }
 }

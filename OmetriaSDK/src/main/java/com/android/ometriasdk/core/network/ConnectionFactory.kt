@@ -25,8 +25,7 @@ internal class ConnectionFactory(private val ometriaConfig: OmetriaConfig) {
 
     fun postConnection(): HttpURLConnection {
         val url = API_ENDPOINT
-        val requestedURL: URL
-        requestedURL = try {
+        val requestedURL: URL = try {
             URL(url)
         } catch (e: MalformedURLException) {
             throw IOException("Attempted to use malformed url: $url", e)

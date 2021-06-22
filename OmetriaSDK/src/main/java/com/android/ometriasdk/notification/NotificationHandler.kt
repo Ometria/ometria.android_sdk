@@ -24,12 +24,14 @@ const val KEY_OMETRIA = "ometria"
 internal class NotificationHandler(
     context: Context,
     notificationIcon: Int,
+    notificationColor: Int?,
     private val executor: OmetriaThreadPoolExecutor,
 ) {
 
     private val ometriaPushNotification: OmetriaPushNotification = OmetriaPushNotification(
         context,
-        notificationIcon
+        notificationIcon,
+        notificationColor
     )
 
     /**

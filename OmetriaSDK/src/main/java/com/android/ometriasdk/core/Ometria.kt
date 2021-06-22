@@ -1,6 +1,7 @@
 package com.android.ometriasdk.core
 
 import android.app.Application
+import android.app.Notification.COLOR_DEFAULT
 import android.content.Intent
 import android.net.Uri
 import androidx.core.app.NotificationManagerCompat
@@ -26,6 +27,7 @@ import com.android.ometriasdk.core.Constants.Params.PUSH_TOKEN
 import com.android.ometriasdk.core.event.EventHandler
 import com.android.ometriasdk.core.event.OmetriaBasket
 import com.android.ometriasdk.core.event.OmetriaEventType
+import com.android.ometriasdk.core.listener.ProcessAppLinkListener
 import com.android.ometriasdk.core.network.Client
 import com.android.ometriasdk.core.network.ConnectionFactory
 import com.android.ometriasdk.core.network.OmetriaThreadPoolExecutor
@@ -78,7 +80,8 @@ class Ometria private constructor() : OmetriaNotificationInteractionHandler {
         fun initialize(
             application: Application,
             apiToken: String,
-            notificationIcon: Int
+            notificationIcon: Int,
+            notificationColor: Int? = COLOR_DEFAULT
         ) = instance.also {
             it.ometriaConfig = OmetriaConfig(apiToken, application)
             it.localCache = LocalCache(application)
@@ -90,7 +93,7 @@ class Ometria private constructor() : OmetriaNotificationInteractionHandler {
             )
             it.eventHandler = EventHandler(application, it.repository)
             it.notificationHandler =
-                NotificationHandler(application, notificationIcon, it.executor)
+                NotificationHandler(application, notificationIcon, notificationColor, it.executor)
             it.isInitialized = true
             it.notificationInteractionHandler = instance
 
@@ -387,6 +390,15 @@ class Ometria private constructor() : OmetriaNotificationInteractionHandler {
      */
     fun clear() {
         localCache.clearEvents()
+    }
+
+    /**
+     * Retrieves the redirect url for the url that you provide.
+     * @param url The url that will be processed.
+     * @param listener The callback interface.
+     */
+    fun processAppLink(url: String, listener: ProcessAppLinkListener) {
+        repository.getRedirectForUrl(url, listener)
     }
 
     override fun onDeepLinkInteraction(deepLink: String) {
