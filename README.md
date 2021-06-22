@@ -90,7 +90,7 @@ val myItem = OmetriaBasketItem(
         quantity = 1,
         price = 12.0f)
 val myItems = listOf(myItem)
-val basket = OmetriaBasket(totalPrice = 12.0f, currency = "USD", items = myItems)
+val basket = OmetriaBasket(totalPrice = 12.0f, currency = "USD", items = myItems, link = "www.example.com")
 
 Ometria.instance().trackBasketUpdatedEvent(basket = basket)
 ```
