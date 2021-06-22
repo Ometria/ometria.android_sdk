@@ -268,6 +268,31 @@ Check with the marketing team about the specifics, and what they might need. Esp
 trackCustomEvent(customEventType: String, additionalInfo: Map<String, Any> = mapOf())
 ```
 
+### `OmetriaBasket`
+
+An object that describes the contents of a shopping basket.
+
+#### Properties
+
+* `currency`: (`String`, required) - A string representing the currency in ISO currency format. e.g. `"USD"`, `"GBP"`.
+* `price`: (`float`, required) - A float value representing the pricing.
+* `items`: (`Array[OmetriaBasketItem]`) - An array containing the item entries in this basket.
+* `link`: (`String`) - A deeplink to the web or in-app page for this basket. Can be used ina notification sent to the user, e.g. "Forgot to check out? Here's
+                       your basket to continue: <link>". Following that link should take them straight to the basket page.
+
+### `OmetriaBasketItem`
+
+An object that describes the contents of a shopping basket. 
+
+It can have its own price and quantity based on different rules and promotions that are being applied.
+
+#### Properties
+
+* `productId`: (`String`, required) - A string representing the unique identifier of this product.
+* `sku`: (`String`, optional) - A string representing the stock keeping unit, which allows identifying a particular item.
+* `quantity`: (`Int`, required) - The number of items that this entry represents.
+* `price`: (`Float`, required) - Float value representing the price for one item. The currency is established by the OmetriaBasket containing this item.
+
 ### Automatically tracked events
 
 The following events are automatically tracked by the SDK.
