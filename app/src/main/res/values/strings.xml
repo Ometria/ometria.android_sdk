@@ -5,4 +5,6 @@
     <string name="tab_three">TAB THREE</string>
     <string name="home">Home</string>
     <string name="events">Events</string>
+    <string name="redirect_modal_title">App Link Processed</string>
+    <string name="ok">OK</string>
 </resources>

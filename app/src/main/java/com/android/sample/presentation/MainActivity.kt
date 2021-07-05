@@ -1,8 +1,15 @@
 package com.android.sample.presentation
 
 import android.os.Bundle
+import android.text.SpannableString
+import android.text.method.LinkMovementMethod
+import android.text.util.Linkify
+import android.widget.TextView
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.viewpager.widget.ViewPager
+import com.android.ometriasdk.core.Ometria
+import com.android.ometriasdk.core.listener.ProcessAppLinkListener
 import com.android.sample.R
 import kotlinx.android.synthetic.main.activity_main.*
 
@@ -17,6 +24,7 @@ class MainActivity : AppCompatActivity() {
 
         setUpBottomNavMenu()
         setupViewPager()
+        handleAppLinkFromIntent()
     }
 
     private fun switchFragment(position: Int) {
@@ -24,7 +32,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun setUpBottomNavMenu() {
-        bottomMenuBnv.setOnNavigationItemSelectedListener { item ->
+        bottomMenuBnv.setOnItemSelectedListener { item ->
             when (item.itemId) {
                 R.id.restaurants -> {
                     switchFragment(FIRST_FRAGMENT_POS)
@@ -63,5 +71,40 @@ class MainActivity : AppCompatActivity() {
                 bottomMenuBnv.menu.getItem(position).isChecked = true
             }
         })
+    }
+
+    private fun handleAppLinkFromIntent() {
+        // Here you should check whether the link is one that can already be handled by the app.
+        // If the link is identified as one coming from an Ometria campaign, you will be able to get the final URL
+        // by calling the processAppLink method.
+        // The processing is done async, so you should present a loading screen.
+        intent.dataString?.let { url ->
+            Ometria.instance().processAppLink(url, object : ProcessAppLinkListener {
+                override fun onProcessResult(redirectUrl: String) {
+                    displayRedirectUrlDialog(redirectUrl)
+                }
+
+                override fun onProcessFailed(error: String) {
+                    displayRedirectUrlDialog(error)
+                }
+            })
+        }
+    }
+
+    private fun displayRedirectUrlDialog(message: String) {
+        val messageSpannableString = SpannableString(message)
+        Linkify.addLinks(messageSpannableString, Linkify.ALL)
+
+        val textView = TextView(this)
+        textView.text = messageSpannableString
+        textView.movementMethod = LinkMovementMethod.getInstance()
+
+        AlertDialog.Builder(this)
+            .setTitle(R.string.redirect_modal_title)
+            .setView(textView)
+            .setPositiveButton(R.string.ok) { dialog, _ ->
+                dialog.dismiss()
+            }
+            .show()
     }
 }

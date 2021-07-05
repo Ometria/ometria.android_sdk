@@ -26,6 +26,7 @@ import com.android.ometriasdk.core.Constants.Params.PUSH_TOKEN
 import com.android.ometriasdk.core.event.EventHandler
 import com.android.ometriasdk.core.event.OmetriaBasket
 import com.android.ometriasdk.core.event.OmetriaEventType
+import com.android.ometriasdk.core.listener.ProcessAppLinkListener
 import com.android.ometriasdk.core.network.Client
 import com.android.ometriasdk.core.network.ConnectionFactory
 import com.android.ometriasdk.core.network.OmetriaThreadPoolExecutor
@@ -387,6 +388,15 @@ class Ometria private constructor() : OmetriaNotificationInteractionHandler {
      */
     fun clear() {
         localCache.clearEvents()
+    }
+
+    /**
+     * Retrieves the redirect url for the url that you provide.
+     * @param url The url that will be processed.
+     * @param listener The callback interface.
+     */
+    fun processAppLink(url: String, listener: ProcessAppLinkListener) {
+        repository.getRedirectForUrl(url, listener)
     }
 
     override fun onDeepLinkInteraction(deepLink: String) {
