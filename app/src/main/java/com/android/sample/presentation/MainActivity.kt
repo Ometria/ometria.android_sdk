@@ -80,8 +80,8 @@ class MainActivity : AppCompatActivity() {
         // The processing is done async, so you should present a loading screen.
         intent.dataString?.let { url ->
             Ometria.instance().processAppLink(url, object : ProcessAppLinkListener {
-                override fun onProcessResult(redirectUrl: String) {
-                    displayRedirectUrlDialog(redirectUrl)
+                override fun onProcessResult(url: String) {
+                    displayRedirectUrlDialog(url)
                 }
 
                 override fun onProcessFailed(error: String) {

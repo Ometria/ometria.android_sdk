@@ -5,6 +5,16 @@ package com.android.ometriasdk.core.listener
  * Processing is done async. Results will be returned on Main Thread.
  */
 interface ProcessAppLinkListener {
-    fun onProcessResult(redirectUrl: String)
+
+    /**
+     * Called when a process completes successfully.
+     * @param url The redirect URL resulted from process.
+     */
+    fun onProcessResult(url: String)
+
+    /**
+     * Called when an exception occurs during a process.
+     * @param error The error message
+     */
     fun onProcessFailed(error: String)
 }
