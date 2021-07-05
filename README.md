@@ -484,11 +484,11 @@ will be added inside your **AndroidManifest** file, the following XML snipped is
 </intent-filter>
 ```
 
-Find more about Android App Links [here] (https://developer.android.com/training/app-links/verify-site-associations)
+Find more about Android App Links [here](https://developer.android.com/training/app-links/verify-site-associations)
 
 ### Create an Digital Asset Links JSON file and upload it on the Ometria Platform
 
-The Digital Asset Links JSON file is used to create a relationship between a domain and your app. [You can find more info about it here] (https://developer.android.com/training/app-links/verify-site-associations#web-assoc).
+The Digital Asset Links JSON file is used to create a relationship between a domain and your app. [You can find more info about it here](https://developer.android.com/training/app-links/verify-site-associations#web-assoc).
 A basic example should look like this:
 
 ```javascript
