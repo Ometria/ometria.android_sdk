@@ -460,3 +460,71 @@ class SampleApp : Application(), OmetriaNotificationInteractionHandler {
     }
 }
 ```
+
+7\. App Links Guide
+----------------------------
+
+Ometria sends personalized emails with URLs that point back to your website. In order to open these URLs inside your application, make sure you follow this guide.
+
+### Handle App Links inside your application
+
+To add Android App Links to your app, define intent filters that open your app content using HTTP URLs. Intent filters for incoming links
+will be added inside your **AndroidManifest** file, the following XML snipped is an example:
+
+```xml
+<intent-filter android:autoVerify="true">
+    <action android:name="android.intent.action.VIEW" />
+
+    <category android:name="android.intent.category.DEFAULT" />
+    <category android:name="android.intent.category.BROWSABLE" />
+
+    <data
+        android:host="www.example.com"
+        android:scheme="https" />
+</intent-filter>
+```
+
+Find more about Android App Links [here] (https://developer.android.com/training/app-links/verify-site-associations)
+
+### Create an Digital Asset Links JSON file and upload it on the Ometria Platform
+
+The Digital Asset Links JSON file is used to create a relationship between a domain and your app. [You can find more info about it here] (https://developer.android.com/training/app-links/verify-site-associations#web-assoc).
+A basic example should look like this:
+
+```javascript
+[
+  {
+    "relation": [ "delegate_permission/common.handle_all_urls" ],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "com.android.sample",
+      "sha256_cert_fingerprints": ["51:5B:24:4B:C7:A4:7F:D2:FA:B2:C7:23:73:7A:A0:91:A5:B6:29:49:08:73:E1:51:7E:CF:60:28:53:65:47:25"]
+    }
+  }
+]
+```
+
+### Process App Links inside your application
+
+The final step is to process the URLs in your app and take the user to the appropriate sections of the app. If you are dealing with known URLs, things are simple, as you can decompose it into different path components and parameters. This will then allow you to source the required information to navigate throught the app.
+However, in the case of Ometria, the URLs are obfuscated, and you cannot break them down. To do so, the SDK provides a method which traces back to your own web domain, and returns a URL that would normally be representative for your website.
+
+```kotlin
+private fun handleAppLinkFromIntent() {
+    intent.dataString?.let { url ->
+        Ometria.instance().processAppLink(url, object : ProcessAppLinkListener {
+            override fun onProcessResult(url: String) {
+                // you can now handle the retrieved url as you would any other url from your website
+            }
+
+            override fun onProcessFailed(error: String) {
+                // an error may have occurred
+            }
+        })
+    }
+}
+```
+
+**Warning**: The method above runs asynchronously. Depending on the internet speed on the device, the processing time can vary in duration. For best results, you could implement a loading state that is displayed while the URL is beeing processed.
+
+If you have done everything correctly, the app should now be able to open App Links and allow you to handle them inside the app.
