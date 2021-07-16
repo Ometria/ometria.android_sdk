@@ -9,6 +9,7 @@ import android.graphics.Bitmap
 import android.os.Build
 import android.os.Bundle
 import androidx.core.app.NotificationCompat
+import androidx.core.content.ContextCompat
 import com.android.ometriasdk.core.network.dataToJson
 
 /**
@@ -22,7 +23,8 @@ const val OMETRIA_CHANNEL_NAME = "ometria"
 
 internal class OmetriaPushNotification(
     private val context: Context,
-    private val notificationIcon: Int
+    private val notificationIcon: Int,
+    private val notificationColor: Int
 ) {
 
     fun createPushNotification(
@@ -46,6 +48,7 @@ internal class OmetriaPushNotification(
             .setAutoCancel(true)
             .setContentIntent(contentIntent)
             .setLargeIcon(image)
+            .setColor(ContextCompat.getColor(context, notificationColor))
 
         val notificationManager =
             context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager

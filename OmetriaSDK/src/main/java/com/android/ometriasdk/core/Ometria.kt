@@ -3,6 +3,7 @@ package com.android.ometriasdk.core
 import android.app.Application
 import android.content.Intent
 import android.net.Uri
+import android.os.Bundle
 import androidx.core.app.NotificationManagerCompat
 import androidx.lifecycle.ProcessLifecycleOwner
 import com.android.ometriasdk.core.Constants.Params.BASKET
@@ -78,7 +79,8 @@ class Ometria private constructor() : OmetriaNotificationInteractionHandler {
         fun initialize(
             application: Application,
             apiToken: String,
-            notificationIcon: Int
+            notificationIcon: Int,
+            notificationColor: Int
         ) = instance.also {
             it.ometriaConfig = OmetriaConfig(apiToken, application)
             it.localCache = LocalCache(application)
@@ -90,7 +92,7 @@ class Ometria private constructor() : OmetriaNotificationInteractionHandler {
             )
             it.eventHandler = EventHandler(application, it.repository)
             it.notificationHandler =
-                NotificationHandler(application, notificationIcon, it.executor)
+                NotificationHandler(application, notificationIcon, notificationColor, it.executor)
             it.isInitialized = true
             it.notificationInteractionHandler = instance
 
@@ -389,11 +391,12 @@ class Ometria private constructor() : OmetriaNotificationInteractionHandler {
         localCache.clearEvents()
     }
 
-    override fun onDeepLinkInteraction(deepLink: String) {
+    override fun onDeepLinkInteraction(deepLink: String, extras: Bundle?) {
         Logger.d(Constants.Logger.PUSH_NOTIFICATIONS, "Open URL: $deepLink")
         val intent = Intent(Intent.ACTION_VIEW)
         intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
         intent.data = Uri.parse(deepLink)
+        extras?.let { intent.putExtras(it) }
         ometriaConfig.application.startActivity(intent)
 
         trackDeepLinkOpenedEvent(deepLink, "Browser")
