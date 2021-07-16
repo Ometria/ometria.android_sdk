@@ -3,6 +3,7 @@ package com.android.sample
 import android.app.Application
 import android.content.Intent
 import android.net.Uri
+import android.os.Bundle
 import android.util.Log
 import com.android.ometriasdk.core.Ometria
 import com.android.ometriasdk.notification.OmetriaNotificationInteractionHandler
@@ -35,7 +36,7 @@ class SampleApp : Application(), OmetriaNotificationInteractionHandler {
         Ometria.instance().notificationInteractionHandler = this
     }
 
-    override fun onDeepLinkInteraction(deepLink: String) {
+    override fun onDeepLinkInteraction(deepLink: String, extras: Bundle?) {
         Log.d(SampleApp::class.java.simpleName, "Open URL: $deepLink")
         Ometria.instance().trackDeepLinkOpenedEvent(deepLink, "Browser")
 
