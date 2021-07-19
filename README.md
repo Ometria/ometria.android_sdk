@@ -461,10 +461,15 @@ class SampleApp : Application(), OmetriaNotificationInteractionHandler {
 }
 ```
 
-7\. App Links Guide
+7\. App links guide
 ----------------------------
 
-Ometria sends personalized emails with URLs that point back to your website. In order to open these URLs inside your application, make sure you follow this guide.
+Ometria sends personalised emails with URLs that point back to your website. In order to open these URLs inside your application, make sure you follow this guide.
+
+### Pre-requisites
+
+First, make sure you have an SSL-enabled Ometria tracking domain set up for your account. You may already have this for
+your email campaigns, but if not ask your Ometria contact to set one up, and they should provide you with the domain.
 
 ### Handle App Links inside your application
 
@@ -479,14 +484,18 @@ will be added inside your **AndroidManifest** file, the following XML snipped is
     <category android:name="android.intent.category.BROWSABLE" />
 
     <data
-        android:host="www.example.com"
+        android:host="clickom.omdemo.net"
         android:scheme="https" />
 </intent-filter>
 ```
 
+This will ensure that when your customers click on links in Ometria emails, your app opens instead of the browser.
+
+**Note:** This does not associate your website's domain with the app, only the tracking domain.
+
 Find more about Android App Links [here](https://developer.android.com/training/app-links/verify-site-associations)
 
-### Create an Digital Asset Links JSON file and upload it on the Ometria Platform
+### Create a digital asset links JSON file and send it to your Ometria contact.
 
 The Digital Asset Links JSON file is used to create a relationship between a domain and your app. [You can find more info about it here](https://developer.android.com/training/app-links/verify-site-associations#web-assoc).
 A basic example should look like this:
@@ -504,10 +513,19 @@ A basic example should look like this:
 ]
 ```
 
+Save it and name it "assetlinks.json". Then send it to your Ometria contact - we will upload this for you so that it will be available behind the
+tracking domain.
+
 ### Process App Links inside your application
 
-The final step is to process the URLs in your app and take the user to the appropriate sections of the app. If you are dealing with known URLs, things are simple, as you can decompose it into different path components and parameters. This will then allow you to source the required information to navigate throught the app.
-However, in the case of Ometria, the URLs are obfuscated, and you cannot break them down. To do so, the SDK provides a method which traces back to your own web domain, and returns a URL that would normally be representative for your website.
+The final step is to process the URLs in your app and take the user to the appropriate sections of the app. Note that
+you need to implement the mapping between your website's URLs and the screens of your app.
+
+See also [Linking push notifications to app screens](https://support.ometria.com/hc/en-gb/articles/4402644059793-Linking-push-notifications-to-app-screens).
+
+If you are dealing with normal URLs pointing to your website, you can decompose it into different path components and parameters. This will allow you to source the required information to navigate through to the correct screen in your app.
+
+However, Ometria emails contain obfuscated tracking URLs, and these need to be converted back to the original URL, pointing to your website, before you can map the URL to an app screen. To do this, the SDK provides a method called `processAppLink`:
 
 ```kotlin
 private fun handleAppLinkFromIntent() {
@@ -525,6 +543,6 @@ private fun handleAppLinkFromIntent() {
 }
 ```
 
-**Warning**: The method above runs asynchronously. Depending on the internet speed on the device, the processing time can vary in duration. For best results, you could implement a loading state that is displayed while the URL is beeing processed.
+**Warning**: The method above runs asynchronously. Depending on the Internet speed on the device, processing time can vary. For best results, you could implement a loading state that is displayed while the URL is being processed.
 
-If you have done everything correctly, the app should now be able to open App Links and allow you to handle them inside the app.
+If you have done everything correctly, the app should now be able to open app links and allow you to handle them inside the app.
