@@ -493,7 +493,7 @@ This will ensure that when your customers click on links in Ometria emails, your
 
 **Note:** This does not associate your website's domain with the app, only the tracking domain.
 
-Find more about Android App Links [here](https://developer.android.com/training/app-links/verify-site-associations)
+Find more about Android App Links [here](https://developer.android.com/training/app-links/verify-site-associations).
 
 ### Create a digital asset links JSON file and send it to your Ometria contact.
 
