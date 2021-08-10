@@ -529,6 +529,7 @@ However, Ometria emails contain obfuscated tracking URLs, and these need to be c
 
 ```kotlin
 private fun handleAppLinkFromIntent() {
+    // you can check here whether the URL is one that you can handle without converting it back
     intent.dataString?.let { url ->
         Ometria.instance().processAppLink(url, object : ProcessAppLinkListener {
             override fun onProcessResult(url: String) {
