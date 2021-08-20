@@ -7,7 +7,7 @@ import com.android.ometriasdk.core.Constants
 import com.android.ometriasdk.core.Logger
 import com.android.ometriasdk.core.Ometria
 import com.android.ometriasdk.core.network.OmetriaThreadPoolExecutor
-import com.android.ometriasdk.core.network.toOmetriaNotification
+import com.android.ometriasdk.core.network.toOmetriaNotificationBody
 import com.google.firebase.messaging.RemoteMessage
 import java.io.IOException
 import java.net.URL
@@ -42,21 +42,21 @@ internal class NotificationHandler(
         val ometriaNotificationString = remoteMessage.data[KEY_OMETRIA]
         ometriaNotificationString ?: return
 
-        val ometriaNotification = ometriaNotificationString.toOmetriaNotification()
-        ometriaNotification?.context?.let {
+        val ometriaNotificationBody = ometriaNotificationString.toOmetriaNotificationBody()
+        ometriaNotificationBody.context?.let {
             Ometria.instance().trackNotificationReceivedEvent(it)
         }
 
         val title = remoteMessage.data[KEY_TITLE]
         val body = remoteMessage.data[KEY_BODY]
 
-        if (ometriaNotification?.imageUrl != null) {
-            loadImage(ometriaNotification.imageUrl) {
+        if (ometriaNotificationBody.imageUrl != null) {
+            loadImage(ometriaNotificationBody.imageUrl) {
                 ometriaPushNotification.createPushNotification(
                     title,
                     body,
                     it,
-                    ometriaNotification,
+                    ometriaNotificationBody,
                     remoteMessage.collapseKey
                 )
             }
@@ -64,7 +64,7 @@ internal class NotificationHandler(
             ometriaPushNotification.createPushNotification(
                 title = title,
                 body = body,
-                ometriaNotification = ometriaNotification,
+                ometriaNotificationBody = ometriaNotificationBody,
                 collapseId = remoteMessage.collapseKey
             )
         }

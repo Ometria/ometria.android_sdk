@@ -31,7 +31,7 @@ To install the library inside **Android Studio**, declare it as dependency in yo
 
 ```gradle
 dependencies {
-    implementation 'com.ometria:android-sdk:1.1.2'
+    implementation 'com.ometria:android-sdk:1.2.1'
 }
 ```
 
@@ -51,11 +51,12 @@ Once you've set up your build system or IDE to use the Ometria library, you can 
 
 We recommend initialising the SDK in your Application subclass. You’ll need to provide:
 ⋅⋅* the application context;
-⋅⋅* your Ometria API token, and;
-⋅⋅* the notifications icon.
+⋅⋅* your Ometria API token;
+⋅⋅* the notifications icon, and;
+⋅⋅* the notifications color (optional).
 
 ```kotlin
-Ometria.initialize(this, "YOUR_API_TOKEN", R.mipmap.ic_launcher)
+Ometria.initialize(this, "YOUR_API_TOKEN", R.drawable.ic_notification_nys, ContextCompat.getColor(this, R.color.colorAccent))
 ```
 
 Ometria logs any errors encountered during runtime by default. 
@@ -414,7 +415,7 @@ override fun onNewToken(token: String) {
 
 ### Handling interaction with notifications that contain URLs
 
-Ometria allows you to send URLs alongside your push notifications and allows you to handle them on the device. 
+Ometria allows you to send URLs and tracking info alongside your push notifications and allows you to handle them on the device. 
 
 By default, the Ometria SDK automatically handles any interaction with push notifications that contain URLs by opening them in a browser.
 
@@ -451,14 +452,24 @@ class SampleApp : Application(), OmetriaNotificationInteractionHandler {
     }
 
     /**
-     * This method will be called each time the user interacts with a notification from Ometria
-     * which contains a deepLinkURL. Write your own custom code in order to
-     * properly redirect the app to the screen that should be displayed.
+     * This method will be called each time the user interacts with a notification from Ometria.
+     * Write your own custom code in order to properly redirect the app to the screen that should be displayed.
      */
-    override fun onDeepLinkInteraction(deepLink: String) {
-        Log.d(SampleApp::class.java.simpleName, "URL: $deepLink")
+    override fun onNotificationInteraction(ometriaNotification: OmetriaNotification) {
+        Log.d(SampleApp::class.java.simpleName, "URL: ${ometriaNotification.deepLinkActionUrl}")
     }
 }
+```
+
+The `OmetriaNotification` object also provides access to other fields in the notification payload, including custom tracking properties that you choose to send.
+
+If for some reason developers need access to the `OmetriaNotification` object in a context other than the OmetriaNotificationInteraction, Ometria SDK provides a
+method called `fun parseNotification(remoteMessage: RemoteMessage)` for this:
+
+```kotlin
+override fun onMessageReceived(remoteMessage: RemoteMessage) {
+        val ometriaNotification = Ometria.instance().parseNotification(remoteMessage)
+    }
 ```
 
 7\. App links guide

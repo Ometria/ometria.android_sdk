@@ -4,6 +4,7 @@ import com.android.ometriasdk.core.event.OmetriaBasket
 import com.android.ometriasdk.core.event.OmetriaBasketItem
 import com.android.ometriasdk.core.event.OmetriaEvent
 import com.android.ometriasdk.core.network.model.OmetriaApiRequest
+import com.android.ometriasdk.notification.OmetriaNotificationBody
 import org.json.JSONArray
 import org.json.JSONObject
 
@@ -112,6 +113,15 @@ internal fun OmetriaEvent.toAPIJson(): JSONObject {
     jsonObject.put("dtOccurred", dtOccurred)
     jsonObject.put("type", type)
     jsonObject.put("data", data?.dataToJson())
+
+    return jsonObject
+}
+
+internal fun OmetriaNotificationBody.toJson(): JSONObject {
+    val jsonObject = JSONObject()
+    jsonObject.put("imageUrl", imageUrl)
+    jsonObject.put("deepLinkActionUrl", deepLinkActionUrl)
+    jsonObject.put("context", context?.dataToJson() ?: JSONObject())
 
     return jsonObject
 }

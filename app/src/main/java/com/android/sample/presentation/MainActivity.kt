@@ -13,6 +13,7 @@ import com.android.ometriasdk.core.listener.ProcessAppLinkListener
 import com.android.sample.R
 import kotlinx.android.synthetic.main.activity_main.*
 
+const val OMETRIA_NOTIFICATION_STRING_EXTRA_KEY = "ometria_notification_string_extra_key"
 private const val OFF_SCREEN_PAGE_LIMIT = 2
 const val FIRST_FRAGMENT_POS = 0
 const val SECOND_FRAGMENT_POS = 1
@@ -22,8 +23,11 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        val ometriaNotificationString =
+            intent.getStringExtra(OMETRIA_NOTIFICATION_STRING_EXTRA_KEY).orEmpty()
+
         setUpBottomNavMenu()
-        setupViewPager()
+        setupViewPager(ometriaNotificationString)
         handleAppLinkFromIntent()
     }
 
@@ -45,13 +49,10 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun setupViewPager() {
-        val adapter = ViewPagerAdapter(
-            supportFragmentManager
-        )
+    private fun setupViewPager(ometriaNotificationString: String) {
+        val adapter = ViewPagerAdapter(supportFragmentManager, ometriaNotificationString)
         containerVP.adapter = adapter
-        containerVP.offscreenPageLimit =
-            OFF_SCREEN_PAGE_LIMIT
+        containerVP.offscreenPageLimit = OFF_SCREEN_PAGE_LIMIT
         switchFragment(0)
         bottomMenuBnv.menu.getItem(0).isChecked = true
 

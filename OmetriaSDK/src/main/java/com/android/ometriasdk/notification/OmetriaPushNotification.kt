@@ -10,7 +10,7 @@ import android.graphics.Bitmap
 import android.os.Build
 import android.os.Bundle
 import androidx.core.app.NotificationCompat
-import com.android.ometriasdk.core.network.dataToJson
+import com.android.ometriasdk.core.network.toJson
 
 /**
  * Created by cristiandregan
@@ -31,13 +31,13 @@ internal class OmetriaPushNotification(
         title: String?,
         body: String?,
         image: Bitmap? = null,
-        ometriaNotification: OmetriaNotification?,
+        ometriaNotificationBody: OmetriaNotificationBody?,
         collapseId: String?
     ) {
         val contentIntent = PendingIntent.getBroadcast(
             context,
             System.currentTimeMillis().toInt(),
-            getRoutingIntent(ometriaNotification),
+            getRoutingIntent(ometriaNotificationBody),
             PendingIntent.FLAG_UPDATE_CURRENT
         )
 
@@ -65,13 +65,10 @@ internal class OmetriaPushNotification(
         notificationManager.notify(collapseId.hashCode(), notification)
     }
 
-    private fun getRoutingIntent(ometriaNotification: OmetriaNotification?): Intent {
+    private fun getRoutingIntent(ometriaNotificationBody: OmetriaNotificationBody?): Intent {
         val options = Bundle()
-        ometriaNotification?.let {
-            options.putString(NOTIFICATION_ACTION_URL_KEY, it.deepLinkActionUrl)
-            it.context?.let { context ->
-                options.putString(OMETRIA_CONTEXT_KEY, context.dataToJson().toString())
-            }
+        ometriaNotificationBody?.let {
+            options.putString(OMETRIA_NOTIFICATION_BODY_KEY, it.toJson().toString())
         }
 
         return Intent()

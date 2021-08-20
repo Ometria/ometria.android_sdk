@@ -16,7 +16,6 @@ import com.android.sample.R
 import com.android.sample.data.EventType
 import kotlinx.android.synthetic.main.fragment_home.*
 
-
 /**
  * Created by cristiandregan
  * on 17/07/2020.
@@ -31,10 +30,11 @@ class HomeFragment : Fragment() {
     private var screenPosition = TAB_ONE
 
     companion object {
-        fun newInstance(position: Int): HomeFragment {
+        fun newInstance(position: Int, ometriaNotificationString: String): HomeFragment {
             val instance = HomeFragment()
             instance.arguments = Bundle().apply {
                 putInt(POSITION_KEY, position)
+                putString(OMETRIA_NOTIFICATION_STRING_EXTRA_KEY, ometriaNotificationString)
             }
             return instance
         }
@@ -51,19 +51,26 @@ class HomeFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        screenPosition = arguments?.getInt(POSITION_KEY)!!
+        screenPosition = arguments?.getInt(POSITION_KEY) ?: TAB_ONE
+        val ometriaNotificationString = arguments?.getString(OMETRIA_NOTIFICATION_STRING_EXTRA_KEY)
 
-        setUpViews()
+        setUpViews(ometriaNotificationString)
         initEventsRV()
     }
 
-    private fun setUpViews() {
+    private fun setUpViews(ometriaNotificationString: String?) {
         detailsBTN.isVisible = screenPosition == TAB_ONE
         eventsRV.isVisible = screenPosition != TAB_ONE
+        detailsTV.isVisible = screenPosition == TAB_ONE
 
         detailsBTN.setOnClickListener {
             startActivity(Intent(requireContext(), DetailsActivity::class.java))
         }
+
+        titleTV.isVisible = screenPosition == TAB_ONE && !ometriaNotificationString.isNullOrEmpty()
+        detailsTV.isVisible =
+            screenPosition == TAB_ONE && !ometriaNotificationString.isNullOrEmpty()
+        detailsTV.text = ometriaNotificationString
     }
 
     private fun initEventsRV() {
