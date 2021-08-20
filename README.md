@@ -474,7 +474,7 @@ your email campaigns, but if not ask your Ometria contact to set one up, and the
 ### Handle App Links inside your application
 
 To add Android App Links to your app, define intent filters that open your app content using HTTP URLs. Intent filters for incoming links
-will be added inside your **AndroidManifest** file, the following XML snipped is an example:
+will be added inside your **AndroidManifest** file, the following XML snippet is an example (assuming "clickom.omdemo.net" is the tracking domain):
 
 ```xml
 <intent-filter android:autoVerify="true">
@@ -529,6 +529,7 @@ However, Ometria emails contain obfuscated tracking URLs, and these need to be c
 
 ```kotlin
 private fun handleAppLinkFromIntent() {
+    // you can check here whether the URL is one that you can handle without converting it back
     intent.dataString?.let { url ->
         Ometria.instance().processAppLink(url, object : ProcessAppLinkListener {
             override fun onProcessResult(url: String) {
