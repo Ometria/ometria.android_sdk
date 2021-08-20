@@ -1,6 +1,7 @@
 package com.android.ometriasdk.core
 
 import android.app.Application
+import android.app.Notification.COLOR_DEFAULT
 import android.content.Intent
 import android.net.Uri
 import androidx.core.app.NotificationManagerCompat
@@ -79,7 +80,8 @@ class Ometria private constructor() : OmetriaNotificationInteractionHandler {
         fun initialize(
             application: Application,
             apiToken: String,
-            notificationIcon: Int
+            notificationIcon: Int,
+            notificationColor: Int? = COLOR_DEFAULT
         ) = instance.also {
             it.ometriaConfig = OmetriaConfig(apiToken, application)
             it.localCache = LocalCache(application)
@@ -91,7 +93,7 @@ class Ometria private constructor() : OmetriaNotificationInteractionHandler {
             )
             it.eventHandler = EventHandler(application, it.repository)
             it.notificationHandler =
-                NotificationHandler(application, notificationIcon, it.executor)
+                NotificationHandler(application, notificationIcon, notificationColor, it.executor)
             it.isInitialized = true
             it.notificationInteractionHandler = instance
 

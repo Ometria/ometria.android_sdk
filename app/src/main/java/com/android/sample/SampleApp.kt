@@ -4,6 +4,7 @@ import android.app.Application
 import android.content.Intent
 import android.net.Uri
 import android.util.Log
+import androidx.core.content.ContextCompat
 import com.android.ometriasdk.core.Ometria
 import com.android.ometriasdk.notification.OmetriaNotificationInteractionHandler
 
@@ -26,7 +27,8 @@ class SampleApp : Application(), OmetriaNotificationInteractionHandler {
         Ometria.initialize(
             this,
             "YOUR_API_TOKEN",
-            R.mipmap.ic_launcher
+            R.drawable.ic_notification_nys,
+            ContextCompat.getColor(this, R.color.colorAccent)
         ).loggingEnabled(true)
 
         // Set the notificationInteractionDelegate in order to provide actions for
