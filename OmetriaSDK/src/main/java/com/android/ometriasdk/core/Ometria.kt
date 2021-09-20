@@ -31,9 +31,10 @@ import com.android.ometriasdk.core.listener.ProcessAppLinkListener
 import com.android.ometriasdk.core.network.Client
 import com.android.ometriasdk.core.network.ConnectionFactory
 import com.android.ometriasdk.core.network.OmetriaThreadPoolExecutor
+import com.android.ometriasdk.core.network.toOmetriaNotification
 import com.android.ometriasdk.lifecycle.OmetriaActivityLifecycleHelper
-import com.android.ometriasdk.notification.OmetriaNotification
 import com.android.ometriasdk.notification.NotificationHandler
+import com.android.ometriasdk.notification.OmetriaNotification
 import com.android.ometriasdk.notification.OmetriaNotificationInteractionHandler
 import com.google.firebase.messaging.RemoteMessage
 import java.util.*
@@ -402,6 +403,13 @@ class Ometria private constructor() : OmetriaNotificationInteractionHandler {
     fun processAppLink(url: String, listener: ProcessAppLinkListener) {
         repository.getRedirectForUrl(url, listener)
     }
+
+    /**
+     * Retrieves the [OmetriaNotification] object.
+     * @param remoteMessage The object that will be processed, received from Firebase messaging.
+     */
+    fun getOmetriaNotification(remoteMessage: RemoteMessage): OmetriaNotification? =
+        remoteMessage.toOmetriaNotification()
 
     override fun onNotificationInteraction(ometriaNotification: OmetriaNotification) {
         Logger.d(Constants.Logger.PUSH_NOTIFICATIONS, "Open URL: ${ometriaNotification.deepLink}")

@@ -5,8 +5,10 @@ import com.android.ometriasdk.core.Logger
 import com.android.ometriasdk.core.Ometria
 import com.android.ometriasdk.core.event.OmetriaEvent
 import com.android.ometriasdk.core.network.model.OmetriaApiError
+import com.android.ometriasdk.notification.KEY_OMETRIA
 import com.android.ometriasdk.notification.OmetriaNotification
 import com.android.ometriasdk.notification.OmetriaNotificationBody
+import com.google.firebase.messaging.RemoteMessage
 import org.json.JSONArray
 import org.json.JSONException
 import org.json.JSONObject
@@ -107,6 +109,13 @@ internal fun String.toOmetriaNotificationBody(): OmetriaNotificationBody {
     )
 }
 
+internal fun RemoteMessage.toOmetriaNotification(): OmetriaNotification? {
+    val ometriaNotificationString = this.data[KEY_OMETRIA]
+    ometriaNotificationString ?: return null
+
+    return ometriaNotificationString.toOmetriaNotificationBody().toOmetriaNotification()
+}
+
 @Suppress("UNCHECKED_CAST")
 internal fun OmetriaNotificationBody.toOmetriaNotification(): OmetriaNotification {
     val deepLinkActionUrl = this.deepLinkActionUrl
@@ -115,6 +124,7 @@ internal fun OmetriaNotificationBody.toOmetriaNotification(): OmetriaNotificatio
     val externalCustomerId: String? = context?.get("ext_customer_id") as? String
     val sendId: String? = context?.get("send_id") as? String
     val tracking: Map<String, Any>? = context?.get("tracking") as? Map<String, Any>
+
     return OmetriaNotification(
         deepLinkActionUrl,
         imageUrl,
