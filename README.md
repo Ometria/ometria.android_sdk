@@ -31,7 +31,7 @@ To install the library inside **Android Studio**, declare it as dependency in yo
 
 ```gradle
 dependencies {
-    implementation 'com.ometria:android-sdk:1.1.2'
+    implementation 'com.ometria:android-sdk:1.2.0'
 }
 ```
 
@@ -51,11 +51,12 @@ Once you've set up your build system or IDE to use the Ometria library, you can 
 
 We recommend initialising the SDK in your Application subclass. You’ll need to provide:
 ⋅⋅* the application context;
-⋅⋅* your Ometria API token, and;
-⋅⋅* the notifications icon.
+⋅⋅* your Ometria API token;
+⋅⋅* the notifications icon, and;
+⋅⋅* the notifications color (optional).
 
 ```kotlin
-Ometria.initialize(this, "YOUR_API_TOKEN", R.mipmap.ic_launcher)
+Ometria.initialize(this, "YOUR_API_TOKEN", R.drawable.ic_notification_nys, ContextCompat.getColor(this, R.color.colorAccent))
 ```
 
 Ometria logs any errors encountered during runtime by default. 
