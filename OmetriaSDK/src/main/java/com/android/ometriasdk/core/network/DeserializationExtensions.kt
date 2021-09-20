@@ -6,6 +6,7 @@ import com.android.ometriasdk.core.Ometria
 import com.android.ometriasdk.core.event.OmetriaEvent
 import com.android.ometriasdk.core.network.model.OmetriaApiError
 import com.android.ometriasdk.notification.OmetriaNotification
+import com.android.ometriasdk.notification.OmetriaNotificationBody
 import org.json.JSONArray
 import org.json.JSONException
 import org.json.JSONObject
@@ -74,7 +75,7 @@ internal fun String.toOmetriaApiError(): OmetriaApiError {
     )
 }
 
-internal fun String.toOmetriaNotification(): OmetriaNotification? {
+internal fun String.toOmetriaNotificationBody(): OmetriaNotificationBody {
     val jsonObject = JSONObject(this)
 
     var context: Map<String, Any>? = null
@@ -91,15 +92,35 @@ internal fun String.toOmetriaNotification(): OmetriaNotification? {
     try {
         deepLinkActionUrl = jsonObject.getString("deepLinkActionUrl")
     } catch (e: JSONException) {
+        Logger.e(PUSH_NOTIFICATIONS, e.message, e)
     }
     try {
         imageUrl = jsonObject.getString("imageUrl")
     } catch (e: JSONException) {
+        Logger.e(PUSH_NOTIFICATIONS, e.message, e)
     }
 
-    return OmetriaNotification(
+    return OmetriaNotificationBody(
         imageUrl,
         deepLinkActionUrl,
         context
+    )
+}
+
+@Suppress("UNCHECKED_CAST")
+internal fun OmetriaNotificationBody.toOmetriaNotification(): OmetriaNotification {
+    val deepLinkActionUrl = this.deepLinkActionUrl
+    val imageUrl = this.imageUrl
+    val campaignType: String? = context?.get("campaign_type") as? String
+    val externalCustomerId: String? = context?.get("ext_customer_id") as? String
+    val sendId: String? = context?.get("send_id") as? String
+    val tracking: Map<String, Any>? = context?.get("tracking") as? Map<String, Any>
+    return OmetriaNotification(
+        deepLinkActionUrl,
+        imageUrl,
+        campaignType,
+        externalCustomerId,
+        sendId,
+        tracking
     )
 }

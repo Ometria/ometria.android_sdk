@@ -6,16 +6,15 @@ import android.content.Intent
 import android.webkit.URLUtil
 import com.android.ometriasdk.core.Ometria
 import com.android.ometriasdk.core.event.OmetriaEventType
-import com.android.ometriasdk.core.network.toMap
-import org.json.JSONObject
+import com.android.ometriasdk.core.network.toOmetriaNotification
+import com.android.ometriasdk.core.network.toOmetriaNotificationBody
 
 /**
  * Created by cristiandregan
  * on 30/07/2020.
  */
 
-internal const val OMETRIA_CONTEXT_KEY = "key_ometria_context"
-const val NOTIFICATION_ACTION_URL_KEY = "deep_link_action_url_key"
+internal const val OMETRIA_NOTIFICATION_BODY_KEY = "ometria_notification_body_key"
 
 /**
  * Used by Push notification's routing intent.
@@ -26,18 +25,26 @@ internal class PushClickBroadcastReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context?, intent: Intent?) {
         val action = intent?.action
         if (action != null && action == PUSH_TAP_ACTION && context != null) {
-            val deepLinkActionUrl = intent.getStringExtra(NOTIFICATION_ACTION_URL_KEY)
-            if (deepLinkActionUrl != null && URLUtil.isValidUrl(deepLinkActionUrl)) {
-                Ometria.instance().notificationInteractionHandler.onDeepLinkInteraction(deepLinkActionUrl)
-            } else {
-                val launcherIntent = context.packageManager.getLaunchIntentForPackage(context.packageName)
-                launcherIntent?.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-                context.startActivity(launcherIntent)
-            }
+            val ometriaNotificationBody =
+                intent.getStringExtra(OMETRIA_NOTIFICATION_BODY_KEY)?.toOmetriaNotificationBody()
+            ometriaNotificationBody?.let { safeOmetriaNotificationBody ->
+                if (safeOmetriaNotificationBody.deepLinkActionUrl != null
+                    && URLUtil.isValidUrl(safeOmetriaNotificationBody.deepLinkActionUrl)
+                ) {
+                    Ometria.instance().notificationInteractionHandler.onNotificationInteraction(
+                        safeOmetriaNotificationBody.toOmetriaNotification()
+                    )
+                } else {
+                    val launcherIntent =
+                        context.packageManager.getLaunchIntentForPackage(context.packageName)
+                    launcherIntent?.flags =
+                        Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                    context.startActivity(launcherIntent)
+                }
 
-            val ometriaContextString = intent.getStringExtra(OMETRIA_CONTEXT_KEY)
-            ometriaContextString?.let {
-                Ometria.instance().trackNotificationInteractedEvent(JSONObject(it).toMap())
+                safeOmetriaNotificationBody.context?.let {
+                    Ometria.instance().trackNotificationInteractedEvent(it)
+                }
             }
         }
     }

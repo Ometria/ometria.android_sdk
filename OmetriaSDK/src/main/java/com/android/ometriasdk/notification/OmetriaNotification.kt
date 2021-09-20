@@ -1,12 +1,20 @@
 package com.android.ometriasdk.notification
 
 /**
- * Created by cristiandregan
- * on 27/08/2020.
+ * An object that exposes the content of a received notification.
+ *
+ * @param deepLink
+ * @param imageUrl
+ * @param campaignType
+ * @param externalCustomerId
+ * @param sendId
+ * @param tracking
  */
-
-internal data class OmetriaNotification(
+data class OmetriaNotification(
+    val deepLink: String?,
     val imageUrl: String?,
-    val deepLinkActionUrl: String?,
-    val context: Map<String, Any>?,
+    val campaignType: String?,
+    val externalCustomerId: String?,
+    val sendId: String?,
+    val tracking: Map<String, Any>?
 )

@@ -32,6 +32,7 @@ import com.android.ometriasdk.core.network.Client
 import com.android.ometriasdk.core.network.ConnectionFactory
 import com.android.ometriasdk.core.network.OmetriaThreadPoolExecutor
 import com.android.ometriasdk.lifecycle.OmetriaActivityLifecycleHelper
+import com.android.ometriasdk.notification.OmetriaNotification
 import com.android.ometriasdk.notification.NotificationHandler
 import com.android.ometriasdk.notification.OmetriaNotificationInteractionHandler
 import com.google.firebase.messaging.RemoteMessage
@@ -75,6 +76,7 @@ class Ometria private constructor() : OmetriaNotificationInteractionHandler {
          * @param application The application context.
          * @param apiToken The api key that has been attributed to your project.
          * @param notificationIcon The icon that will be used when displaying push notifications.
+         * @param notificationColor The color that will be used when displaying push notifications.
          */
         @JvmStatic
         fun initialize(
@@ -345,8 +347,8 @@ class Ometria private constructor() : OmetriaNotificationInteractionHandler {
      * @param link A string representing the URL that has been opened.
      * @param page A string representing the name of the screen that has been opened as a result of decomposing the URL.
      */
-    fun trackDeepLinkOpenedEvent(link: String, page: String) {
-        trackEvent(OmetriaEventType.DEEP_LINK_OPENED, mapOf(LINK to link, PAGE to page))
+    fun trackDeepLinkOpenedEvent(link: String?, page: String) {
+        trackEvent(OmetriaEventType.DEEP_LINK_OPENED, mapOf(LINK to link.orEmpty(), PAGE to page))
     }
 
     internal fun trackErrorOccurredEvent(
@@ -401,13 +403,13 @@ class Ometria private constructor() : OmetriaNotificationInteractionHandler {
         repository.getRedirectForUrl(url, listener)
     }
 
-    override fun onDeepLinkInteraction(deepLink: String) {
-        Logger.d(Constants.Logger.PUSH_NOTIFICATIONS, "Open URL: $deepLink")
+    override fun onNotificationInteraction(ometriaNotification: OmetriaNotification) {
+        Logger.d(Constants.Logger.PUSH_NOTIFICATIONS, "Open URL: ${ometriaNotification.deepLink}")
         val intent = Intent(Intent.ACTION_VIEW)
         intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
-        intent.data = Uri.parse(deepLink)
+        intent.data = Uri.parse(ometriaNotification.deepLink)
         ometriaConfig.application.startActivity(intent)
 
-        trackDeepLinkOpenedEvent(deepLink, "Browser")
+        trackDeepLinkOpenedEvent(ometriaNotification.deepLink, "Browser")
     }
 }

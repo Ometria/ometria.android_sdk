@@ -6,6 +6,7 @@ import android.net.Uri
 import android.util.Log
 import androidx.core.content.ContextCompat
 import com.android.ometriasdk.core.Ometria
+import com.android.ometriasdk.notification.OmetriaNotification
 import com.android.ometriasdk.notification.OmetriaNotificationInteractionHandler
 
 /**
@@ -37,14 +38,14 @@ class SampleApp : Application(), OmetriaNotificationInteractionHandler {
         Ometria.instance().notificationInteractionHandler = this
     }
 
-    override fun onDeepLinkInteraction(deepLink: String) {
-        Log.d(SampleApp::class.java.simpleName, "Open URL: $deepLink")
-        Ometria.instance().trackDeepLinkOpenedEvent(deepLink, "Browser")
+    override fun onNotificationInteraction(ometriaNotification: OmetriaNotification) {
+        Log.d(SampleApp::class.java.simpleName, "Open URL: ${ometriaNotification.deepLink}")
+        Ometria.instance().trackDeepLinkOpenedEvent(ometriaNotification.deepLink, "Browser")
 
-        openBrowser(deepLink)
+        openBrowser(ometriaNotification.deepLink)
     }
 
-    private fun openBrowser(deepLink: String) {
+    private fun openBrowser(deepLink: String?) {
         val intent = Intent(Intent.ACTION_VIEW)
         intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
         intent.data = Uri.parse(deepLink)
