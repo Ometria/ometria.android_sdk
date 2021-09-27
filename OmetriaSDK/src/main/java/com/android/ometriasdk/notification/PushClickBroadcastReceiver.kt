@@ -4,6 +4,8 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.webkit.URLUtil
+import com.android.ometriasdk.core.Constants
+import com.android.ometriasdk.core.Logger
 import com.android.ometriasdk.core.Ometria
 import com.android.ometriasdk.core.event.OmetriaEventType
 import com.android.ometriasdk.core.network.toOmetriaNotification
@@ -32,6 +34,11 @@ internal class PushClickBroadcastReceiver : BroadcastReceiver() {
                     && URLUtil.isValidUrl(safeOmetriaNotificationBody.deepLinkActionUrl)
                 ) {
                     Ometria.instance().notificationInteractionHandler.onNotificationInteraction(
+                        safeOmetriaNotificationBody.toOmetriaNotification()
+                    )
+                    Logger.d(
+                        Constants.Logger.PUSH_NOTIFICATIONS,
+                        "Ometria Notification: ",
                         safeOmetriaNotificationBody.toOmetriaNotification()
                     )
                 } else {

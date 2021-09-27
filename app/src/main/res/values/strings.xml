@@ -6,5 +6,6 @@
     <string name="home">Home</string>
     <string name="events">Events</string>
     <string name="redirect_modal_title">App Link Processed</string>
+    <string name="notification_interaction_modal_title">Ometria Notification Object</string>
     <string name="ok">OK</string>
 </resources>

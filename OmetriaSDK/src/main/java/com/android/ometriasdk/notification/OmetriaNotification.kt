@@ -19,4 +19,13 @@ data class OmetriaNotification(
     val externalCustomerId: String?,
     val sendId: String?,
     val tracking: Map<String, Any>?
-)
+) {
+    override fun toString(): String {
+        return "deepLink: $deepLink\n\n" +
+                "imageUrl: $imageUrl\n\n" +
+                "campaignType: $campaignType\n\n" +
+                "externalCustomerId: $externalCustomerId\n\n" +
+                "sendId: $sendId\n\n" +
+                "tracking: $tracking"
+    }
+}
