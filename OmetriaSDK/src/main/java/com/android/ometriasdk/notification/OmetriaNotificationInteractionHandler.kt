@@ -10,7 +10,7 @@ package com.android.ometriasdk.notification
  */
 interface OmetriaNotificationInteractionHandler {
     @Deprecated(
-        message = "Use the new onNotificationInteraction(ometriaNotification: OmetriaNotification) method",
+        message = "Use the new onNotificationInteraction(ometriaNotification: OmetriaNotification) method"
     )
     fun onDeepLinkInteraction(deepLink: String) {/* default implementation */ }
 

@@ -408,7 +408,7 @@ class Ometria private constructor() : OmetriaNotificationInteractionHandler {
      * Retrieves the [OmetriaNotification] object.
      * @param remoteMessage The object that will be processed, received from Firebase messaging.
      */
-    fun getOmetriaNotification(remoteMessage: RemoteMessage): OmetriaNotification? =
+    fun parseNotification(remoteMessage: RemoteMessage): OmetriaNotification? =
         remoteMessage.toOmetriaNotification()
 
     override fun onNotificationInteraction(ometriaNotification: OmetriaNotification) {
