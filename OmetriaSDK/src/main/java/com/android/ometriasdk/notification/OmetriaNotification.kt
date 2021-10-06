@@ -3,7 +3,7 @@ package com.android.ometriasdk.notification
 /**
  * An object that exposes the content of a received notification.
  *
- * @param deepLink The URL that was sent in the notification. We append tracking parameters to the URL
+ * @param deepLinkActionUrl The URL that was sent in the notification. We append tracking parameters to the URL
  * specified in the account and campaign settings (these can be changed in the Ometria app).
  * @param imageUrl The image URL that was sent in the notification.
  * @param campaignType Can be trigger, mass, transactional (currently only trigger is used).
@@ -13,7 +13,7 @@ package com.android.ometriasdk.notification
  * settings (can be changed in the Ometria app, uses some defaults if not specified).
  */
 data class OmetriaNotification(
-    val deepLink: String?,
+    val deepLinkActionUrl: String?,
     val imageUrl: String?,
     val campaignType: String?,
     val externalCustomerId: String?,
@@ -21,7 +21,7 @@ data class OmetriaNotification(
     val tracking: Map<String, Any>?
 ) {
     override fun toString(): String {
-        return "deepLink: $deepLink\n\n" +
+        return "deepLinkActionUrl: $deepLinkActionUrl\n\n" +
                 "imageUrl: $imageUrl\n\n" +
                 "campaignType: $campaignType\n\n" +
                 "externalCustomerId: $externalCustomerId\n\n" +

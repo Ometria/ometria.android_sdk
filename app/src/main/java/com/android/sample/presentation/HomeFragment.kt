@@ -21,7 +21,6 @@ import com.android.sample.SampleApp
 import com.android.sample.data.EventType
 import kotlinx.android.synthetic.main.fragment_home.*
 
-
 /**
  * Created by cristiandregan
  * on 17/07/2020.
@@ -147,11 +146,11 @@ class HomeFragment : Fragment(), OmetriaNotificationInteractionHandler {
     }
 
     override fun onNotificationInteraction(ometriaNotification: OmetriaNotification) {
-        Log.d(SampleApp::class.java.simpleName, "Open URL: ${ometriaNotification.deepLink}")
-        Ometria.instance().trackDeepLinkOpenedEvent(ometriaNotification.deepLink, "Browser")
+        Log.d(SampleApp::class.java.simpleName, "Open URL: ${ometriaNotification.deepLinkActionUrl}")
+        Ometria.instance().trackDeepLinkOpenedEvent(ometriaNotification.deepLinkActionUrl, "Browser")
 
         displayNotificationInteractionObject(ometriaNotification)
-        openBrowser(ometriaNotification.deepLink)
+        openBrowser(ometriaNotification.deepLinkActionUrl)
     }
 
     private fun openBrowser(deepLink: String?) {

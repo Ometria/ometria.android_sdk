@@ -412,12 +412,15 @@ class Ometria private constructor() : OmetriaNotificationInteractionHandler {
         remoteMessage.toOmetriaNotification()
 
     override fun onNotificationInteraction(ometriaNotification: OmetriaNotification) {
-        Logger.d(Constants.Logger.PUSH_NOTIFICATIONS, "Open URL: ${ometriaNotification.deepLink}")
+        Logger.d(
+            Constants.Logger.PUSH_NOTIFICATIONS,
+            "Open URL: ${ometriaNotification.deepLinkActionUrl}"
+        )
         val intent = Intent(Intent.ACTION_VIEW)
         intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
-        intent.data = Uri.parse(ometriaNotification.deepLink)
+        intent.data = Uri.parse(ometriaNotification.deepLinkActionUrl)
         ometriaConfig.application.startActivity(intent)
 
-        trackDeepLinkOpenedEvent(ometriaNotification.deepLink, "Browser")
+        trackDeepLinkOpenedEvent(ometriaNotification.deepLinkActionUrl, "Browser")
     }
 }
