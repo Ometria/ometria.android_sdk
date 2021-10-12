@@ -1,9 +1,7 @@
 package com.android.sample.presentation
 
 import android.content.Intent
-import android.net.Uri
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -14,10 +12,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.android.ometriasdk.core.Ometria
 import com.android.ometriasdk.core.event.OmetriaBasket
 import com.android.ometriasdk.core.event.OmetriaBasketItem
-import com.android.ometriasdk.notification.OmetriaNotification
-import com.android.ometriasdk.notification.OmetriaNotificationInteractionHandler
 import com.android.sample.R
-import com.android.sample.SampleApp
 import com.android.sample.data.EventType
 import kotlinx.android.synthetic.main.fragment_home.*
 
@@ -30,15 +25,16 @@ private const val POSITION_KEY = "position_key"
 const val TAB_ONE = 0
 const val TAB_TWO = 1
 
-class HomeFragment : Fragment(), OmetriaNotificationInteractionHandler {
+class HomeFragment : Fragment() {
 
     private var screenPosition = TAB_ONE
 
     companion object {
-        fun newInstance(position: Int): HomeFragment {
+        fun newInstance(position: Int, ometriaNotificationString: String): HomeFragment {
             val instance = HomeFragment()
             instance.arguments = Bundle().apply {
                 putInt(POSITION_KEY, position)
+                putString(OMETRIA_NOTIFICATION_STRING_EXTRA_KEY, ometriaNotificationString)
             }
             return instance
         }
@@ -55,20 +51,14 @@ class HomeFragment : Fragment(), OmetriaNotificationInteractionHandler {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        screenPosition = arguments?.getInt(POSITION_KEY)!!
+        screenPosition = arguments?.getInt(POSITION_KEY) ?: TAB_ONE
+        val ometriaNotificationString = arguments?.getString(OMETRIA_NOTIFICATION_STRING_EXTRA_KEY)
 
-        setUpViews()
+        setUpViews(ometriaNotificationString)
         initEventsRV()
-
-        if (screenPosition == TAB_ONE) {
-            // Set the notificationInteractionDelegate in order to provide actions for
-            // notifications that contain a deepLink URL.
-            // The default functionality when you don't assign a delegate is opening urls in a browser
-            Ometria.instance().notificationInteractionHandler = this
-        }
     }
 
-    private fun setUpViews() {
+    private fun setUpViews(ometriaNotificationString: String?) {
         detailsBTN.isVisible = screenPosition == TAB_ONE
         eventsRV.isVisible = screenPosition != TAB_ONE
         detailsTV.isVisible = screenPosition == TAB_ONE
@@ -76,6 +66,11 @@ class HomeFragment : Fragment(), OmetriaNotificationInteractionHandler {
         detailsBTN.setOnClickListener {
             startActivity(Intent(requireContext(), DetailsActivity::class.java))
         }
+
+        titleTV.isVisible = screenPosition == TAB_ONE && !ometriaNotificationString.isNullOrEmpty()
+        detailsTV.isVisible =
+            screenPosition == TAB_ONE && !ometriaNotificationString.isNullOrEmpty()
+        detailsTV.text = ometriaNotificationString
     }
 
     private fun initEventsRV() {
@@ -143,26 +138,5 @@ class HomeFragment : Fragment(), OmetriaNotificationInteractionHandler {
             items = myItems,
             link = "www.example.com"
         )
-    }
-
-    override fun onNotificationInteraction(ometriaNotification: OmetriaNotification) {
-        Log.d(SampleApp::class.java.simpleName, "Open URL: ${ometriaNotification.deepLinkActionUrl}")
-        Ometria.instance().trackDeepLinkOpenedEvent(ometriaNotification.deepLinkActionUrl, "Browser")
-
-        displayNotificationInteractionObject(ometriaNotification)
-        openBrowser(ometriaNotification.deepLinkActionUrl)
-    }
-
-    private fun openBrowser(deepLink: String?) {
-        val intent = Intent(Intent.ACTION_VIEW)
-        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
-        intent.data = Uri.parse(deepLink)
-        startActivity(intent)
-    }
-
-    private fun displayNotificationInteractionObject(ometriaNotification: OmetriaNotification) {
-        titleTV.isVisible = true
-        detailsTV.isVisible = true
-        detailsTV.text = ometriaNotification.toString()
     }
 }

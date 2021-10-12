@@ -11,14 +11,14 @@ import androidx.fragment.app.FragmentPagerAdapter
 
 private const val SCREENS_NO = 2
 
-class ViewPagerAdapter(manager: FragmentManager) :
+class ViewPagerAdapter(manager: FragmentManager, private val ometriaNotificationString: String) :
     FragmentPagerAdapter(manager, BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT) {
     override fun getItem(position: Int): Fragment {
         return when (position) {
-            FIRST_FRAGMENT_POS -> HomeFragment.newInstance(TAB_ONE)
-            SECOND_FRAGMENT_POS -> HomeFragment.newInstance(TAB_TWO)
+            FIRST_FRAGMENT_POS -> HomeFragment.newInstance(TAB_ONE, ometriaNotificationString)
+            SECOND_FRAGMENT_POS -> HomeFragment.newInstance(TAB_TWO, ometriaNotificationString)
 
-            else -> HomeFragment.newInstance(TAB_ONE)
+            else -> HomeFragment.newInstance(TAB_ONE, ometriaNotificationString)
         }
     }
 

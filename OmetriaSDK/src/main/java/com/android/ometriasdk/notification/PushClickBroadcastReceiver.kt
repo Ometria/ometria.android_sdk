@@ -4,8 +4,6 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.webkit.URLUtil
-import com.android.ometriasdk.core.Constants
-import com.android.ometriasdk.core.Logger
 import com.android.ometriasdk.core.Ometria
 import com.android.ometriasdk.core.event.OmetriaEventType
 import com.android.ometriasdk.core.network.toOmetriaNotification
@@ -29,25 +27,20 @@ internal class PushClickBroadcastReceiver : BroadcastReceiver() {
         if (action != null && action == PUSH_TAP_ACTION && context != null) {
             val ometriaNotificationBody =
                 intent.getStringExtra(OMETRIA_NOTIFICATION_BODY_KEY)?.toOmetriaNotificationBody()
+
+
             ometriaNotificationBody?.let { safeOmetriaNotificationBody ->
                 if (safeOmetriaNotificationBody.deepLinkActionUrl != null
                     && URLUtil.isValidUrl(safeOmetriaNotificationBody.deepLinkActionUrl)
                 ) {
-                    Ometria.instance().notificationInteractionHandler.onNotificationInteraction(
-                        safeOmetriaNotificationBody.toOmetriaNotification()
+                    Ometria.instance().notificationInteractionHandler.onDeepLinkInteraction(
+                        safeOmetriaNotificationBody.deepLinkActionUrl
                     )
-                    Logger.d(
-                        Constants.Logger.PUSH_NOTIFICATIONS,
-                        "Ometria Notification: ",
-                        safeOmetriaNotificationBody.toOmetriaNotification()
-                    )
-                } else {
-                    val launcherIntent =
-                        context.packageManager.getLaunchIntentForPackage(context.packageName)
-                    launcherIntent?.flags =
-                        Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-                    context.startActivity(launcherIntent)
+
                 }
+                Ometria.instance().notificationInteractionHandler.onNotificationInteraction(
+                    safeOmetriaNotificationBody.toOmetriaNotification()
+                )
 
                 safeOmetriaNotificationBody.context?.let {
                     Ometria.instance().trackNotificationInteractedEvent(it)
