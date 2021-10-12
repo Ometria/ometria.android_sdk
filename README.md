@@ -456,7 +456,7 @@ class SampleApp : Application(), OmetriaNotificationInteractionHandler {
      * Write your own custom code in order to properly redirect the app to the screen that should be displayed.
      */
     override fun onNotificationInteraction(ometriaNotification: OmetriaNotification) {
-        Log.d(SampleApp::class.java.simpleName, "URL: ${ometriaNotification.deepLink}")
+        Log.d(SampleApp::class.java.simpleName, "URL: ${ometriaNotification.deepLinkActionUrl}")
     }
 }
 ```
