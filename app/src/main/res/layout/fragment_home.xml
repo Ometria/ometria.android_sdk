@@ -1,45 +1,117 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:fillViewport="true">
 
-    <Button
-        android:id="@+id/detailsBTN"
-        android:layout_width="wrap_content"
-        android:layout_height="50dp"
-        android:layout_margin="24dp"
-        android:drawableEnd="@drawable/ic_arrow_right_alt_24px"
-        android:drawablePadding="5dp"
-        android:text="Details screen"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/eventsRV"
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        android:layout_height="wrap_content">
 
-    <TextView
-        android:id="@+id/titleTV"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"
-        android:text="Notification object:"
-        android:textColor="@android:color/black"
-        android:visibility="gone"
-        app:layout_constraintTop_toBottomOf="@+id/detailsBTN" />
+        <Button
+            android:id="@+id/detailsBTN"
+            android:layout_width="wrap_content"
+            android:layout_height="50dp"
+            android:layout_margin="24dp"
+            android:drawableEnd="@drawable/ic_arrow_right_alt_24px"
+            android:drawablePadding="5dp"
+            android:text="Details screen"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
-    <TextView
-        android:id="@+id/detailsTV"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:padding="16dp"
-        android:visibility="gone"
-        app:layout_constraintTop_toBottomOf="@+id/titleTV"
-        tools:text="Test text in here" />
-</androidx.constraintlayout.widget.ConstraintLayout>
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/eventsRV"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/titleTV"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="16dp"
+            android:text="Notification object:"
+            android:textColor="@android:color/black"
+            android:visibility="gone"
+            app:layout_constraintTop_toBottomOf="@+id/loginWithCustomerIdBTN" />
+
+        <TextView
+            android:id="@+id/detailsTV"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="16dp"
+            android:visibility="gone"
+            app:layout_constraintTop_toBottomOf="@+id/titleTV"
+            tools:text="Test text in here" />
+
+        <EditText
+            android:id="@+id/apiTokenET"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="24dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="24dp"
+            android:hint="@string/hint_token_key"
+            android:importantForAutofill="no"
+            android:inputType="text"
+            app:layout_constraintTop_toBottomOf="@+id/detailsBTN" />
+
+        <Button
+            android:id="@+id/saveAPIKeyBTN"
+            android:layout_width="wrap_content"
+            android:layout_height="50dp"
+            android:layout_marginStart="24dp"
+            android:drawablePadding="5dp"
+            android:text="@string/save_api_token"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/apiTokenET" />
+
+        <EditText
+            android:id="@+id/emailET"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="24dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="24dp"
+            android:hint="@string/hint_email"
+            android:importantForAutofill="no"
+            android:inputType="textEmailAddress"
+            app:layout_constraintTop_toBottomOf="@+id/saveAPIKeyBTN" />
+
+        <Button
+            android:id="@+id/loginWithEmailBTN"
+            android:layout_width="wrap_content"
+            android:layout_height="50dp"
+            android:layout_marginStart="24dp"
+            android:drawablePadding="5dp"
+            android:text="@string/login_with_email"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/emailET" />
+
+        <EditText
+            android:id="@+id/customerIdET"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="24dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="24dp"
+            android:hint="@string/hint_customer_id"
+            android:importantForAutofill="no"
+            android:inputType="text"
+            app:layout_constraintTop_toBottomOf="@+id/loginWithEmailBTN" />
+
+        <Button
+            android:id="@+id/loginWithCustomerIdBTN"
+            android:layout_width="wrap_content"
+            android:layout_height="50dp"
+            android:layout_marginStart="24dp"
+            android:drawablePadding="5dp"
+            android:text="@string/login_with_customer_id"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/customerIdET" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</ScrollView>

@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.DividerItemDecoration
@@ -13,6 +14,8 @@ import com.android.ometriasdk.core.Ometria
 import com.android.ometriasdk.core.event.OmetriaBasket
 import com.android.ometriasdk.core.event.OmetriaBasketItem
 import com.android.sample.R
+import com.android.sample.SampleApp
+import com.android.sample.data.AppPreferencesUtils
 import com.android.sample.data.EventType
 import kotlinx.android.synthetic.main.fragment_home.*
 
@@ -55,6 +58,7 @@ class HomeFragment : Fragment() {
         val ometriaNotificationString = arguments?.getString(OMETRIA_NOTIFICATION_STRING_EXTRA_KEY)
 
         setUpViews(ometriaNotificationString)
+        setUpListeners()
         initEventsRV()
     }
 
@@ -62,15 +66,45 @@ class HomeFragment : Fragment() {
         detailsBTN.isVisible = screenPosition == TAB_ONE
         eventsRV.isVisible = screenPosition != TAB_ONE
         detailsTV.isVisible = screenPosition == TAB_ONE
-
-        detailsBTN.setOnClickListener {
-            startActivity(Intent(requireContext(), DetailsActivity::class.java))
-        }
+        apiTokenET.isVisible = screenPosition == TAB_ONE
+        saveAPIKeyBTN.isVisible = screenPosition == TAB_ONE
+        emailET.isVisible = screenPosition == TAB_ONE
+        loginWithEmailBTN.isVisible = screenPosition == TAB_ONE
+        customerIdET.isVisible = screenPosition == TAB_ONE
+        loginWithCustomerIdBTN.isVisible = screenPosition == TAB_ONE
 
         titleTV.isVisible = screenPosition == TAB_ONE && !ometriaNotificationString.isNullOrEmpty()
         detailsTV.isVisible =
             screenPosition == TAB_ONE && !ometriaNotificationString.isNullOrEmpty()
         detailsTV.text = ometriaNotificationString
+
+        apiTokenET.setText(AppPreferencesUtils.getApiToken() ?: "")
+    }
+
+    private fun setUpListeners() {
+        detailsBTN.setOnClickListener {
+            startActivity(Intent(requireContext(), DetailsActivity::class.java))
+        }
+        saveAPIKeyBTN.setOnClickListener {
+            val apiToken = apiTokenET.text.toString()
+            Ometria.initialize(
+                SampleApp.instance,
+                apiToken,
+                R.drawable.ic_notification_nys,
+                ContextCompat.getColor(requireContext(), R.color.colorAccent)
+            ).loggingEnabled(true)
+            AppPreferencesUtils.saveApiToken(apiToken)
+        }
+        loginWithEmailBTN.setOnClickListener {
+            val email = emailET.text.toString()
+            Ometria.instance().trackProfileIdentifiedByEmailEvent(email)
+            Ometria.instance().flush()
+        }
+        loginWithCustomerIdBTN.setOnClickListener {
+            val customerId = customerIdET.text.toString()
+            Ometria.instance().trackProfileIdentifiedByCustomerIdEvent(customerId)
+            Ometria.instance().flush()
+        }
     }
 
     private fun initEventsRV() {
