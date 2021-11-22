@@ -18,7 +18,7 @@ internal data class OmetriaEvent(
     val installationId: String? = null,
     val appVersion: String? = null,
     val appBuildNumber: String? = null,
-    val sdkVersion: String? = BuildConfig.VERSION_NAME,
+    val sdkVersion: String? = BuildConfig.SDK_VERSION_NAME,
     val platform: String = PLATFORM,
     val osVersion: String? = Build.VERSION.RELEASE,
     val deviceManufacturer: String? = Build.MANUFACTURER,

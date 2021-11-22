@@ -11,23 +11,27 @@ import com.android.ometriasdk.core.Ometria
 import com.android.sample.R
 import com.android.sample.SampleApp
 import com.android.sample.data.AppPreferencesUtils
-import kotlinx.android.synthetic.main.dialog_enter_api_token.*
+import com.android.sample.databinding.DialogEnterApiTokenBinding
 
 class EnterApiTokenDialog : DialogFragment() {
+
+    private lateinit var binding: DialogEnterApiTokenBinding
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        return inflater.inflate(R.layout.dialog_enter_api_token, container, false)
+    ): View {
+        binding = DialogEnterApiTokenBinding.inflate(layoutInflater, container, false)
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        apiTokenET.setText(AppPreferencesUtils.getApiToken() ?: "")
-        saveAPIKeyBTN.setOnClickListener {
-            val apiToken = apiTokenET.text.toString()
+        binding.apiTokenET.setText(AppPreferencesUtils.getApiToken() ?: "")
+        binding.saveAPIKeyBTN.setOnClickListener {
+            val apiToken = binding.apiTokenET.text.toString()
             Ometria.initialize(
                 SampleApp.instance,
                 apiToken,
@@ -37,7 +41,7 @@ class EnterApiTokenDialog : DialogFragment() {
             AppPreferencesUtils.saveApiToken(apiToken)
             dismiss()
         }
-        cancelBTN.setOnClickListener { dismiss() }
+        binding.cancelBTN.setOnClickListener { dismiss() }
     }
 
     override fun onResume() {

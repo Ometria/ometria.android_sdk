@@ -12,10 +12,9 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.android.ometriasdk.core.Ometria
 import com.android.ometriasdk.core.event.OmetriaBasket
 import com.android.ometriasdk.core.event.OmetriaBasketItem
-import com.android.sample.R
 import com.android.sample.data.AppPreferencesUtils
 import com.android.sample.data.EventType
-import kotlinx.android.synthetic.main.fragment_home.*
+import com.android.sample.databinding.FragmentHomeBinding
 
 /**
  * Created by cristiandregan
@@ -30,6 +29,7 @@ class HomeFragment : Fragment() {
 
     private var screenPosition = TAB_ONE
     private val enterApiTokenDialog = EnterApiTokenDialog()
+    private lateinit var binding: FragmentHomeBinding
 
     companion object {
         fun newInstance(position: Int, ometriaNotificationString: String): HomeFragment {
@@ -46,8 +46,9 @@ class HomeFragment : Fragment() {
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        return inflater.inflate(R.layout.fragment_home, container, false)
+    ): View {
+        binding = FragmentHomeBinding.inflate(layoutInflater, container, false)
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -62,19 +63,19 @@ class HomeFragment : Fragment() {
     }
 
     private fun setUpViews(ometriaNotificationString: String?) {
-        detailsBTN.isVisible = screenPosition == TAB_ONE
-        eventsRV.isVisible = screenPosition != TAB_ONE
-        detailsTV.isVisible = screenPosition == TAB_ONE
-        updateApiTokenBTN.isVisible = screenPosition == TAB_ONE
-        emailET.isVisible = screenPosition == TAB_ONE
-        loginWithEmailBTN.isVisible = screenPosition == TAB_ONE
-        customerIdET.isVisible = screenPosition == TAB_ONE
-        loginWithCustomerIdBTN.isVisible = screenPosition == TAB_ONE
+        binding.detailsBTN.isVisible = screenPosition == TAB_ONE
+        binding.eventsRV.isVisible = screenPosition != TAB_ONE
+        binding.detailsTV.isVisible = screenPosition == TAB_ONE
+        binding.updateApiTokenBTN.isVisible = screenPosition == TAB_ONE
+        binding.emailET.isVisible = screenPosition == TAB_ONE
+        binding.loginWithEmailBTN.isVisible = screenPosition == TAB_ONE
+        binding.customerIdET.isVisible = screenPosition == TAB_ONE
+        binding.loginWithCustomerIdBTN.isVisible = screenPosition == TAB_ONE
 
-        titleTV.isVisible = screenPosition == TAB_ONE && !ometriaNotificationString.isNullOrEmpty()
-        detailsTV.isVisible =
+        binding.titleTV.isVisible = screenPosition == TAB_ONE && !ometriaNotificationString.isNullOrEmpty()
+        binding.detailsTV.isVisible =
             screenPosition == TAB_ONE && !ometriaNotificationString.isNullOrEmpty()
-        detailsTV.text = ometriaNotificationString
+        binding.detailsTV.text = ometriaNotificationString
 
         if (AppPreferencesUtils.getApiToken().isNullOrEmpty() && screenPosition == TAB_ONE) {
             showEnterApiTokenDialog()
@@ -82,31 +83,31 @@ class HomeFragment : Fragment() {
     }
 
     private fun setUpListeners() {
-        detailsBTN.setOnClickListener {
+        binding.detailsBTN.setOnClickListener {
             startActivity(Intent(requireContext(), DetailsActivity::class.java))
         }
-        updateApiTokenBTN.setOnClickListener {
+        binding.updateApiTokenBTN.setOnClickListener {
             showEnterApiTokenDialog()
         }
-        loginWithEmailBTN.setOnClickListener {
-            val email = emailET.text.toString()
+        binding.loginWithEmailBTN.setOnClickListener {
+            val email = binding.emailET.text.toString()
             Ometria.instance().trackProfileIdentifiedByEmailEvent(email)
             Ometria.instance().flush()
         }
-        loginWithCustomerIdBTN.setOnClickListener {
-            val customerId = customerIdET.text.toString()
+        binding.loginWithCustomerIdBTN.setOnClickListener {
+            val customerId = binding.customerIdET.text.toString()
             Ometria.instance().trackProfileIdentifiedByCustomerIdEvent(customerId)
             Ometria.instance().flush()
         }
     }
 
     private fun initEventsRV() {
-        eventsRV.layoutManager = LinearLayoutManager(requireContext())
-        eventsRV.adapter = EventsAdapter {
+        binding.eventsRV.layoutManager = LinearLayoutManager(requireContext())
+        binding.eventsRV.adapter = EventsAdapter {
             sendEvent(it)
         }
-        eventsRV.addItemDecoration(
-            DividerItemDecoration(eventsRV.context, DividerItemDecoration.VERTICAL)
+        binding.eventsRV.addItemDecoration(
+            DividerItemDecoration(binding.eventsRV.context, DividerItemDecoration.VERTICAL)
         )
     }
 
