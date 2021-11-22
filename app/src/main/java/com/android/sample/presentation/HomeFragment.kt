@@ -5,7 +5,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.DividerItemDecoration
@@ -14,7 +13,6 @@ import com.android.ometriasdk.core.Ometria
 import com.android.ometriasdk.core.event.OmetriaBasket
 import com.android.ometriasdk.core.event.OmetriaBasketItem
 import com.android.sample.R
-import com.android.sample.SampleApp
 import com.android.sample.data.AppPreferencesUtils
 import com.android.sample.data.EventType
 import kotlinx.android.synthetic.main.fragment_home.*
@@ -31,6 +29,7 @@ const val TAB_TWO = 1
 class HomeFragment : Fragment() {
 
     private var screenPosition = TAB_ONE
+    private val enterApiTokenDialog = EnterApiTokenDialog()
 
     companion object {
         fun newInstance(position: Int, ometriaNotificationString: String): HomeFragment {
@@ -66,8 +65,7 @@ class HomeFragment : Fragment() {
         detailsBTN.isVisible = screenPosition == TAB_ONE
         eventsRV.isVisible = screenPosition != TAB_ONE
         detailsTV.isVisible = screenPosition == TAB_ONE
-        apiTokenET.isVisible = screenPosition == TAB_ONE
-        saveAPIKeyBTN.isVisible = screenPosition == TAB_ONE
+        updateApiTokenBTN.isVisible = screenPosition == TAB_ONE
         emailET.isVisible = screenPosition == TAB_ONE
         loginWithEmailBTN.isVisible = screenPosition == TAB_ONE
         customerIdET.isVisible = screenPosition == TAB_ONE
@@ -78,22 +76,17 @@ class HomeFragment : Fragment() {
             screenPosition == TAB_ONE && !ometriaNotificationString.isNullOrEmpty()
         detailsTV.text = ometriaNotificationString
 
-        apiTokenET.setText(AppPreferencesUtils.getApiToken() ?: "")
+        if (AppPreferencesUtils.getApiToken().isNullOrEmpty() && screenPosition == TAB_ONE) {
+            showEnterApiTokenDialog()
+        }
     }
 
     private fun setUpListeners() {
         detailsBTN.setOnClickListener {
             startActivity(Intent(requireContext(), DetailsActivity::class.java))
         }
-        saveAPIKeyBTN.setOnClickListener {
-            val apiToken = apiTokenET.text.toString()
-            Ometria.initialize(
-                SampleApp.instance,
-                apiToken,
-                R.drawable.ic_notification_nys,
-                ContextCompat.getColor(requireContext(), R.color.colorAccent)
-            ).loggingEnabled(true)
-            AppPreferencesUtils.saveApiToken(apiToken)
+        updateApiTokenBTN.setOnClickListener {
+            showEnterApiTokenDialog()
         }
         loginWithEmailBTN.setOnClickListener {
             val email = emailET.text.toString()
@@ -172,5 +165,10 @@ class HomeFragment : Fragment() {
             items = myItems,
             link = "www.example.com"
         )
+    }
+
+    private fun showEnterApiTokenDialog() {
+        enterApiTokenDialog.isCancelable = false
+        enterApiTokenDialog.show(childFragmentManager, null)
     }
 }

@@ -14,4 +14,6 @@
     <string name="hint_customer_id">Customer Id</string>
     <string name="login_with_email">Login with email</string>
     <string name="hint_email">Email</string>
+    <string name="enter_your_api_token">Please enter your API token</string>
+    <string name="do_it_later">Do it later</string>
 </resources>

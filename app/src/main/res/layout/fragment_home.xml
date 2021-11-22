@@ -48,28 +48,16 @@
             app:layout_constraintTop_toBottomOf="@+id/titleTV"
             tools:text="Test text in here" />
 
-        <EditText
-            android:id="@+id/apiTokenET"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="8dp"
-            android:layout_marginEnd="16dp"
-            android:hint="@string/hint_token_key"
-            android:importantForAutofill="no"
-            android:inputType="text"
-            android:textSize="14sp"
-            app:layout_constraintTop_toBottomOf="@+id/detailsBTN" />
-
         <Button
-            android:id="@+id/saveAPIKeyBTN"
+            android:id="@+id/updateApiTokenBTN"
             android:layout_width="wrap_content"
             android:layout_height="50dp"
-            android:layout_marginStart="16dp"
+            android:layout_margin="16dp"
+            android:drawableEnd="@drawable/ic_arrow_right_alt_24px"
             android:drawablePadding="5dp"
-            android:text="@string/save_api_token"
+            android:text="Update API Toekn"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/apiTokenET" />
+            app:layout_constraintTop_toBottomOf="@+id/detailsBTN" />
 
         <EditText
             android:id="@+id/emailET"
@@ -82,7 +70,7 @@
             android:importantForAutofill="no"
             android:inputType="textEmailAddress"
             android:textSize="14sp"
-            app:layout_constraintTop_toBottomOf="@+id/saveAPIKeyBTN" />
+            app:layout_constraintTop_toBottomOf="@+id/updateApiTokenBTN" />
 
         <Button
             android:id="@+id/loginWithEmailBTN"
