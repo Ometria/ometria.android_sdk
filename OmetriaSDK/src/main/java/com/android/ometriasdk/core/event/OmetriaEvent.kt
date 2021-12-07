@@ -24,5 +24,6 @@ internal data class OmetriaEvent(
     val deviceManufacturer: String? = Build.MANUFACTURER,
     val deviceModel: String? = Build.MODEL,
     val type: String,
-    val data: Map<String, Any>?
+    val data: Map<String, Any>?,
+    var sdkVersionRN: String? = null
 )

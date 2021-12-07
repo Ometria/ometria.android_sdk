@@ -65,7 +65,8 @@ internal class EventHandler(context: Context, private val repository: Repository
             appVersion = appVersion,
             appBuildNumber = appBuildNumber,
             type = type.id,
-            data = data
+            data = data,
+            sdkVersionRN = repository.getSdkVersionRN()
         )
 
         sendEvent(event)

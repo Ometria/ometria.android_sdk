@@ -20,8 +20,13 @@ private const val CUSTOMER_ID_KEY = "CUSTOMER_ID_KEY"
 private const val EMAIL_KEY = "EMAIL_KEY"
 private const val ARE_NOTIFICATIONS_ENABLED_KEY = "ARE_NOTIFICATIONS_ENABLED_KEY"
 private const val JSON_ARRAY = "[]"
+private const val SDK_VERSION_RN_KEY = "SDK_VERSION_RN_KEY"
 
 internal class LocalCache(private val context: Context) {
+
+    private fun getLocalCachePreferences(): SharedPreferences {
+        return context.getSharedPreferences(LOCAL_CACHE_PREFERENCES, Context.MODE_PRIVATE)
+    }
 
     fun saveIsFirstAppRun(isFirstAppRun: Boolean) {
         getLocalCachePreferences().edit().putBoolean(IS_FIRST_APP_RUN_KEY, isFirstAppRun).apply()
@@ -83,10 +88,6 @@ internal class LocalCache(private val context: Context) {
             .apply()
     }
 
-    private fun getLocalCachePreferences(): SharedPreferences {
-        return context.getSharedPreferences(LOCAL_CACHE_PREFERENCES, Context.MODE_PRIVATE)
-    }
-
     fun savePushToken(pushToken: String) {
         getLocalCachePreferences().edit().putString(PUSH_TOKEN_KEY, pushToken).apply()
     }
@@ -127,5 +128,9 @@ internal class LocalCache(private val context: Context) {
 
     fun areNotificationsEnabled(): Boolean {
         return getLocalCachePreferences().getBoolean(ARE_NOTIFICATIONS_ENABLED_KEY, true)
+    }
+
+    fun getSdkVersionRN(): String? {
+        return getLocalCachePreferences().getString(SDK_VERSION_RN_KEY, null)
     }
 }
