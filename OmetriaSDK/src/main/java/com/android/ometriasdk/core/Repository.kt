@@ -1,6 +1,7 @@
 package com.android.ometriasdk.core
 
 import android.os.Handler
+import android.os.Looper
 import com.android.ometriasdk.core.Constants.Logger.NETWORK
 import com.android.ometriasdk.core.event.OmetriaEvent
 import com.android.ometriasdk.core.event.toApiRequest
@@ -26,7 +27,7 @@ internal class Repository(
     private val executor: OmetriaThreadPoolExecutor
 ) {
 
-    private val resultHandler: Handler = Handler()
+    private val resultHandler: Handler = Handler(Looper.getMainLooper())
     private val dropStatusCodesRange = 400..499
 
     fun flushEvents(events: List<OmetriaEvent>, success: () -> Unit, error: () -> Unit) {
@@ -67,25 +68,19 @@ internal class Repository(
         localCache.saveIsFirstAppRun(isFirstAppRun)
     }
 
-    fun isFirstAppRun(): Boolean {
-        return localCache.isFirstAppRun()
-    }
+    fun isFirstAppRun(): Boolean = localCache.isFirstAppRun()
 
     fun saveInstallationId(installationId: String) {
         localCache.saveInstallationId(installationId)
     }
 
-    fun getInstallationId(): String? {
-        return localCache.getInstallationId()
-    }
+    fun getInstallationId(): String? = localCache.getInstallationId()
 
     fun saveEvent(ometriaEvent: OmetriaEvent) {
         localCache.saveEvent(ometriaEvent)
     }
 
-    fun getEvents(): List<OmetriaEvent> {
-        return localCache.getEvents()
-    }
+    fun getEvents(): List<OmetriaEvent> = localCache.getEvents()
 
     private fun updateEvents(events: List<OmetriaEvent>?, isBeingFlushed: Boolean) {
         localCache.updateEvents(events, isBeingFlushed)
@@ -101,25 +96,19 @@ internal class Repository(
         localCache.savePushToken(pushToken)
     }
 
-    fun getPushToken(): String? {
-        return localCache.getPushToken()
-    }
+    fun getPushToken(): String? = localCache.getPushToken()
 
     fun saveCustomerId(customerId: String) {
         localCache.saveCustomerId(customerId)
     }
 
-    fun getCustomerId(): String? {
-        return localCache.getCustomerId()
-    }
+    fun getCustomerId(): String? = localCache.getCustomerId()
 
     fun saveEmail(email: String) {
         localCache.saveEmail(email)
     }
 
-    fun getEmail(): String? {
-        return localCache.getEmail()
-    }
+    fun getEmail(): String? = localCache.getEmail()
 
     fun clearProfileIdentifiedData() {
         localCache.clearProfileIdentifiedData()
@@ -129,9 +118,7 @@ internal class Repository(
         localCache.saveAreNotificationsEnabled(areNotificationsEnabled)
     }
 
-    fun areNotificationsEnabled(): Boolean {
-        return localCache.areNotificationsEnabled()
-    }
+    fun areNotificationsEnabled(): Boolean = localCache.areNotificationsEnabled()
 
     fun getRedirectForUrl(url: String, listener: ProcessAppLinkListener) {
         executor.execute {
@@ -156,4 +143,6 @@ internal class Repository(
             connection?.disconnect()
         }
     }
+
+    fun getSdkVersionRN(): String? = localCache.getSdkVersionRN()
 }

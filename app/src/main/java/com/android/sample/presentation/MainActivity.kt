@@ -11,7 +11,7 @@ import androidx.viewpager.widget.ViewPager
 import com.android.ometriasdk.core.Ometria
 import com.android.ometriasdk.core.listener.ProcessAppLinkListener
 import com.android.sample.R
-import kotlinx.android.synthetic.main.activity_main.*
+import com.android.sample.databinding.ActivityMainBinding
 
 const val OMETRIA_NOTIFICATION_STRING_EXTRA_KEY = "ometria_notification_string_extra_key"
 private const val OFF_SCREEN_PAGE_LIMIT = 2
@@ -19,9 +19,13 @@ const val FIRST_FRAGMENT_POS = 0
 const val SECOND_FRAGMENT_POS = 1
 
 class MainActivity : AppCompatActivity() {
+
+    private lateinit var binding: ActivityMainBinding
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+        binding = ActivityMainBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
         val ometriaNotificationString =
             intent.getStringExtra(OMETRIA_NOTIFICATION_STRING_EXTRA_KEY).orEmpty()
@@ -32,11 +36,11 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun switchFragment(position: Int) {
-        containerVP.currentItem = position
+        binding.containerVP.currentItem = position
     }
 
     private fun setUpBottomNavMenu() {
-        bottomMenuBnv.setOnItemSelectedListener { item ->
+        binding.bottomMenuBnv.setOnItemSelectedListener { item ->
             when (item.itemId) {
                 R.id.restaurants -> {
                     switchFragment(FIRST_FRAGMENT_POS)
@@ -51,12 +55,12 @@ class MainActivity : AppCompatActivity() {
 
     private fun setupViewPager(ometriaNotificationString: String) {
         val adapter = ViewPagerAdapter(supportFragmentManager, ometriaNotificationString)
-        containerVP.adapter = adapter
-        containerVP.offscreenPageLimit = OFF_SCREEN_PAGE_LIMIT
+        binding.containerVP.adapter = adapter
+        binding.containerVP.offscreenPageLimit = OFF_SCREEN_PAGE_LIMIT
         switchFragment(0)
-        bottomMenuBnv.menu.getItem(0).isChecked = true
+        binding.bottomMenuBnv.menu.getItem(0).isChecked = true
 
-        containerVP.addOnPageChangeListener(object : ViewPager.OnPageChangeListener {
+        binding.containerVP.addOnPageChangeListener(object : ViewPager.OnPageChangeListener {
             override fun onPageScrollStateChanged(state: Int) {
 
             }
@@ -69,7 +73,7 @@ class MainActivity : AppCompatActivity() {
             }
 
             override fun onPageSelected(position: Int) {
-                bottomMenuBnv.menu.getItem(position).isChecked = true
+                binding.bottomMenuBnv.menu.getItem(position).isChecked = true
             }
         })
     }

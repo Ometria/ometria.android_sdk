@@ -8,4 +8,12 @@
     <string name="redirect_modal_title">App Link Processed</string>
     <string name="notification_interaction_modal_title">Ometria Notification Object</string>
     <string name="ok">OK</string>
+    <string name="hint_token_key">API token</string>
+    <string name="save_api_token">Save API token</string>
+    <string name="login_with_customer_id">Login with customer id</string>
+    <string name="hint_customer_id">Customer Id</string>
+    <string name="login_with_email">Login with email</string>
+    <string name="hint_email">Email</string>
+    <string name="enter_your_api_token">Please enter your API token</string>
+    <string name="do_it_later">Do it later</string>
 </resources>

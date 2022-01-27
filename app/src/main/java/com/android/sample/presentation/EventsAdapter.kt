@@ -6,8 +6,8 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.android.sample.R
 import com.android.sample.data.EventType
+import com.android.sample.databinding.ItemEventBinding
 import kotlinx.android.extensions.LayoutContainer
-import kotlinx.android.synthetic.main.item_event.*
 
 /**
  * Created by cristiandregan
@@ -33,14 +33,16 @@ class EventsAdapter(private val onEventClicked: (EventType) -> Unit) :
         RecyclerView.ViewHolder(containerView),
         LayoutContainer {
 
+        private var binding = ItemEventBinding.bind(containerView)
+
         init {
-            eventTV.setOnClickListener {
+            binding.eventTV.setOnClickListener {
                 onEventClicked.invoke(EventType.values()[adapterPosition])
             }
         }
 
         internal fun bind(eventType: EventType) {
-            eventTV.text = eventType.name
+            binding.eventTV.text = eventType.name
         }
     }
 }

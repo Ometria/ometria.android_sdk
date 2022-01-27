@@ -39,6 +39,7 @@ internal fun OmetriaEvent.toJson(): JSONObject {
     jsonObject.put("deviceModel", deviceModel)
     jsonObject.put("type", type)
     jsonObject.put("data", data?.dataToJson() ?: JSONObject())
+    jsonObject.put("sdkVersionRN", sdkVersionRN)
 
     return jsonObject
 }
@@ -92,6 +93,7 @@ internal fun OmetriaApiRequest.toJson(): JSONObject {
     jsonObject.put("deviceManufacturer", deviceManufacturer)
     jsonObject.put("deviceModel", deviceModel)
     jsonObject.put("dtSent", dtSent)
+    jsonObject.put("sdkVersionRN", sdkVersionRN)
     jsonObject.put("events", events?.toAPIJson())
 
     return jsonObject

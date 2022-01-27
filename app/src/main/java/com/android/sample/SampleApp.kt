@@ -8,6 +8,7 @@ import androidx.core.content.ContextCompat
 import com.android.ometriasdk.core.Ometria
 import com.android.ometriasdk.notification.OmetriaNotification
 import com.android.ometriasdk.notification.OmetriaNotificationInteractionHandler
+import com.android.sample.data.AppPreferencesUtils
 import com.android.sample.presentation.MainActivity
 import com.android.sample.presentation.OMETRIA_NOTIFICATION_STRING_EXTRA_KEY
 
@@ -29,7 +30,7 @@ class SampleApp : Application(), OmetriaNotificationInteractionHandler {
         // Note: Replace api token with your own
         Ometria.initialize(
             this,
-            "YOUR_API_TOKEN",
+            AppPreferencesUtils.getApiToken() ?: "YOUR_API_TOKEN",
             R.drawable.ic_notification_nys,
             ContextCompat.getColor(this, R.color.colorAccent)
         ).loggingEnabled(true)

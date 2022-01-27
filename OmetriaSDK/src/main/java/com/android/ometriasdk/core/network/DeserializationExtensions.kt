@@ -30,7 +30,7 @@ internal fun String.toOmetriaEventList(): MutableList<OmetriaEvent> {
 
 internal fun String.toOmetriaEvent(): OmetriaEvent {
     val jsonObject = JSONObject(this)
-    return OmetriaEvent(
+    val ometriaEvent = OmetriaEvent(
         jsonObject.getString("eventId"),
         jsonObject.getBoolean("isBeingFlushed"),
         jsonObject.getString("dtOccurred"),
@@ -46,6 +46,16 @@ internal fun String.toOmetriaEvent(): OmetriaEvent {
         jsonObject.getString("type"),
         jsonObject.getJSONObject("data").toMap()
     )
+
+    var sdkVersionRN: String? = null
+    try {
+        sdkVersionRN = jsonObject.getString("sdkVersionRN")
+    } catch (e: JSONException) {
+    }
+
+    ometriaEvent.sdkVersionRN = sdkVersionRN
+
+    return ometriaEvent
 }
 
 internal fun JSONObject?.toMap(): Map<String, Any> {
