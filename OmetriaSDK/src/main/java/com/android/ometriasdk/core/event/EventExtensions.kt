@@ -37,6 +37,7 @@ internal fun List<OmetriaEvent>.toApiRequest(): OmetriaApiRequest {
         sdkVersion = ometriaEvent.sdkVersion,
         osVersion = ometriaEvent.osVersion,
         dtSent = dateFormat.format(Calendar.getInstance().time),
+        sdkVersionRN = ometriaEvent.sdkVersionRN,
         events = this
     )
 }
