@@ -28,15 +28,11 @@ internal class PushClickBroadcastReceiver : BroadcastReceiver() {
             val ometriaNotificationBody =
                 intent.getStringExtra(OMETRIA_NOTIFICATION_BODY_KEY)?.toOmetriaNotificationBody()
 
-
             ometriaNotificationBody?.let { safeOmetriaNotificationBody ->
-                if (safeOmetriaNotificationBody.deepLinkActionUrl != null
-                    && URLUtil.isValidUrl(safeOmetriaNotificationBody.deepLinkActionUrl)
-                ) {
+                if (safeOmetriaNotificationBody.deepLinkActionUrl != null) {
                     Ometria.instance().notificationInteractionHandler.onDeepLinkInteraction(
                         safeOmetriaNotificationBody.deepLinkActionUrl
                     )
-
                 }
                 Ometria.instance().notificationInteractionHandler.onNotificationInteraction(
                     safeOmetriaNotificationBody.toOmetriaNotification()

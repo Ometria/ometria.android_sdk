@@ -4,6 +4,7 @@ import android.app.Application
 import android.content.Intent
 import android.net.Uri
 import android.util.Log
+import android.webkit.URLUtil
 import androidx.core.content.ContextCompat
 import com.android.ometriasdk.core.Ometria
 import com.android.ometriasdk.notification.OmetriaNotification
@@ -55,6 +56,8 @@ class SampleApp : Application(), OmetriaNotificationInteractionHandler {
 
     private fun openBrowser(deepLink: String?) {
         deepLink?.let { safeDeepLink ->
+            if (URLUtil.isValidUrl(safeDeepLink).not()) return
+
             Ometria.instance()
                 .trackDeepLinkOpenedEvent(safeDeepLink, "Browser")
             Log.d(SampleApp::class.java.simpleName, "Open URL: $safeDeepLink")

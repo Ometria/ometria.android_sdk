@@ -4,6 +4,7 @@ import android.app.Application
 import android.app.Notification.COLOR_DEFAULT
 import android.content.Intent
 import android.net.Uri
+import android.webkit.URLUtil
 import androidx.core.app.NotificationManagerCompat
 import androidx.lifecycle.ProcessLifecycleOwner
 import com.android.ometriasdk.core.Constants.Params.BASKET
@@ -412,11 +413,13 @@ class Ometria private constructor() : OmetriaNotificationInteractionHandler {
         remoteMessage.toOmetriaNotification()
 
     override fun onNotificationInteraction(ometriaNotification: OmetriaNotification) {
-        ometriaNotification.deepLinkActionUrl.let { safeDeeplinkActionUrl ->
-            Logger.d(
-                Constants.Logger.PUSH_NOTIFICATIONS,
-                "Open URL: $safeDeeplinkActionUrl"
-            )
+        ometriaNotification.deepLinkActionUrl?.let { safeDeeplinkActionUrl ->
+            if (URLUtil.isValidUrl(safeDeeplinkActionUrl).not()) {
+                Logger.e(Constants.Logger.PUSH_NOTIFICATIONS, "Can not open $safeDeeplinkActionUrl")
+                return
+            }
+
+            Logger.d(Constants.Logger.PUSH_NOTIFICATIONS, "Open URL: $safeDeeplinkActionUrl")
             val intent = Intent(Intent.ACTION_VIEW)
             intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
             intent.data = Uri.parse(safeDeeplinkActionUrl)
