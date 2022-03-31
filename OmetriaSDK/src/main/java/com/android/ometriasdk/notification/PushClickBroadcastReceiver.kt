@@ -3,7 +3,6 @@ package com.android.ometriasdk.notification
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
-import android.webkit.URLUtil
 import com.android.ometriasdk.core.Ometria
 import com.android.ometriasdk.core.event.OmetriaEventType
 import com.android.ometriasdk.core.network.toOmetriaNotification
