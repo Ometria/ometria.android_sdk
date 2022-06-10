@@ -1,5 +1,6 @@
 package com.android.ometriasdk.notification
 
+import android.annotation.SuppressLint
 import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
@@ -27,6 +28,7 @@ internal class OmetriaPushNotification(
     private val notificationColor: Int?
 ) {
 
+    @SuppressLint("LaunchActivityFromNotification")
     fun createPushNotification(
         title: String?,
         body: String?,
@@ -38,7 +40,7 @@ internal class OmetriaPushNotification(
             context,
             System.currentTimeMillis().toInt(),
             getRoutingIntent(ometriaNotificationBody),
-            PendingIntent.FLAG_UPDATE_CURRENT
+            getFlags()
         )
 
         val notificationBuilder = NotificationCompat.Builder(context, OMETRIA_CHANNEL_ID)
@@ -75,5 +77,11 @@ internal class OmetriaPushNotification(
             .setAction(PUSH_TAP_ACTION)
             .setClass(context, PushClickBroadcastReceiver::class.java)
             .putExtras(options)
+    }
+
+    private fun getFlags(): Int = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+        PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
+    } else {
+        PendingIntent.FLAG_UPDATE_CURRENT
     }
 }

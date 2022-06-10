@@ -3,7 +3,6 @@ package com.android.ometriasdk.notification
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
-import android.webkit.URLUtil
 import com.android.ometriasdk.core.Ometria
 import com.android.ometriasdk.core.event.OmetriaEventType
 import com.android.ometriasdk.core.network.toOmetriaNotification
@@ -28,15 +27,11 @@ internal class PushClickBroadcastReceiver : BroadcastReceiver() {
             val ometriaNotificationBody =
                 intent.getStringExtra(OMETRIA_NOTIFICATION_BODY_KEY)?.toOmetriaNotificationBody()
 
-
             ometriaNotificationBody?.let { safeOmetriaNotificationBody ->
-                if (safeOmetriaNotificationBody.deepLinkActionUrl != null
-                    && URLUtil.isValidUrl(safeOmetriaNotificationBody.deepLinkActionUrl)
-                ) {
+                if (safeOmetriaNotificationBody.deepLinkActionUrl != null) {
                     Ometria.instance().notificationInteractionHandler.onDeepLinkInteraction(
                         safeOmetriaNotificationBody.deepLinkActionUrl
                     )
-
                 }
                 Ometria.instance().notificationInteractionHandler.onNotificationInteraction(
                     safeOmetriaNotificationBody.toOmetriaNotification()
