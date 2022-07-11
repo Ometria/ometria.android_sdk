@@ -30,10 +30,11 @@ class SampleApp : Application(), OmetriaNotificationInteractionHandler {
         // Initializing Ometria SDK with application context, api token and notifications icon resource id
         // Note: Replace api token with your own
         Ometria.initialize(
-            this,
-            AppPreferencesUtils.getApiToken() ?: "YOUR_API_TOKEN",
-            R.drawable.ic_notification_nys,
-            ContextCompat.getColor(this, R.color.colorAccent)
+            application = this,
+            apiToken = AppPreferencesUtils.getApiToken() ?: "YOUR_API_TOKEN",
+            notificationIcon = R.drawable.ic_notification_nys,
+            notificationColor = ContextCompat.getColor(this, R.color.colorAccent),
+
         ).loggingEnabled(true)
 
         // Set the notificationInteractionDelegate in order to provide actions for

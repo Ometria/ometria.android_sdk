@@ -25,13 +25,15 @@ internal class NotificationHandler(
     context: Context,
     notificationIcon: Int,
     notificationColor: Int?,
-    private val executor: OmetriaThreadPoolExecutor,
+    notificationChannelName: String,
+    private val executor: OmetriaThreadPoolExecutor
 ) {
 
     private val ometriaPushNotification: OmetriaPushNotification = OmetriaPushNotification(
-        context,
-        notificationIcon,
-        notificationColor
+        context = context,
+        notificationIcon = notificationIcon,
+        notificationColor = notificationColor,
+        notificationChannelName = notificationChannelName
     )
 
     /**
@@ -53,11 +55,11 @@ internal class NotificationHandler(
         if (ometriaNotificationBody.imageUrl != null) {
             loadImage(ometriaNotificationBody.imageUrl) {
                 ometriaPushNotification.createPushNotification(
-                    title,
-                    body,
-                    it,
-                    ometriaNotificationBody,
-                    remoteMessage.collapseKey
+                    title = title,
+                    body = body,
+                    image = it,
+                    ometriaNotificationBody = ometriaNotificationBody,
+                    collapseId = remoteMessage.collapseKey
                 )
             }
         } else {
