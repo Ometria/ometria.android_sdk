@@ -54,7 +54,7 @@ We recommend initialising the SDK in your Application subclass. You’ll need to
 * your Ometria API token;
 * the notifications icon;
 * the notifications color (optional), and;
-* the notifications channel name.
+* the notifications channel name (optional).
 
 ```kotlin
 Ometria.initialize(
