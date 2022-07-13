@@ -34,6 +34,7 @@ class SampleApp : Application(), OmetriaNotificationInteractionHandler {
             apiToken = AppPreferencesUtils.getApiToken() ?: "YOUR_API_TOKEN",
             notificationIcon = R.drawable.ic_notification_nys,
             notificationColor = ContextCompat.getColor(this, R.color.colorAccent),
+            notificationChannelName = "Custom Channel Name"
 
         ).loggingEnabled(true)
 
