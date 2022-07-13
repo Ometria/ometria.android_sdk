@@ -31,7 +31,7 @@ To install the library inside **Android Studio**, declare it as dependency in yo
 
 ```gradle
 dependencies {
-    implementation 'com.ometria:android-sdk:1.2.3'
+    implementation 'com.ometria:android-sdk:1.3.0'
 }
 ```
 
@@ -50,13 +50,20 @@ If it can’t find the dependency, you should make sure you've specified `mavenC
 Once you've set up your build system or IDE to use the Ometria library, you can initialise it in your code. 
 
 We recommend initialising the SDK in your Application subclass. You’ll need to provide:
-⋅⋅* the application context;
-⋅⋅* your Ometria API token;
-⋅⋅* the notifications icon, and;
-⋅⋅* the notifications color (optional).
+* the application context;
+* your Ometria API token;
+* the notifications icon;
+* the notifications color (optional), and;
+* the notifications channel name.
 
 ```kotlin
-Ometria.initialize(this, "YOUR_API_TOKEN", R.drawable.ic_notification_nys, ContextCompat.getColor(this, R.color.colorAccent))
+Ometria.initialize(
+    application = this,
+    apiToken = "YOUR_API_TOKEN",
+    notificationIcon = R.drawable.ic_notification_nys,
+    notificationColor = ContextCompat.getColor(this, R.color.colorAccent),
+    notificationChannelName = "Custom Channel Name"
+)
 ```
 
 Ometria logs any errors encountered during runtime by default. 
@@ -64,8 +71,11 @@ Ometria logs any errors encountered during runtime by default.
 You can enable advanced logging if you want more information on what’s happening in the background. Just add the following line after initialising the library:
 
 ```kotlin
-Ometria.initialize(this, "YOUR_API_TOKEN", R.mipmap.ic_launcher)
-            .loggingEnabled(true)
+Ometria.initialize(
+    application = this,
+    apiToken = "YOUR_API_TOKEN",
+    notificationIcon = R.drawable.ic_notification_nys
+).loggingEnabled(true)
 ```
 
 5\. Event tracking guide

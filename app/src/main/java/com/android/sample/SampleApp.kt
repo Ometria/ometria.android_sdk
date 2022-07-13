@@ -35,7 +35,6 @@ class SampleApp : Application(), OmetriaNotificationInteractionHandler {
             notificationIcon = R.drawable.ic_notification_nys,
             notificationColor = ContextCompat.getColor(this, R.color.colorAccent),
             notificationChannelName = "Custom Channel Name"
-
         ).loggingEnabled(true)
 
         // Set the notificationInteractionDelegate in order to provide actions for
