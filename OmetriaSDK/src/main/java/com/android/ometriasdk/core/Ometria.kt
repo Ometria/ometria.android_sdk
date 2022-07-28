@@ -35,6 +35,7 @@ import com.android.ometriasdk.core.network.OmetriaThreadPoolExecutor
 import com.android.ometriasdk.core.network.toOmetriaNotification
 import com.android.ometriasdk.lifecycle.OmetriaActivityLifecycleHelper
 import com.android.ometriasdk.notification.NotificationHandler
+import com.android.ometriasdk.notification.OMETRIA_CHANNEL_NAME
 import com.android.ometriasdk.notification.OmetriaNotification
 import com.android.ometriasdk.notification.OmetriaNotificationInteractionHandler
 import com.google.firebase.messaging.RemoteMessage
@@ -85,7 +86,8 @@ class Ometria private constructor() : OmetriaNotificationInteractionHandler {
             application: Application,
             apiToken: String,
             notificationIcon: Int,
-            notificationColor: Int? = COLOR_DEFAULT
+            notificationColor: Int? = COLOR_DEFAULT,
+            notificationChannelName: String = OMETRIA_CHANNEL_NAME
         ) = instance.also {
             it.ometriaConfig = OmetriaConfig(apiToken, application)
             it.localCache = LocalCache(application)
@@ -97,7 +99,13 @@ class Ometria private constructor() : OmetriaNotificationInteractionHandler {
             )
             it.eventHandler = EventHandler(application, it.repository)
             it.notificationHandler =
-                NotificationHandler(application, notificationIcon, notificationColor, it.executor)
+                NotificationHandler(
+                    context = application,
+                    notificationIcon = notificationIcon,
+                    notificationColor = notificationColor,
+                    notificationChannelName = notificationChannelName,
+                    executor = it.executor
+                )
             it.isInitialized = true
             it.notificationInteractionHandler = instance
 

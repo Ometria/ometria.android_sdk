@@ -20,12 +20,13 @@ import com.android.ometriasdk.core.network.toJson
 
 const val PUSH_TAP_ACTION = "com.android.ometriasdk.push_notification_tap"
 const val OMETRIA_CHANNEL_ID = "ometria"
-const val OMETRIA_CHANNEL_NAME = "ometria"
+const val OMETRIA_CHANNEL_NAME = " "
 
 internal class OmetriaPushNotification(
     private val context: Context,
     private val notificationIcon: Int,
-    private val notificationColor: Int?
+    private val notificationColor: Int?,
+    private val notificationChannelName: String
 ) {
 
     @SuppressLint("LaunchActivityFromNotification")
@@ -57,7 +58,7 @@ internal class OmetriaPushNotification(
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val channel = NotificationChannel(
-                OMETRIA_CHANNEL_ID, OMETRIA_CHANNEL_NAME,
+                OMETRIA_CHANNEL_ID, notificationChannelName,
                 NotificationManager.IMPORTANCE_HIGH
             )
             notificationManager.createNotificationChannel(channel)
