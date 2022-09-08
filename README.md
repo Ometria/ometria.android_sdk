@@ -157,20 +157,6 @@ The value is opaque, and is only used to create segments and automation campaign
 
 Use non-localised, predictable, human readable slugs. E.g. "womens-footwear".
 
-#### Wishlist events
-
-The user has added this product to their wishlist:
-
-```kotlin
-trackWishlistAddedToEvent(productId: String)
-```
-
-... or removed it:
-
-```kotlin
-trackWishlistRemovedFromEvent(productId: String)
-```
-
 #### Basket viewed
 
 The user has viewed a dedicated page, screen or modal with the contents of the shopping basket.

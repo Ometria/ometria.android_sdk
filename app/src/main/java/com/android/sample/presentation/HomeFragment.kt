@@ -127,10 +127,6 @@ class HomeFragment : Fragment() {
                 "search",
                 mapOf("searchQuery" to "some search terms")
             )
-            EventType.WISH_LIST_ADDED_TO -> Ometria.instance()
-                .trackWishlistAddedToEvent("product_1")
-            EventType.WISHLIST_REMOVED_FROM -> Ometria.instance()
-                .trackWishlistRemovedFromEvent("product_1")
             EventType.BASKET_VIEWED -> Ometria.instance()
                 .trackBasketViewedEvent()
             EventType.BASKET_UPDATED -> Ometria.instance()

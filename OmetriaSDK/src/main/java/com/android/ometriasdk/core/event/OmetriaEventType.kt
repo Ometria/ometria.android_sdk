@@ -19,8 +19,6 @@ internal enum class OmetriaEventType(var id: String) {
     // Product related events
     PRODUCT_VIEWED("productViewed"),
     PRODUCT_LISTING_VIEWED("productListingViewed"),
-    WISH_LIST_ADDED_TO("wishlistAddedTo"),
-    WISHLIST_REMOVED_FROM("wishlistRemovedFrom"),
     BASKET_VIEWED("basketViewed"),
     BASKET_UPDATED("basketUpdated"),
     CHECKOUT_STARTED("checkoutStarted"),
