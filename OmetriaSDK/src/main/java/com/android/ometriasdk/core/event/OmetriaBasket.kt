@@ -1,11 +1,6 @@
 package com.android.ometriasdk.core.event
 
 /**
- * Created by cristiandregan
- * on 12/08/2020.
- */
-
-/**
  * An object that describes the contents of a shopping basket.
  *
  * @param totalPrice A float value representing the pricing.

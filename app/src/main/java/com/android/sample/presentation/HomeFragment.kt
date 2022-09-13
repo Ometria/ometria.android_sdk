@@ -1,10 +1,17 @@
 package com.android.sample.presentation
 
+import android.Manifest
 import android.content.Intent
+import android.content.pm.PackageManager
+import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.app.NotificationManagerCompat
+import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.DividerItemDecoration
@@ -16,11 +23,6 @@ import com.android.sample.data.AppPreferencesUtils
 import com.android.sample.data.EventType
 import com.android.sample.databinding.FragmentHomeBinding
 
-/**
- * Created by cristiandregan
- * on 17/07/2020.
- */
-
 private const val POSITION_KEY = "position_key"
 const val TAB_ONE = 0
 const val TAB_TWO = 1
@@ -30,6 +32,8 @@ class HomeFragment : Fragment() {
     private var screenPosition = TAB_ONE
     private val enterApiTokenDialog = EnterApiTokenDialog()
     private lateinit var binding: FragmentHomeBinding
+    private val notificationManagerCompat by lazy { NotificationManagerCompat.from(requireContext()) }
+    private val requestNotificationPermissionLauncher = initNotificationPermissionLauncher()
 
     companion object {
         fun newInstance(position: Int, ometriaNotificationString: String): HomeFragment {
@@ -60,6 +64,7 @@ class HomeFragment : Fragment() {
         setUpViews(ometriaNotificationString)
         setUpListeners()
         initEventsRV()
+        requestNotificationPermission()
     }
 
     private fun setUpViews(ometriaNotificationString: String?) {
@@ -72,7 +77,8 @@ class HomeFragment : Fragment() {
         binding.customerIdET.isVisible = screenPosition == TAB_ONE
         binding.loginWithCustomerIdBTN.isVisible = screenPosition == TAB_ONE
 
-        binding.titleTV.isVisible = screenPosition == TAB_ONE && !ometriaNotificationString.isNullOrEmpty()
+        binding.titleTV.isVisible =
+            screenPosition == TAB_ONE && !ometriaNotificationString.isNullOrEmpty()
         binding.detailsTV.isVisible =
             screenPosition == TAB_ONE && !ometriaNotificationString.isNullOrEmpty()
         binding.detailsTV.text = ometriaNotificationString
@@ -167,5 +173,55 @@ class HomeFragment : Fragment() {
     private fun showEnterApiTokenDialog() {
         enterApiTokenDialog.isCancelable = false
         enterApiTokenDialog.show(childFragmentManager, null)
+    }
+
+    /**
+     * Mocking a basket object
+     */
+    private fun initNotificationPermissionLauncher() = registerForActivityResult(
+        ActivityResultContracts.RequestPermission()
+    ) { isGranted ->
+        if (isGranted) {
+            // Permission is granted. Continue the action or workflow in your app
+        } else {
+            // Permission not granted so we are kindly asking the user to take the action of accessing
+            // settings and grant the permission from there
+            showPermissionRationale()
+        }
+    }
+
+    /**
+     * Check if Notifications Permission is granted and if not proceed with asking for permission
+     */
+    private fun requestNotificationPermission() {
+        if (hasNotificationPermission()) return
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            if (shouldShowRequestPermissionRationale(Manifest.permission.POST_NOTIFICATIONS)) {
+                // Explain to the user that the feature is unavailable because the
+                // features requires a permission that the user has denied.
+                showPermissionRationale()
+            } else {
+                // Launch permission prompt
+                requestNotificationPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
+            }
+        }
+    }
+
+    private fun hasNotificationPermission(): Boolean =
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            ContextCompat.checkSelfPermission(
+                requireContext(),
+                Manifest.permission.POST_NOTIFICATIONS
+            ) == PackageManager.PERMISSION_GRANTED
+        } else {
+            notificationManagerCompat.areNotificationsEnabled()
+        }
+
+    private fun showPermissionRationale() {
+        Toast.makeText(
+            requireContext(),
+            "Please grant Notification Permission from App Settings",
+            Toast.LENGTH_LONG
+        ).show()
     }
 }

@@ -42,11 +42,6 @@ import com.google.firebase.messaging.RemoteMessage
 import java.util.*
 
 /**
- * Created by cristiandregan
- * on 08/07/2020.
- */
-
-/**
  * The primary class that allows instantiating and integrating Ometria in your application
  */
 @Suppress("unused")

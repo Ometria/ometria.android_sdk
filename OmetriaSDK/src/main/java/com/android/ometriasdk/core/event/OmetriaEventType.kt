@@ -1,10 +1,5 @@
 package com.android.ometriasdk.core.event
 
-/**
- * Created by cristiandregan
- * on 24/07/2020.
- */
-
 internal enum class OmetriaEventType(var id: String) {
     // Application related events
     APP_INSTALLED("appInstalled"),

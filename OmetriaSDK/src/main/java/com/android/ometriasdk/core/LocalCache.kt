@@ -6,11 +6,6 @@ import com.android.ometriasdk.core.event.OmetriaEvent
 import com.android.ometriasdk.core.network.toJson
 import com.android.ometriasdk.core.network.toOmetriaEventList
 
-/**
- * Created by cristiandregan
- * on 24/07/2020.
- */
-
 private const val LOCAL_CACHE_PREFERENCES = "LOCAL_CACHE_PREFERENCES"
 private const val IS_FIRST_APP_RUN_KEY = "IS_FIRST_APP_RUN_KEY"
 private const val INSTALLATION_ID_KEY = "INSTALLATION_ID_KEY"

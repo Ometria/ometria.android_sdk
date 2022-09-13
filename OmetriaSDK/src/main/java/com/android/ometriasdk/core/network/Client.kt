@@ -9,11 +9,6 @@ import java.io.*
 import java.net.HttpURLConnection
 import java.nio.charset.Charset
 
-/**
- * Created by cristiandregan
- * on 20/08/2020.
- */
-
 private const val ERROR_RESPONSE_CODE_START_RANGE = 300
 private const val SUCCESS_RESPONSE_CODE_START_RANGE = 200
 private const val SUCCESS_RESPONSE_CODE_END_RANGE = 299

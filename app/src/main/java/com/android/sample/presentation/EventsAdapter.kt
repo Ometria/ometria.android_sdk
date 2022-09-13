@@ -8,11 +8,6 @@ import com.android.sample.R
 import com.android.sample.data.EventType
 import com.android.sample.databinding.ItemEventBinding
 
-/**
- * Created by cristiandregan
- * on 17/08/2020.
- */
-
 class EventsAdapter(private val onEventClicked: (EventType) -> Unit) :
     RecyclerView.Adapter<EventsAdapter.EventVH>() {
 

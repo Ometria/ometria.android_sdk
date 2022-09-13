@@ -8,11 +8,6 @@ import com.android.ometriasdk.core.event.OmetriaEventType
 import com.android.ometriasdk.core.network.toOmetriaNotification
 import com.android.ometriasdk.core.network.toOmetriaNotificationBody
 
-/**
- * Created by cristiandregan
- * on 30/07/2020.
- */
-
 internal const val OMETRIA_NOTIFICATION_BODY_KEY = "ometria_notification_body_key"
 
 /**

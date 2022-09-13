@@ -11,11 +11,6 @@ import java.net.MalformedURLException
 import java.net.URL
 import java.util.concurrent.TimeUnit
 
-/**
- * Created by cristiandregan
- * on 20/08/2020.
- */
-
 private const val POST = "POST"
 private const val TIMEOUT_IN_SECONDS = 30L
 

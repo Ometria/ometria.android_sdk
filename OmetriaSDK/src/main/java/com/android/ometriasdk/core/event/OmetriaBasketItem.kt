@@ -1,11 +1,6 @@
 package com.android.ometriasdk.core.event
 
 /**
- * Created by cristiandregan
- * on 12/08/2020.
- */
-
-/**
  * An object representing one entry of a particular item in a basket. It can have its own price and
  * quantity based on different rules and promotions that are being applied.
  *

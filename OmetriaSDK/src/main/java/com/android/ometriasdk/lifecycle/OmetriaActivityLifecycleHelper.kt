@@ -11,11 +11,6 @@ import com.android.ometriasdk.core.Ometria
 import com.android.ometriasdk.core.Repository
 import java.util.concurrent.atomic.AtomicBoolean
 
-/**
- * Created by cristiandregan
- * on 07/07/2020.
- */
-
 internal class OmetriaActivityLifecycleHelper(
     private val repository: Repository,
     private val context: Context
