@@ -18,5 +18,6 @@ data class OmetriaBasketItem(
     val productId: String,
     val sku: String? = null,
     val quantity: Int,
-    val price: Float
+    val price: Float,
+    val variantId: String? = null
 )

@@ -16,6 +16,7 @@ package com.android.ometriasdk.core.event
  * Following that link should take them straight to the basket page.
  */
 data class OmetriaBasket(
+    val id: String? = null,
     val totalPrice: Float,
     val currency: String,
     val items: List<OmetriaBasketItem> = listOf(),
