@@ -158,11 +158,13 @@ class HomeFragment : Fragment() {
             productId = "product-1",
             sku = "sku-product-1",
             quantity = 1,
-            price = 12.0f
+            price = 12.0f,
+            variantId = "variant-id-1"
         )
         val myItems = listOf(myItem)
 
         return OmetriaBasket(
+            id = "id-1",
             totalPrice = 12.0f,
             currency = "USD",
             items = myItems,
