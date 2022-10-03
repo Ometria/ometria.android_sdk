@@ -59,6 +59,7 @@ internal fun OmetriaBasket.toJson(): JSONObject {
     jsonObject.put("totalPrice", totalPrice)
     jsonObject.put("currency", currency)
     jsonObject.put("link", link)
+    jsonObject.put("id", id)
 
     val jsonArray = JSONArray()
 
@@ -77,6 +78,7 @@ internal fun OmetriaBasketItem.toJson(): JSONObject {
     jsonObject.put("sku", sku)
     jsonObject.put("quantity", quantity)
     jsonObject.put("price", price)
+    jsonObject.put("variantId", variantId)
 
     return jsonObject
 }
