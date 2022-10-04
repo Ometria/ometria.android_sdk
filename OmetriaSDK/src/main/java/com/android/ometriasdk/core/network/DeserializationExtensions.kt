@@ -45,7 +45,7 @@ internal fun String.toOmetriaEvent(): OmetriaEvent {
     var sdkVersionRN: String? = null
     try {
         sdkVersionRN = jsonObject.getString("sdkVersionRN")
-    } catch (e: JSONException) {
+    } catch (_: JSONException) {
     }
 
     ometriaEvent.sdkVersionRN = sdkVersionRN
