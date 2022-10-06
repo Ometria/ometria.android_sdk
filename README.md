@@ -352,6 +352,7 @@ implementation 'com.google.firebase:firebase-messaging:20.2.4'
 
 Android 13 (API level 33) and higher requires a runtime permission for sending push notifications. If you target Android 13 or higher
 please declare the permission in your AndroidManifest file and complete the process of requesting the runtime permission.
+
 Find more about Notification runtime permission [here](https://developer.android.com/develop/ui/views/notifications/notification-permission).
 
 ### Option 1 - Reference OmetriaFirebaseMessagingService in AndroidManifest file
