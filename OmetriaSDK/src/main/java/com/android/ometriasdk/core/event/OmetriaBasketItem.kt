@@ -12,7 +12,8 @@ package com.android.ometriasdk.core.event
  * @param productId A string representing the unique identifier of this product.
  * @param sku A string representing the stock keeping unit, which allows identifying a particular item.
  * @param quantity The number of items that this entry represents.
- * @param price Float value representing the price for one item. The currency is established by the [OmetriaBasket] containing this item
+ * @param price Float value representing the price for one item. The currency is established by the [OmetriaBasket] containing this item.
+ * @param variantId An identifier for a variant product associated with this line item.
  */
 data class OmetriaBasketItem(
     val productId: String,

@@ -281,7 +281,7 @@ An object that describes the contents of a shopping basket.
 
 * `id`: (`String`, optional) - A unique identifier for this basket.
 * `currency`: (`String`, required) - A string representing the currency in ISO currency format. e.g. `"USD"`, `"GBP"`.
-* `price`: (`float`, required) - A float value representing the pricing.
+* `totalPrice`: (`float`, required) - A float value representing the pricing.
 * `items`: (`Array[OmetriaBasketItem]`) - An array containing the item entries in this basket.
 * `link`: (`String`, optional) - A deeplink to the web or in-app page for this basket. Can be used ina notification sent to the user, e.g. "Forgot to check out? Here's
                        your basket to continue: <link>". Following that link should take them straight to the basket page.
