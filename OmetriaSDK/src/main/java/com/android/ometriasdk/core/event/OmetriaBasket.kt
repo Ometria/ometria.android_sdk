@@ -8,6 +8,7 @@ package com.android.ometriasdk.core.event
 /**
  * An object that describes the contents of a shopping basket.
  *
+ * @param id A unique identifier for this basket.
  * @param totalPrice A float value representing the pricing.
  * @param currency A string representing the currency in ISO currency format. e.g. "USD", "GBP"
  * @param items (List[OmetriaBasketItem]) An array containing the item entries in this basket.
@@ -16,6 +17,7 @@ package com.android.ometriasdk.core.event
  * Following that link should take them straight to the basket page.
  */
 data class OmetriaBasket(
+    val id: String? = null,
     val totalPrice: Float,
     val currency: String,
     val items: List<OmetriaBasketItem> = listOf(),

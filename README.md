@@ -31,7 +31,7 @@ To install the library inside **Android Studio**, declare it as dependency in yo
 
 ```gradle
 dependencies {
-    implementation 'com.ometria:android-sdk:1.3.0'
+    implementation 'com.ometria:android-sdk:1.4.0'
 }
 ```
 
@@ -99,9 +99,17 @@ val myItem = OmetriaBasketItem(
         productId = "product-1",
         sku = "sku-product-1",
         quantity = 1,
-        price = 12.0f)
+        price = 12.0f,
+        variantId = "variant-id-1"
+)
 val myItems = listOf(myItem)
-val basket = OmetriaBasket(totalPrice = 12.0f, currency = "USD", items = myItems, link = "www.example.com")
+val basket = OmetriaBasket(
+        id = "id-1",
+        totalPrice = 12.0f,
+        currency = "USD",
+        items = myItems,
+        link = "www.example.com"
+)
 
 Ometria.instance().trackBasketUpdatedEvent(basket = basket)
 ```
@@ -156,20 +164,6 @@ The product details must be sent to Ometria separately, e.g. using the server-to
 The value is opaque, and is only used to create segments and automation campaigns in the Ometria app. 
 
 Use non-localised, predictable, human readable slugs. E.g. "womens-footwear".
-
-#### Wishlist events
-
-The user has added this product to their wishlist:
-
-```kotlin
-trackWishlistAddedToEvent(productId: String)
-```
-
-... or removed it:
-
-```kotlin
-trackWishlistRemovedFromEvent(productId: String)
-```
 
 #### Basket viewed
 
@@ -234,9 +228,9 @@ E.g., A store sells clothing, and the visitor taps on "Women's Footwear" to see 
 
 This event should be triggered on:
 
-⋅⋅* search results
-⋅⋅* category lists
-⋅⋅* any similar screens
+* search results
+* category lists
+* any similar screens
 
 ```kotlin
 trackProductListingViewedEvent(listingType: String? = null, listingAttributes: Map<String, Any> = mapOf())
@@ -285,10 +279,11 @@ An object that describes the contents of a shopping basket.
 
 #### Properties
 
+* `id`: (`String`, optional) - A unique identifier for this basket.
 * `currency`: (`String`, required) - A string representing the currency in ISO currency format. e.g. `"USD"`, `"GBP"`.
-* `price`: (`float`, required) - A float value representing the pricing.
+* `totalPrice`: (`float`, required) - A float value representing the pricing.
 * `items`: (`Array[OmetriaBasketItem]`) - An array containing the item entries in this basket.
-* `link`: (`String`) - A deeplink to the web or in-app page for this basket. Can be used ina notification sent to the user, e.g. "Forgot to check out? Here's
+* `link`: (`String`, optional) - A deeplink to the web or in-app page for this basket. Can be used ina notification sent to the user, e.g. "Forgot to check out? Here's
                        your basket to continue: <link>". Following that link should take them straight to the basket page.
 
 ### `OmetriaBasketItem`
@@ -303,6 +298,7 @@ It can have its own price and quantity based on different rules and promotions t
 * `sku`: (`String`, optional) - A string representing the stock keeping unit, which allows identifying a particular item.
 * `quantity`: (`Int`, required) - The number of items that this entry represents.
 * `price`: (`Float`, required) - Float value representing the price for one item. The currency is established by the OmetriaBasket containing this item.
+* `variantId`: (`String`, optional) - An identifier for a variant product associated with this line item.
 
 ### Automatically tracked events
 

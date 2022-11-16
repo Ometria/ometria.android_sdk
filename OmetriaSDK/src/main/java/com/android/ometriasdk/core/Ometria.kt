@@ -272,16 +272,25 @@ class Ometria private constructor() : OmetriaNotificationInteractionHandler {
      * Track when a user has added a product to their wishlist.
      * @param productId The unique identifier of the product that has been added to the wishlist.
      */
+    @Deprecated(message = "The event is no longer sent to the Ometria backend. It will be removed in a future version")
     fun trackWishlistAddedToEvent(productId: String) {
-        trackEvent(OmetriaEventType.WISH_LIST_ADDED_TO, mapOf(PRODUCT_ID to productId))
+        Logger.d(
+            Constants.Logger.EVENTS,
+            "The trackWishlistAddedToEvent event is no longer processed by Ometria. It will not produce any result."
+        )
     }
 
     /**
      * Track when a user has removed a product to their wishlist.
      * @param productId The unique identifier of the product that has been removed from the wishlist.
      */
+    @Deprecated(message = "The event is no longer sent to the Ometria backend. It will be removed in a future version")
+    @Suppress("replaceWith")
     fun trackWishlistRemovedFromEvent(productId: String) {
-        trackEvent(OmetriaEventType.WISHLIST_REMOVED_FROM, mapOf(PRODUCT_ID to productId))
+        Logger.d(
+            Constants.Logger.EVENTS,
+            "The trackWishlistRemovedFromEvent event is no longer processed by Ometria. It will not produce any result."
+        )
     }
 
     /**

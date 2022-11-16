@@ -72,7 +72,8 @@ class HomeFragment : Fragment() {
         binding.customerIdET.isVisible = screenPosition == TAB_ONE
         binding.loginWithCustomerIdBTN.isVisible = screenPosition == TAB_ONE
 
-        binding.titleTV.isVisible = screenPosition == TAB_ONE && !ometriaNotificationString.isNullOrEmpty()
+        binding.titleTV.isVisible =
+            screenPosition == TAB_ONE && !ometriaNotificationString.isNullOrEmpty()
         binding.detailsTV.isVisible =
             screenPosition == TAB_ONE && !ometriaNotificationString.isNullOrEmpty()
         binding.detailsTV.text = ometriaNotificationString
@@ -127,10 +128,6 @@ class HomeFragment : Fragment() {
                 "search",
                 mapOf("searchQuery" to "some search terms")
             )
-            EventType.WISH_LIST_ADDED_TO -> Ometria.instance()
-                .trackWishlistAddedToEvent("product_1")
-            EventType.WISHLIST_REMOVED_FROM -> Ometria.instance()
-                .trackWishlistRemovedFromEvent("product_1")
             EventType.BASKET_VIEWED -> Ometria.instance()
                 .trackBasketViewedEvent()
             EventType.BASKET_UPDATED -> Ometria.instance()
@@ -156,11 +153,13 @@ class HomeFragment : Fragment() {
             productId = "product-1",
             sku = "sku-product-1",
             quantity = 1,
-            price = 12.0f
+            price = 12.0f,
+            variantId = "variant-id-1"
         )
         val myItems = listOf(myItem)
 
         return OmetriaBasket(
+            id = "id-1",
             totalPrice = 12.0f,
             currency = "USD",
             items = myItems,
