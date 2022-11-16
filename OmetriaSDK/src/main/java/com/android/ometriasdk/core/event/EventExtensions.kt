@@ -7,11 +7,6 @@ import java.text.SimpleDateFormat
 import java.util.*
 
 /**
- * Created by cristiandregan
- * on 28/07/2020.
- */
-
-/**
  * @return A hashcode used to compare and group cached events in batches when performing flush.
  */
 internal fun OmetriaEvent.batchIdentifier(): Int {

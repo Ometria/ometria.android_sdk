@@ -13,11 +13,6 @@ import android.os.Bundle
 import androidx.core.app.NotificationCompat
 import com.android.ometriasdk.core.network.toJson
 
-/**
- * Created by cristiandregan
- * on 16/07/2020.
- */
-
 const val PUSH_TAP_ACTION = "com.android.ometriasdk.push_notification_tap"
 const val OMETRIA_CHANNEL_ID = "ometria"
 const val OMETRIA_CHANNEL_NAME = " "

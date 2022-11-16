@@ -14,11 +14,6 @@ import java.net.HttpURLConnection
 import java.net.MalformedURLException
 import java.net.URL
 
-/**
- * Created by cristiandregan
- * on 06/08/2020.
- */
-
 private const val TOO_MANY_REQUESTS_STATUS_CODE = 429
 
 internal class Repository(

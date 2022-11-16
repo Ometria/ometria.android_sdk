@@ -7,12 +7,6 @@ import androidx.recyclerview.widget.RecyclerView
 import com.android.sample.R
 import com.android.sample.data.EventType
 import com.android.sample.databinding.ItemEventBinding
-import kotlinx.android.extensions.LayoutContainer
-
-/**
- * Created by cristiandregan
- * on 17/08/2020.
- */
 
 class EventsAdapter(private val onEventClicked: (EventType) -> Unit) :
     RecyclerView.Adapter<EventsAdapter.EventVH>() {
@@ -29,9 +23,7 @@ class EventsAdapter(private val onEventClicked: (EventType) -> Unit) :
         holder.bind(EventType.values()[position])
     }
 
-    inner class EventVH(override val containerView: View) :
-        RecyclerView.ViewHolder(containerView),
-        LayoutContainer {
+    inner class EventVH(containerView: View) : RecyclerView.ViewHolder(containerView) {
 
         private var binding = ItemEventBinding.bind(containerView)
 

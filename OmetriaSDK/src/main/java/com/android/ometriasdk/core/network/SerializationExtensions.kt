@@ -8,11 +8,6 @@ import com.android.ometriasdk.notification.OmetriaNotificationBody
 import org.json.JSONArray
 import org.json.JSONObject
 
-/**
- * Created by cristiandregan
- * on 21/08/2020.
- */
-
 internal fun Collection<OmetriaEvent>.toJson(): JSONArray {
     val jsonArray = JSONArray()
 

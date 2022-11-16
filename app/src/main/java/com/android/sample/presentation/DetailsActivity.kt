@@ -5,11 +5,6 @@ import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
 import com.android.sample.R
 
-/**
- * Created by cristiandregan
- * on 08/07/2020.
- */
-
 class DetailsActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
