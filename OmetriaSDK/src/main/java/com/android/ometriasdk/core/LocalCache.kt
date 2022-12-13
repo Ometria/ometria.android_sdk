@@ -14,6 +14,7 @@ private const val PUSH_TOKEN_KEY = "PUSH_TOKEN_KEY"
 private const val CUSTOMER_ID_KEY = "CUSTOMER_ID_KEY"
 private const val EMAIL_KEY = "EMAIL_KEY"
 private const val ARE_NOTIFICATIONS_ENABLED_KEY = "ARE_NOTIFICATIONS_ENABLED_KEY"
+private const val IS_FIRST_PERMISSION_UPDATE_EVENT_KEY = "IS_FIRST_PERMISSION_UPDATE_EVENT_KEY"
 private const val JSON_ARRAY = "[]"
 private const val SDK_VERSION_RN_KEY = "SDK_VERSION_RN_KEY"
 
@@ -123,6 +124,15 @@ internal class LocalCache(private val context: Context) {
 
     fun areNotificationsEnabled(): Boolean {
         return getLocalCachePreferences().getBoolean(ARE_NOTIFICATIONS_ENABLED_KEY, true)
+    }
+
+    fun saveIsFirstPermissionsUpdateEvent(isFirstPermissionsUpdateEvent: Boolean) {
+        getLocalCachePreferences().edit()
+            .putBoolean(IS_FIRST_PERMISSION_UPDATE_EVENT_KEY, isFirstPermissionsUpdateEvent).apply()
+    }
+
+    fun isFirstPermissionsUpdateEvent(): Boolean {
+        return getLocalCachePreferences().getBoolean(IS_FIRST_PERMISSION_UPDATE_EVENT_KEY, true)
     }
 
     fun getSdkVersionRN(): String? {

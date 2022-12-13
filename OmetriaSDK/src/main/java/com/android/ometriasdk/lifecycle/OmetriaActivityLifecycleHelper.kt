@@ -85,7 +85,7 @@ internal class OmetriaActivityLifecycleHelper(
     override fun onActivityResumed(activity: Activity) {
         val areNotificationsEnabled =
             NotificationManagerCompat.from(context).areNotificationsEnabled()
-        if (areNotificationsEnabled != repository.areNotificationsEnabled()) {
+        if (areNotificationsEnabled != repository.areNotificationsEnabled() || repository.isFirstPermissionsUpdateEvent()) {
             repository.saveAreNotificationsEnabled(areNotificationsEnabled)
             Ometria.instance().trackPermissionsUpdateEvent(areNotificationsEnabled)
         }

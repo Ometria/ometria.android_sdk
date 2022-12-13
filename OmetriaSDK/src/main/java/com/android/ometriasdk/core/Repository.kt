@@ -111,9 +111,12 @@ internal class Repository(
 
     fun saveAreNotificationsEnabled(areNotificationsEnabled: Boolean) {
         localCache.saveAreNotificationsEnabled(areNotificationsEnabled)
+        localCache.saveIsFirstPermissionsUpdateEvent(false)
     }
 
     fun areNotificationsEnabled(): Boolean = localCache.areNotificationsEnabled()
+
+    fun isFirstPermissionsUpdateEvent(): Boolean = localCache.isFirstPermissionsUpdateEvent()
 
     fun getRedirectForUrl(url: String, listener: ProcessAppLinkListener) {
         executor.execute {
