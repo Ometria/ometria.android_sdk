@@ -12,8 +12,8 @@ android {
         applicationId = "com.android.sample"
         minSdk = 21
         targetSdk = 33
-        versionCode = 3
-        versionName = "1.0.2"
+        versionCode = 4
+        versionName = "1.0.3"
     }
     signingConfigs {
         getByName("debug") {
