@@ -33,10 +33,11 @@ class EnterApiTokenDialog : DialogFragment() {
         binding.saveAPIKeyBTN.setOnClickListener {
             val apiToken = binding.apiTokenET.text.toString()
             Ometria.initialize(
-                SampleApp.instance,
-                apiToken,
-                R.drawable.ic_notification_nys,
-                ContextCompat.getColor(requireContext(), R.color.colorAccent)
+                application = SampleApp.instance,
+                apiToken = apiToken,
+                notificationIcon = R.drawable.ic_notification_nys,
+                notificationColor = ContextCompat.getColor(requireContext(), R.color.colorAccent),
+                notificationChannelName = "Custom Channel Name"
             ).loggingEnabled(true)
             AppPreferencesUtils.saveApiToken(apiToken)
             dismiss()
