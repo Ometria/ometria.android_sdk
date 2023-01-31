@@ -13,7 +13,6 @@ import android.os.Bundle
 import androidx.core.app.NotificationCompat
 import com.android.ometriasdk.core.network.toJson
 
-const val PUSH_TAP_ACTION = "com.android.ometriasdk.push_notification_tap"
 const val OMETRIA_CHANNEL_ID = "ometria"
 const val OMETRIA_CHANNEL_NAME = " "
 
@@ -32,7 +31,7 @@ internal class OmetriaPushNotification(
         ometriaNotificationBody: OmetriaNotificationBody?,
         collapseId: String?
     ) {
-        val contentIntent = PendingIntent.getBroadcast(
+        val pendingIntent = PendingIntent.getActivity(
             context,
             System.currentTimeMillis().toInt(),
             getRoutingIntent(ometriaNotificationBody),
@@ -44,7 +43,7 @@ internal class OmetriaPushNotification(
             .setContentTitle(title)
             .setContentText(body)
             .setAutoCancel(true)
-            .setContentIntent(contentIntent)
+            .setContentIntent(pendingIntent)
             .setLargeIcon(image)
             .setColor(notificationColor ?: Notification.COLOR_DEFAULT)
 
@@ -70,8 +69,7 @@ internal class OmetriaPushNotification(
         }
 
         return Intent()
-            .setAction(PUSH_TAP_ACTION)
-            .setClass(context, PushClickBroadcastReceiver::class.java)
+            .setClass(context, NotificationInteractionActivity::class.java)
             .putExtras(options)
     }
 
