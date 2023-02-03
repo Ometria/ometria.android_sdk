@@ -13,11 +13,6 @@ import com.android.sample.data.AppPreferencesUtils
 import com.android.sample.presentation.MainActivity
 import com.android.sample.presentation.OMETRIA_NOTIFICATION_STRING_EXTRA_KEY
 
-/**
- * Created by cristiandregan
- * on 08/07/2020.
- */
-
 class SampleApp : Application(), OmetriaNotificationInteractionHandler {
     companion object {
         lateinit var instance: SampleApp

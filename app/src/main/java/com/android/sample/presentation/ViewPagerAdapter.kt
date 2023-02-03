@@ -2,27 +2,25 @@ package com.android.sample.presentation
 
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
-import androidx.fragment.app.FragmentPagerAdapter
+import androidx.lifecycle.Lifecycle
+import androidx.viewpager2.adapter.FragmentStateAdapter
 
-/**
- * Created by cristiandregan
- * on 17/07/2020.
- */
+class ViewPagerAdapter(
+    manager: FragmentManager,
+    lifecycle: Lifecycle,
+    private val ometriaNotificationString: String
+) :
+    FragmentStateAdapter(manager, lifecycle) {
 
-private const val SCREENS_NO = 2
+    override fun getItemCount(): Int = NUMBER_OF_FRAGMENTS
 
-class ViewPagerAdapter(manager: FragmentManager, private val ometriaNotificationString: String) :
-    FragmentPagerAdapter(manager, BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT) {
-    override fun getItem(position: Int): Fragment {
-        return when (position) {
-            FIRST_FRAGMENT_POS -> HomeFragment.newInstance(TAB_ONE, ometriaNotificationString)
-            SECOND_FRAGMENT_POS -> HomeFragment.newInstance(TAB_TWO, ometriaNotificationString)
-
-            else -> HomeFragment.newInstance(TAB_ONE, ometriaNotificationString)
-        }
+    override fun createFragment(position: Int): Fragment = when (position) {
+        FIRST_FRAGMENT_POS -> HomeFragment.newInstance(TAB_ONE, ometriaNotificationString)
+        SECOND_FRAGMENT_POS -> HomeFragment.newInstance(TAB_TWO, ometriaNotificationString)
+        else -> throw IllegalArgumentException("Unknown fragment for position $position")
     }
 
-    override fun getCount(): Int {
-        return SCREENS_NO
+    companion object {
+        private const val NUMBER_OF_FRAGMENTS = 2
     }
 }

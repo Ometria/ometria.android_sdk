@@ -4,6 +4,6 @@
     <uses-permission android:name="android.permission.INTERNET" />
 
     <application>
-        <receiver android:name=".notification.PushClickBroadcastReceiver" />
+        <activity android:name=".notification.NotificationInteractionActivity"/>
     </application>
 </manifest>

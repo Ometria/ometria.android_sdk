@@ -12,11 +12,6 @@ import com.google.firebase.messaging.RemoteMessage
 import java.io.IOException
 import java.net.URL
 
-/**
- * Created by cristiandregan
- * on 15/07/2020.
- */
-
 const val KEY_TITLE = "title"
 const val KEY_BODY = "body"
 const val KEY_OMETRIA = "ometria"

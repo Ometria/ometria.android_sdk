@@ -13,11 +13,6 @@ import org.json.JSONArray
 import org.json.JSONException
 import org.json.JSONObject
 
-/**
- * Created by cristiandregan
- * on 21/08/2020.
- */
-
 internal fun String.toOmetriaEventList(): MutableList<OmetriaEvent> {
     val jsonArray = JSONArray(this)
     val ometriaEventArray = mutableListOf<OmetriaEvent>()

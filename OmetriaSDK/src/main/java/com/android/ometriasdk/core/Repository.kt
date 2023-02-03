@@ -14,11 +14,6 @@ import java.net.HttpURLConnection
 import java.net.MalformedURLException
 import java.net.URL
 
-/**
- * Created by cristiandregan
- * on 06/08/2020.
- */
-
 private const val TOO_MANY_REQUESTS_STATUS_CODE = 429
 
 internal class Repository(
@@ -116,9 +111,12 @@ internal class Repository(
 
     fun saveAreNotificationsEnabled(areNotificationsEnabled: Boolean) {
         localCache.saveAreNotificationsEnabled(areNotificationsEnabled)
+        localCache.saveIsFirstPermissionsUpdateEvent(false)
     }
 
     fun areNotificationsEnabled(): Boolean = localCache.areNotificationsEnabled()
+
+    fun isFirstPermissionsUpdateEvent(): Boolean = localCache.isFirstPermissionsUpdateEvent()
 
     fun getRedirectForUrl(url: String, listener: ProcessAppLinkListener) {
         executor.execute {

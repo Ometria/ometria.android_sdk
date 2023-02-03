@@ -1,10 +1,5 @@
 package com.android.ometriasdk.notification
 
-/**
- * Created by cristiandregan
- * on 27/08/2020.
- */
-
 internal data class OmetriaNotificationBody(
     val imageUrl: String?,
     val deepLinkActionUrl: String?,

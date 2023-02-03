@@ -2,11 +2,6 @@ package com.android.ometriasdk.core
 
 import android.util.Log
 
-/**
- * Created by cristiandregan
- * on 20/07/2020.
- */
-
 const val VERBOSE = 2
 const val DEBUG = 3
 const val INFO = 4

@@ -15,11 +15,6 @@ import java.text.SimpleDateFormat
 import java.util.*
 import java.util.concurrent.TimeUnit
 
-/**
- * Created by cristiandregan
- * on 27/07/2020.
- */
-
 private const val FLUSH_LIMIT = 10
 private const val BATCH_LIMIT = 100
 private const val THROTTLE_LIMIT = 10L

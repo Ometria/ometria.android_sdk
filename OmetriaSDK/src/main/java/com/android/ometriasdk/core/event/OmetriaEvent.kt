@@ -5,11 +5,6 @@ import com.android.ometriasdk.BuildConfig
 import com.android.ometriasdk.core.Constants.Common.PLATFORM
 import java.util.*
 
-/**
- * Created by cristiandregan
- * on 17/07/2020.
- */
-
 internal data class OmetriaEvent(
     val eventId: String,
     var isBeingFlushed: Boolean = false,

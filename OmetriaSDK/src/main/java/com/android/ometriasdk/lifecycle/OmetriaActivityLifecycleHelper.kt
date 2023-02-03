@@ -11,11 +11,6 @@ import com.android.ometriasdk.core.Ometria
 import com.android.ometriasdk.core.Repository
 import java.util.concurrent.atomic.AtomicBoolean
 
-/**
- * Created by cristiandregan
- * on 07/07/2020.
- */
-
 internal class OmetriaActivityLifecycleHelper(
     private val repository: Repository,
     private val context: Context
@@ -51,13 +46,6 @@ internal class OmetriaActivityLifecycleHelper(
             Ometria.instance().trackAppLaunchedEvent()
         }
 
-        val areNotificationsEnabled =
-            NotificationManagerCompat.from(context).areNotificationsEnabled()
-        if (areNotificationsEnabled != repository.areNotificationsEnabled()) {
-            repository.saveAreNotificationsEnabled(areNotificationsEnabled)
-            Ometria.instance().trackPermissionsUpdateEvent(areNotificationsEnabled)
-        }
-
         Ometria.instance().trackAppForegroundedEvent()
 
         !firstLaunch.getAndSet(false)
@@ -89,15 +77,23 @@ internal class OmetriaActivityLifecycleHelper(
     /**
      * Using activity started callback to track Screen View event
      */
-    override fun onActivityStarted(activity: Activity) {
-        // Disabled at clients request
-//        Ometria.instance().trackAutomatedScreenViewedEvent(activity::class.simpleName)
+    override fun onActivityStarted(activity: Activity) {}
+
+    /**
+     * Using activity resumed callback to update Notifications opt-in/out
+     */
+    override fun onActivityResumed(activity: Activity) {
+        val areNotificationsEnabled =
+            NotificationManagerCompat.from(context).areNotificationsEnabled()
+        if (areNotificationsEnabled != repository.areNotificationsEnabled() || repository.isFirstPermissionsUpdateEvent()) {
+            repository.saveAreNotificationsEnabled(areNotificationsEnabled)
+            Ometria.instance().trackPermissionsUpdateEvent(areNotificationsEnabled)
+        }
     }
 
     /**
      * Not included in the SDK's current requirements
      */
-    override fun onActivityResumed(activity: Activity) {}
     override fun onActivityPaused(activity: Activity) {}
     override fun onActivityStopped(activity: Activity) {}
     override fun onActivitySaveInstanceState(activity: Activity, outState: Bundle) {}

@@ -4,11 +4,6 @@ import android.os.Build
 import com.android.ometriasdk.core.Constants.Common.PLATFORM
 import com.android.ometriasdk.core.event.OmetriaEvent
 
-/**
- * Created by cristiandregan
- * on 13/08/2020.
- */
-
 internal data class OmetriaApiRequest(
     val appId: String? = null,
     val appVersion: String? = null,
