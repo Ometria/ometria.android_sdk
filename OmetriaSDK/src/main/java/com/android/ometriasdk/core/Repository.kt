@@ -1,7 +1,5 @@
 package com.android.ometriasdk.core
 
-import android.os.Handler
-import android.os.Looper
 import com.android.ometriasdk.core.Constants.Logger.NETWORK
 import com.android.ometriasdk.core.event.OmetriaEvent
 import com.android.ometriasdk.core.event.toApiRequest
@@ -22,7 +20,6 @@ internal class Repository(
     private val executor: OmetriaThreadPoolExecutor
 ) {
 
-    private val resultHandler: Handler = Handler(Looper.getMainLooper())
     private val dropStatusCodesRange = 400..499
 
     fun flushEvents(events: List<OmetriaEvent>, success: () -> Unit, error: () -> Unit) {
@@ -120,24 +117,28 @@ internal class Repository(
 
     fun getRedirectForUrl(url: String, listener: ProcessAppLinkListener) {
         executor.execute {
-            var urlTemp: URL? = null
-            var connection: HttpURLConnection? = null
+            val urlTemp: URL?
+            val connection: HttpURLConnection?
             try {
                 urlTemp = URL(url)
             } catch (e: MalformedURLException) {
                 listener.onProcessFailed(e.message ?: "Something went wrong")
+                return@execute
             }
             try {
-                connection = urlTemp?.openConnection() as HttpURLConnection
+                connection = urlTemp.openConnection() as? HttpURLConnection
             } catch (e: IOException) {
                 listener.onProcessFailed(e.message ?: "Something went wrong")
+                return@execute
             }
             try {
                 connection?.responseCode
             } catch (e: IOException) {
                 listener.onProcessFailed(e.message ?: "Something went wrong")
+                connection?.disconnect()
+                return@execute
             }
-            resultHandler.post { listener.onProcessResult(connection?.url.toString()) }
+            listener.onProcessResult(connection?.url.toString())
             connection?.disconnect()
         }
     }
