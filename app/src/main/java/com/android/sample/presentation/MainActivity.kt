@@ -97,7 +97,7 @@ class MainActivity : AppCompatActivity() {
                 }
 
                 override fun onProcessFailed(error: String) {
-                    displayRedirectUrlDialog(error)
+                    displayRedirectUrlDialog("$error $safeUrl")
                 }
             })
         }

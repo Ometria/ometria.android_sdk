@@ -35,7 +35,5 @@ class NotificationInteractionActivity : Activity() {
                 Ometria.instance().trackNotificationInteractedEvent(it)
             }
         }
-
-        finish()
     }
 }

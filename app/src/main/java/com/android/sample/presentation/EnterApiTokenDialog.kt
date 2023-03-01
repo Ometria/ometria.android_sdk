@@ -39,6 +39,7 @@ class EnterApiTokenDialog : DialogFragment() {
                 notificationColor = ContextCompat.getColor(requireContext(), R.color.colorAccent),
                 notificationChannelName = "Custom Channel Name"
             ).loggingEnabled(true)
+            Ometria.instance().notificationInteractionHandler = SampleApp.instance
             AppPreferencesUtils.saveApiToken(apiToken)
             dismiss()
         }

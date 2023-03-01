@@ -68,9 +68,9 @@ internal class OmetriaPushNotification(
             options.putString(OMETRIA_NOTIFICATION_BODY_KEY, it.toJson().toString())
         }
 
-        return Intent()
-            .setClass(context, NotificationInteractionActivity::class.java)
+        return Intent(context, NotificationInteractionActivity::class.java)
             .putExtras(options)
+            .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
     }
 
     private fun getFlags(): Int = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
