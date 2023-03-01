@@ -12,7 +12,7 @@ android {
         applicationId = "com.android.sample"
         minSdk = 21
         targetSdk = 33
-        versionCode = 6
+        versionCode = 7
         versionName = "1.0.5"
     }
     signingConfigs {
