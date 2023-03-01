@@ -1,9 +1,13 @@
 package com.android.sample.presentation
 
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.text.SpannableString
 import android.text.method.LinkMovementMethod
 import android.text.util.Linkify
+import android.util.Log
+import android.webkit.URLUtil
 import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
@@ -11,9 +15,11 @@ import androidx.viewpager2.widget.ViewPager2
 import com.android.ometriasdk.core.Ometria
 import com.android.ometriasdk.core.listener.ProcessAppLinkListener
 import com.android.sample.R
+import com.android.sample.SampleApp
 import com.android.sample.databinding.ActivityMainBinding
 
 const val OMETRIA_NOTIFICATION_STRING_EXTRA_KEY = "ometria_notification_string_extra_key"
+const val DEEPLINK_ACTION_URL_EXTRA_KEY = "deeplink_action_url_extra_key"
 const val FIRST_FRAGMENT_POS = 0
 const val SECOND_FRAGMENT_POS = 1
 
@@ -28,10 +34,11 @@ class MainActivity : AppCompatActivity() {
 
         val ometriaNotificationString =
             intent.getStringExtra(OMETRIA_NOTIFICATION_STRING_EXTRA_KEY).orEmpty()
+        val deepLinkActionUrl = intent.getStringExtra(DEEPLINK_ACTION_URL_EXTRA_KEY)
 
         setUpBottomNavMenu()
         setupViewPager(ometriaNotificationString)
-        handleAppLinkFromIntent()
+        handleAppLinkFromIntent(deepLinkActionUrl)
     }
 
     private fun switchFragment(position: Int) {
@@ -77,19 +84,20 @@ class MainActivity : AppCompatActivity() {
         })
     }
 
-    private fun handleAppLinkFromIntent() {
+    private fun handleAppLinkFromIntent(deepLinkActionUrl: String?) {
         // Here you should check whether the link is one that can already be handled by the app.
         // If the link is identified as one coming from an Ometria campaign, you will be able to get the final URL
         // by calling the processAppLink method.
         // The processing is done async, so you should present a loading screen.
-        intent.dataString?.let { url ->
-            Ometria.instance().processAppLink(url, object : ProcessAppLinkListener {
+        val url = deepLinkActionUrl ?: intent.dataString
+        url?.let { safeUrl ->
+            Ometria.instance().processAppLink(safeUrl, object : ProcessAppLinkListener {
                 override fun onProcessResult(url: String) {
-                    displayRedirectUrlDialog(url)
+                    openBrowser(url)
                 }
 
                 override fun onProcessFailed(error: String) {
-                    displayRedirectUrlDialog(error)
+                    displayRedirectUrlDialog("$error $safeUrl")
                 }
             })
         }
@@ -110,5 +118,19 @@ class MainActivity : AppCompatActivity() {
                 dialog.dismiss()
             }
             .show()
+    }
+
+    private fun openBrowser(deepLink: String?) {
+        deepLink?.let { safeDeepLink ->
+            if (URLUtil.isValidUrl(safeDeepLink).not()) return
+
+            Ometria.instance()
+                .trackDeepLinkOpenedEvent(safeDeepLink, "Browser")
+            Log.d(SampleApp::class.java.simpleName, "Open URL: $safeDeepLink")
+            val intent = Intent(Intent.ACTION_VIEW)
+            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+            intent.data = Uri.parse(safeDeepLink)
+            startActivity(intent)
+        }
     }
 }

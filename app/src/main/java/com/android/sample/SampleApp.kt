@@ -2,14 +2,12 @@ package com.android.sample
 
 import android.app.Application
 import android.content.Intent
-import android.net.Uri
-import android.util.Log
-import android.webkit.URLUtil
 import androidx.core.content.ContextCompat
 import com.android.ometriasdk.core.Ometria
 import com.android.ometriasdk.notification.OmetriaNotification
 import com.android.ometriasdk.notification.OmetriaNotificationInteractionHandler
 import com.android.sample.data.AppPreferencesUtils
+import com.android.sample.presentation.DEEPLINK_ACTION_URL_EXTRA_KEY
 import com.android.sample.presentation.MainActivity
 import com.android.sample.presentation.OMETRIA_NOTIFICATION_STRING_EXTRA_KEY
 
@@ -39,28 +37,14 @@ class SampleApp : Application(), OmetriaNotificationInteractionHandler {
     }
 
     override fun onNotificationInteraction(ometriaNotification: OmetriaNotification) {
-        openMainActivity(ometriaNotification.toString())
-        openBrowser(ometriaNotification.deepLinkActionUrl)
+        openMainActivity(ometriaNotification.toString(), ometriaNotification.deepLinkActionUrl)
     }
 
-    private fun openMainActivity(ometriaNotificationString: String) {
+    private fun openMainActivity(ometriaNotificationString: String, deepLinkActionUrl: String?) {
         val intent = Intent(this, MainActivity::class.java)
         intent.putExtra(OMETRIA_NOTIFICATION_STRING_EXTRA_KEY, ometriaNotificationString)
+        intent.putExtra(DEEPLINK_ACTION_URL_EXTRA_KEY, deepLinkActionUrl)
         intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
         startActivity(intent)
-    }
-
-    private fun openBrowser(deepLink: String?) {
-        deepLink?.let { safeDeepLink ->
-            if (URLUtil.isValidUrl(safeDeepLink).not()) return
-
-            Ometria.instance()
-                .trackDeepLinkOpenedEvent(safeDeepLink, "Browser")
-            Log.d(SampleApp::class.java.simpleName, "Open URL: $safeDeepLink")
-            val intent = Intent(Intent.ACTION_VIEW)
-            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
-            intent.data = Uri.parse(safeDeepLink)
-            startActivity(intent)
-        }
     }
 }
