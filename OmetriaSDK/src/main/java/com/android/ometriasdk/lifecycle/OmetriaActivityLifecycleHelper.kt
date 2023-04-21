@@ -12,7 +12,7 @@ import com.android.ometriasdk.core.Repository
 import java.util.concurrent.atomic.AtomicBoolean
 
 internal class OmetriaActivityLifecycleHelper(
-    private val repository: Repository,
+    var repository: Repository,
     private val context: Context
 ) :
     DefaultLifecycleObserver,
