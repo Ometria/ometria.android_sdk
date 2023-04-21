@@ -33,7 +33,9 @@ import com.android.ometriasdk.core.network.Client
 import com.android.ometriasdk.core.network.ConnectionFactory
 import com.android.ometriasdk.core.network.OmetriaThreadPoolExecutor
 import com.android.ometriasdk.core.network.toOmetriaNotification
+import com.android.ometriasdk.core.network.toOmetriaNotificationBody
 import com.android.ometriasdk.lifecycle.OmetriaActivityLifecycleHelper
+import com.android.ometriasdk.notification.KEY_OMETRIA
 import com.android.ometriasdk.notification.NotificationHandler
 import com.android.ometriasdk.notification.OMETRIA_CHANNEL_NAME
 import com.android.ometriasdk.notification.OmetriaNotification
@@ -150,6 +152,23 @@ class Ometria private constructor() : OmetriaNotificationInteractionHandler {
 
         return instance
     }
+
+    // Region RN test methods
+    fun onNotificationReceived(remoteMessage: RemoteMessage) {
+        notificationHandler.handleNotification(remoteMessage, false)
+    }
+
+    // ToDo Move method login into NotificationHandler class
+    fun onNotificationInteracted(remoteMessage: RemoteMessage) {
+        val ometriaNotificationString = remoteMessage.data[KEY_OMETRIA]
+        ometriaNotificationString ?: return
+
+        val ometriaNotificationBody = ometriaNotificationString.toOmetriaNotificationBody()
+        ometriaNotificationBody.context?.let {
+            trackNotificationInteractedEvent(it)
+        }
+    }
+    // endregion
 
     fun onMessageReceived(remoteMessage: RemoteMessage) {
         notificationHandler.handleNotification(remoteMessage)
