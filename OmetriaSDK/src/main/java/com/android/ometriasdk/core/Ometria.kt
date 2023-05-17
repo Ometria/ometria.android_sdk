@@ -54,6 +54,7 @@ class Ometria private constructor() : OmetriaNotificationInteractionHandler {
     private lateinit var repository: Repository
     private lateinit var notificationHandler: NotificationHandler
     private lateinit var executor: OmetriaThreadPoolExecutor
+    private lateinit var activityLifecycleHelper: OmetriaActivityLifecycleHelper
     lateinit var notificationInteractionHandler: OmetriaNotificationInteractionHandler
 
     /**
@@ -75,6 +76,7 @@ class Ometria private constructor() : OmetriaNotificationInteractionHandler {
          * @param apiToken The api key that has been attributed to your project.
          * @param notificationIcon The icon that will be used when displaying push notifications.
          * @param notificationColor The color that will be used when displaying push notifications.
+         * @param notificationChannelName The name param when creating NotificationChannel object.
          */
         @JvmStatic
         fun initialize(
@@ -84,6 +86,8 @@ class Ometria private constructor() : OmetriaNotificationInteractionHandler {
             notificationColor: Int? = COLOR_DEFAULT,
             notificationChannelName: String = OMETRIA_CHANNEL_NAME
         ) = instance.also {
+            clearOldInstanceIfNeeded()
+
             it.ometriaConfig = OmetriaConfig(apiToken, application)
             it.localCache = LocalCache(application)
             it.executor = OmetriaThreadPoolExecutor()
@@ -101,19 +105,31 @@ class Ometria private constructor() : OmetriaNotificationInteractionHandler {
                     notificationChannelName = notificationChannelName,
                     executor = it.executor
                 )
-            it.isInitialized = true
             it.notificationInteractionHandler = instance
 
             if (it.shouldGenerateInstallationId()) {
                 it.generateInstallationId()
             }
 
-            val activityLifecycleHelper = OmetriaActivityLifecycleHelper(it.repository, application)
+            if (it.isInitialized) {
+                it.activityLifecycleHelper.repository = it.repository
+            } else {
+                it.activityLifecycleHelper = OmetriaActivityLifecycleHelper(
+                    repository = it.repository,
+                    context = application
+                )
+                ProcessLifecycleOwner.get().lifecycle.addObserver(it.activityLifecycleHelper)
+                application.registerActivityLifecycleCallbacks(it.activityLifecycleHelper)
+            }
 
-            val lifecycle = ProcessLifecycleOwner.get().lifecycle
-            lifecycle.addObserver(activityLifecycleHelper)
+            it.isInitialized = true
+        }
 
-            application.registerActivityLifecycleCallbacks(activityLifecycleHelper)
+        private fun clearOldInstanceIfNeeded() {
+            if (instance.isInitialized) {
+                instance.flush()
+                instance.clear()
+            }
         }
 
         /**

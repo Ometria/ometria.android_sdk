@@ -1,4 +1,4 @@
-val versionName = "1.4.2"
+val versionName = "1.5.0"
 
 plugins {
     id("com.android.library")
