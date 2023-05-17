@@ -31,7 +31,7 @@ To install the library inside **Android Studio**, declare it as dependency in yo
 
 ```gradle
 dependencies {
-    implementation 'com.ometria:android-sdk:1.4.2'
+    implementation 'com.ometria:android-sdk:1.5.0'
 }
 ```
 
@@ -77,6 +77,14 @@ Ometria.initialize(
     notificationIcon = R.drawable.ic_notification_nys
 ).loggingEnabled(true)
 ```
+
+### Using multiple Ometria API tokens within the same app instance (Reinitializing the SDK)
+
+There are cases where different flows of an application should log events under different tokens (think of different user roles, or other similar scenarios). 
+To address this, we offer the possibility of reinitializing the Ometria SDK. Although we currently do not keep references to multiple instances of the SDK, 
+we ensure that on reinitialization there will be a flush attempt for all the events that have been logged up to that point on the old instance.
+
+Reinitializing the SDK requires the exact steps as a normal initialization.
 
 5\. Event tracking guide
 ------------------------
