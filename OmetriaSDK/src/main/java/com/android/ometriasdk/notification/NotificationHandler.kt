@@ -39,10 +39,8 @@ internal class NotificationHandler(
         remoteMessage: RemoteMessage,
         shouldDisplayNotification: Boolean = true
     ) {
-        val ometriaNotificationString = remoteMessage.data[KEY_OMETRIA]
-        ometriaNotificationString ?: return
+        val ometriaNotificationBody = remoteMessage.toOmetriaNotificationBody() ?: return
 
-        val ometriaNotificationBody = ometriaNotificationString.toOmetriaNotificationBody()
         ometriaNotificationBody.context?.let {
             Ometria.instance().trackNotificationReceivedEvent(it)
         }

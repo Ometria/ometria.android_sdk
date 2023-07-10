@@ -35,7 +35,6 @@ import com.android.ometriasdk.core.network.OmetriaThreadPoolExecutor
 import com.android.ometriasdk.core.network.toOmetriaNotification
 import com.android.ometriasdk.core.network.toOmetriaNotificationBody
 import com.android.ometriasdk.lifecycle.OmetriaActivityLifecycleHelper
-import com.android.ometriasdk.notification.KEY_OMETRIA
 import com.android.ometriasdk.notification.NotificationHandler
 import com.android.ometriasdk.notification.OMETRIA_CHANNEL_NAME
 import com.android.ometriasdk.notification.OmetriaNotification
@@ -153,25 +152,28 @@ class Ometria private constructor() : OmetriaNotificationInteractionHandler {
         return instance
     }
 
-    // Region RN test methods
+    /**
+     * Extracts OmetriaNotification from RemoteMessage, then displays Push Notification and tracks
+     * notificationReceived event.
+     */
+    fun onMessageReceived(remoteMessage: RemoteMessage) {
+        notificationHandler.handleNotification(remoteMessage)
+    }
+
+    /**
+     * Extracts OmetriaNotification from RemoteMessage and tracks notificationReceived event.
+     */
     fun onNotificationReceived(remoteMessage: RemoteMessage) {
         notificationHandler.handleNotification(remoteMessage, false)
     }
 
-    // ToDo Move method login into NotificationHandler class
+    /**
+     * Extracts OmetriaNotification from RemoteMessage and tracks notificationInteracted event.
+     */
     fun onNotificationInteracted(remoteMessage: RemoteMessage) {
-        val ometriaNotificationString = remoteMessage.data[KEY_OMETRIA]
-        ometriaNotificationString ?: return
-
-        val ometriaNotificationBody = ometriaNotificationString.toOmetriaNotificationBody()
-        ometriaNotificationBody.context?.let {
-            trackNotificationInteractedEvent(it)
+        remoteMessage.toOmetriaNotificationBody()?.let { ometriaPushNotificationBody ->
+            trackNotificationInteractedEvent(ometriaPushNotificationBody.context ?: return)
         }
-    }
-    // endregion
-
-    fun onMessageReceived(remoteMessage: RemoteMessage) {
-        notificationHandler.handleNotification(remoteMessage)
     }
 
     fun onNewToken(token: String) {
