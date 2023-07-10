@@ -33,6 +33,7 @@ import com.android.ometriasdk.core.network.Client
 import com.android.ometriasdk.core.network.ConnectionFactory
 import com.android.ometriasdk.core.network.OmetriaThreadPoolExecutor
 import com.android.ometriasdk.core.network.toOmetriaNotification
+import com.android.ometriasdk.core.network.toOmetriaNotificationBody
 import com.android.ometriasdk.lifecycle.OmetriaActivityLifecycleHelper
 import com.android.ometriasdk.notification.NotificationHandler
 import com.android.ometriasdk.notification.OMETRIA_CHANNEL_NAME
@@ -167,8 +168,28 @@ class Ometria private constructor() : OmetriaNotificationInteractionHandler {
         return instance
     }
 
+    /**
+     * Extracts OmetriaNotification from RemoteMessage, then displays Push Notification and tracks
+     * notificationReceived event.
+     */
     fun onMessageReceived(remoteMessage: RemoteMessage) {
         notificationHandler.handleNotification(remoteMessage)
+    }
+
+    /**
+     * Extracts OmetriaNotification from RemoteMessage and tracks notificationReceived event.
+     */
+    fun onNotificationReceived(remoteMessage: RemoteMessage) {
+        notificationHandler.handleNotification(remoteMessage, false)
+    }
+
+    /**
+     * Extracts OmetriaNotification from RemoteMessage and tracks notificationInteracted event.
+     */
+    fun onNotificationInteracted(remoteMessage: RemoteMessage) {
+        remoteMessage.toOmetriaNotificationBody()?.let { ometriaPushNotificationBody ->
+            trackNotificationInteractedEvent(ometriaPushNotificationBody.context ?: return)
+        }
     }
 
     fun onNewToken(token: String) {

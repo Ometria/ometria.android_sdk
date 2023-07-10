@@ -82,8 +82,11 @@ internal fun String.toOmetriaApiError(): OmetriaApiError {
     )
 }
 
-internal fun String.toOmetriaNotificationBody(): OmetriaNotificationBody {
-    val jsonObject = JSONObject(this)
+internal fun RemoteMessage.toOmetriaNotificationBody(): OmetriaNotificationBody? {
+    val ometriaNotificationString = this.data[KEY_OMETRIA]
+    ometriaNotificationString ?: return null
+
+    val jsonObject = JSONObject(ometriaNotificationString)
 
     var context: Map<String, Any>? = null
     var deepLinkActionUrl: String? = null
@@ -113,12 +116,9 @@ internal fun String.toOmetriaNotificationBody(): OmetriaNotificationBody {
     )
 }
 
-internal fun RemoteMessage.toOmetriaNotification(): OmetriaNotification? {
-    val ometriaNotificationString = this.data[KEY_OMETRIA]
-    ometriaNotificationString ?: return null
+internal fun RemoteMessage.toOmetriaNotification(): OmetriaNotification? =
+    toOmetriaNotificationBody()?.toOmetriaNotification()
 
-    return ometriaNotificationString.toOmetriaNotificationBody().toOmetriaNotification()
-}
 
 @Suppress("UNCHECKED_CAST")
 internal fun OmetriaNotificationBody.toOmetriaNotification(): OmetriaNotification {

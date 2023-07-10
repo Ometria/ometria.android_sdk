@@ -35,14 +35,17 @@ internal class NotificationHandler(
      * Handles a received push notification
      * We should handle and display the push notification only if the [remoteMessage] contains the [KEY_OMETRIA] object
      */
-    fun handleNotification(remoteMessage: RemoteMessage) {
-        val ometriaNotificationString = remoteMessage.data[KEY_OMETRIA]
-        ometriaNotificationString ?: return
+    fun handleNotification(
+        remoteMessage: RemoteMessage,
+        shouldDisplayNotification: Boolean = true
+    ) {
+        val ometriaNotificationBody = remoteMessage.toOmetriaNotificationBody() ?: return
 
-        val ometriaNotificationBody = ometriaNotificationString.toOmetriaNotificationBody()
         ometriaNotificationBody.context?.let {
             Ometria.instance().trackNotificationReceivedEvent(it)
         }
+
+        if (!shouldDisplayNotification) return
 
         val title = remoteMessage.data[KEY_TITLE]
         val body = remoteMessage.data[KEY_BODY]
