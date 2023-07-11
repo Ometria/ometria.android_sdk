@@ -82,11 +82,8 @@ internal fun String.toOmetriaApiError(): OmetriaApiError {
     )
 }
 
-internal fun RemoteMessage.toOmetriaNotificationBody(): OmetriaNotificationBody? {
-    val ometriaNotificationString = this.data[KEY_OMETRIA]
-    ometriaNotificationString ?: return null
-
-    val jsonObject = JSONObject(ometriaNotificationString)
+internal fun String.toOmetriaNotificationBody(): OmetriaNotificationBody {
+    val jsonObject = JSONObject(this)
 
     var context: Map<String, Any>? = null
     var deepLinkActionUrl: String? = null
@@ -114,6 +111,13 @@ internal fun RemoteMessage.toOmetriaNotificationBody(): OmetriaNotificationBody?
         deepLinkActionUrl,
         context
     )
+}
+
+internal fun RemoteMessage.toOmetriaNotificationBody(): OmetriaNotificationBody? {
+    val ometriaNotificationString = this.data[KEY_OMETRIA]
+    ometriaNotificationString ?: return null
+
+    return ometriaNotificationString.toOmetriaNotificationBody()
 }
 
 internal fun RemoteMessage.toOmetriaNotification(): OmetriaNotification? =
