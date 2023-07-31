@@ -10,7 +10,7 @@ android {
 
     defaultConfig {
         applicationId = "com.android.sample"
-        minSdk = 21
+        minSdk = 23
         targetSdk = 33
         versionCode = 9
         versionName = "1.0.7"

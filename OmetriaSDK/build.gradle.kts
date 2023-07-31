@@ -9,7 +9,7 @@ android {
     compileSdk = 31
 
     defaultConfig {
-        minSdk = 21
+        minSdk = 23
         targetSdk = 29
     }
 
@@ -36,6 +36,7 @@ dependencies {
     implementation("org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion")
     implementation("androidx.core:core-ktx:1.8.0")
     implementation("androidx.appcompat:appcompat:1.4.2")
+    implementation("androidx.security:security-crypto:1.0.0")
 
     // Lifecycle
     implementation("androidx.lifecycle:lifecycle-process:2.5.1")
