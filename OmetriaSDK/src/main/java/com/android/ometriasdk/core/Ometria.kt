@@ -54,8 +54,8 @@ class Ometria private constructor() : OmetriaNotificationInteractionHandler {
     private lateinit var repository: Repository
     private lateinit var notificationHandler: NotificationHandler
     private lateinit var executor: OmetriaThreadPoolExecutor
-    private lateinit var activityLifecycleHelper: OmetriaActivityLifecycleHelper
     lateinit var notificationInteractionHandler: OmetriaNotificationInteractionHandler
+    private var activityLifecycleHelper: OmetriaActivityLifecycleHelper? = null
 
     /**
      * Kotlin Object ensures thread safety.
@@ -111,18 +111,20 @@ class Ometria private constructor() : OmetriaNotificationInteractionHandler {
                 it.generateInstallationId()
             }
 
-            if (it.isInitialized) {
-                it.activityLifecycleHelper.repository = it.repository
+            it.isInitialized = true
+
+            if (it.activityLifecycleHelper != null) {
+                it.activityLifecycleHelper?.repository = it.repository
             } else {
                 it.activityLifecycleHelper = OmetriaActivityLifecycleHelper(
                     repository = it.repository,
                     context = application
                 )
-                ProcessLifecycleOwner.get().lifecycle.addObserver(it.activityLifecycleHelper)
+                it.activityLifecycleHelper?.let { activityLifecycleHelper ->
+                    ProcessLifecycleOwner.get().lifecycle.addObserver(activityLifecycleHelper)
+                }
                 application.registerActivityLifecycleCallbacks(it.activityLifecycleHelper)
             }
-
-            it.isInitialized = true
         }
 
         private fun clearOldInstanceIfNeeded() {
