@@ -3,6 +3,9 @@ package com.android.sample
 import android.app.Application
 import android.content.Intent
 import androidx.core.content.ContextCompat
+import androidx.work.OneTimeWorkRequestBuilder
+import androidx.work.OutOfQuotaPolicy
+import androidx.work.WorkManager
 import com.android.ometriasdk.core.Ometria
 import com.android.ometriasdk.notification.OmetriaNotification
 import com.android.ometriasdk.notification.OmetriaNotificationInteractionHandler
@@ -19,6 +22,12 @@ class SampleApp : Application(), OmetriaNotificationInteractionHandler {
     override fun onCreate() {
         super.onCreate()
         instance = this
+
+        // Update security provider to protect against SSL exploits section
+        val workRequest = OneTimeWorkRequestBuilder<PatchWorker>()
+            .setExpedited(OutOfQuotaPolicy.RUN_AS_NON_EXPEDITED_WORK_REQUEST)
+            .build()
+        WorkManager.getInstance(this).enqueue(workRequest)
 
         // Initializing Ometria SDK with application context, api token and notifications icon resource id
         // Note: Replace api token with your own
