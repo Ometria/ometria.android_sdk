@@ -1,4 +1,4 @@
-val versionName = "1.5.1"
+val versionName = "1.6.0"
 
 plugins {
     id("com.android.library")
@@ -9,7 +9,7 @@ android {
     compileSdk = 31
 
     defaultConfig {
-        minSdk = 21
+        minSdk = 23
         targetSdk = 29
     }
 
@@ -34,15 +34,16 @@ dependencies {
 
     // Android Core
     implementation("org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion")
-    implementation("androidx.core:core-ktx:1.8.0")
-    implementation("androidx.appcompat:appcompat:1.4.2")
+    implementation("androidx.core:core-ktx:1.10.1")
+    implementation("androidx.appcompat:appcompat:1.6.1")
+    implementation("androidx.security:security-crypto:1.0.0")
 
     // Lifecycle
-    implementation("androidx.lifecycle:lifecycle-process:2.5.1")
-    implementation("androidx.lifecycle:lifecycle-common-java8:2.5.1")
+    implementation("androidx.lifecycle:lifecycle-process:2.6.1")
+    implementation("androidx.lifecycle:lifecycle-common-java8:2.6.1")
 
     // Add the SDK for Firebase Cloud Messaging
-    implementation("com.google.firebase:firebase-messaging:23.0.8")
+    implementation("com.google.firebase:firebase-messaging:23.2.0")
 }
 
 // Publishing

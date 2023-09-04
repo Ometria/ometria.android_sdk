@@ -113,12 +113,16 @@ internal fun String.toOmetriaNotificationBody(): OmetriaNotificationBody {
     )
 }
 
-internal fun RemoteMessage.toOmetriaNotification(): OmetriaNotification? {
+internal fun RemoteMessage.toOmetriaNotificationBody(): OmetriaNotificationBody? {
     val ometriaNotificationString = this.data[KEY_OMETRIA]
     ometriaNotificationString ?: return null
 
-    return ometriaNotificationString.toOmetriaNotificationBody().toOmetriaNotification()
+    return ometriaNotificationString.toOmetriaNotificationBody()
 }
+
+internal fun RemoteMessage.toOmetriaNotification(): OmetriaNotification? =
+    toOmetriaNotificationBody()?.toOmetriaNotification()
+
 
 @Suppress("UNCHECKED_CAST")
 internal fun OmetriaNotificationBody.toOmetriaNotification(): OmetriaNotification {

@@ -5,7 +5,7 @@ buildscript {
         mavenCentral()
     }
     extra.apply {
-        set("kotlin_version", "1.7.0")
+        set("kotlin_version", "1.8.0")
     }
     repositories {
         mavenCentral()
@@ -13,8 +13,8 @@ buildscript {
     }
     dependencies {
         classpath("com.android.tools.build:gradle:7.2.2")
-        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.7.0")
-        classpath("com.google.gms:google-services:4.3.13")
+        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.8.0")
+        classpath("com.google.gms:google-services:4.3.15")
 
         // NOTE: Do not place your application dependencies here; they belong
         // in the individual module build.gradle files

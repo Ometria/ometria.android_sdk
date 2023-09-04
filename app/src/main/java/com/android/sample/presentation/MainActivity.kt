@@ -48,12 +48,8 @@ class MainActivity : AppCompatActivity() {
     private fun setUpBottomNavMenu() {
         binding.bottomMenuBnv.setOnItemSelectedListener { item ->
             when (item.itemId) {
-                R.id.restaurants -> {
-                    switchFragment(FIRST_FRAGMENT_POS)
-                }
-                R.id.my_orders -> {
-                    switchFragment(SECOND_FRAGMENT_POS)
-                }
+                R.id.home -> switchFragment(FIRST_FRAGMENT_POS)
+                R.id.events -> switchFragment(SECOND_FRAGMENT_POS)
             }
             false
         }
@@ -67,9 +63,7 @@ class MainActivity : AppCompatActivity() {
 
         binding.containerVP.registerOnPageChangeCallback(object :
             ViewPager2.OnPageChangeCallback() {
-            override fun onPageScrollStateChanged(state: Int) {
-
-            }
+            override fun onPageScrollStateChanged(state: Int) {}
 
             override fun onPageScrolled(
                 position: Int,
@@ -124,8 +118,7 @@ class MainActivity : AppCompatActivity() {
         deepLink?.let { safeDeepLink ->
             if (URLUtil.isValidUrl(safeDeepLink).not()) return
 
-            Ometria.instance()
-                .trackDeepLinkOpenedEvent(safeDeepLink, "Browser")
+            Ometria.instance().trackDeepLinkOpenedEvent(safeDeepLink, "Browser")
             Log.d(SampleApp::class.java.simpleName, "Open URL: $safeDeepLink")
             val intent = Intent(Intent.ACTION_VIEW)
             intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
