@@ -5,7 +5,12 @@ import com.android.ometriasdk.core.Logger
 import com.android.ometriasdk.core.network.model.OmetriaApiError
 import com.android.ometriasdk.core.network.model.OmetriaApiRequest
 import org.json.JSONException
-import java.io.*
+import java.io.BufferedReader
+import java.io.BufferedWriter
+import java.io.IOException
+import java.io.InputStreamReader
+import java.io.OutputStream
+import java.io.OutputStreamWriter
 import java.net.HttpURLConnection
 import java.nio.charset.Charset
 

@@ -3,7 +3,7 @@ package com.android.ometriasdk.core.event
 import android.os.Build
 import com.android.ometriasdk.BuildConfig
 import com.android.ometriasdk.core.Constants.Common.PLATFORM
-import java.util.*
+import java.util.Date
 
 internal data class OmetriaEvent(
     val eventId: String,

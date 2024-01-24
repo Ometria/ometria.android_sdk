@@ -4,7 +4,8 @@ import com.android.ometriasdk.core.Constants
 import com.android.ometriasdk.core.network.model.OmetriaApiRequest
 import java.text.DateFormat
 import java.text.SimpleDateFormat
-import java.util.*
+import java.util.Calendar
+import java.util.Locale
 
 /**
  * @return A hashcode used to compare and group cached events in batches when performing flush.

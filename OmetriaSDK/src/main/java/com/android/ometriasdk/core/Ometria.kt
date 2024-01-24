@@ -39,8 +39,10 @@ import com.android.ometriasdk.notification.NotificationHandler
 import com.android.ometriasdk.notification.OMETRIA_CHANNEL_NAME
 import com.android.ometriasdk.notification.OmetriaNotification
 import com.android.ometriasdk.notification.OmetriaNotificationInteractionHandler
+import com.google.android.gms.tasks.OnCompleteListener
+import com.google.firebase.messaging.FirebaseMessaging
 import com.google.firebase.messaging.RemoteMessage
-import java.util.*
+import java.util.UUID
 
 /**
  * The primary class that allows instantiating and integrating Ometria in your application
@@ -126,6 +128,26 @@ class Ometria private constructor() : OmetriaNotificationInteractionHandler {
                 }
                 application.registerActivityLifecycleCallbacks(it.activityLifecycleHelper)
             }
+
+            if (it.localCache.getPushToken().isNullOrEmpty()) {
+                retrieveFirebaseToken()
+            }
+        }
+
+        private fun retrieveFirebaseToken() {
+            FirebaseMessaging.getInstance().token.addOnCompleteListener(OnCompleteListener { task ->
+                if (!task.isSuccessful) {
+                    Logger.w(
+                        Constants.Logger.EVENTS,
+                        "Fetching FCM registration token failed."
+                    )
+                    return@OnCompleteListener
+                }
+
+                val token = task.result
+                Logger.d(Constants.Logger.PUSH_NOTIFICATIONS, "Token - $token")
+                instance.onNewToken(token)
+            })
         }
 
         private fun clearOldInstanceIfNeeded() {
@@ -195,7 +217,9 @@ class Ometria private constructor() : OmetriaNotificationInteractionHandler {
     }
 
     fun onNewToken(token: String) {
-        trackPushTokenRefreshedEvent(token)
+        if (localCache.getPushToken() != token) {
+            trackPushTokenRefreshedEvent(token)
+        }
     }
 
     private fun trackEvent(type: OmetriaEventType, data: Map<String, Any>? = null) {
@@ -272,7 +296,7 @@ class Ometria private constructor() : OmetriaNotificationInteractionHandler {
 
     /**
      * Track the current app user being deidentified.
-     * An app user has deidentified themselves. This basically means: a user has logged out.*
+     * An app user has deidentified themselves. This basically means: a user has logged out.
      */
     fun trackProfileDeidentifiedEvent() {
         trackEvent(OmetriaEventType.PROFILE_DEIDENTIFIED)
