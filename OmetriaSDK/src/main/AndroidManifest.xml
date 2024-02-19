@@ -8,5 +8,17 @@
         android:usesCleartextTraffic="true"
         tools:targetApi="m">
         <activity android:name=".notification.NotificationInteractionActivity" />
+
+        <receiver
+            android:name=".notification.OmetriaMessagingReceiver"
+            android:exported="true"
+            android:permission="com.google.android.c2dm.permission.SEND" >
+            <intent-filter>
+                <action android:name="com.google.android.c2dm.intent.RECEIVE" />
+            </intent-filter>
+            <meta-data
+                android:name="com.google.android.gms.cloudmessaging.FINISHED_AFTER_HANDLED"
+                android:value="true" />
+        </receiver>
     </application>
 </manifest>

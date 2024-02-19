@@ -2,6 +2,7 @@ package com.android.ometriasdk.core
 
 import android.app.Application
 import android.app.Notification.COLOR_DEFAULT
+import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.webkit.URLUtil
@@ -130,25 +131,29 @@ class Ometria private constructor() : OmetriaNotificationInteractionHandler {
             }
 
             if (it.localCache.getPushToken().isNullOrEmpty()) {
-                retrieveFirebaseToken()
+                it.retrieveFirebaseToken()
             }
+
+            it.repository.saveApiToken(apiToken)
         }
 
-        private fun retrieveFirebaseToken() {
-            FirebaseMessaging.getInstance().token.addOnCompleteListener(OnCompleteListener { task ->
-                if (!task.isSuccessful) {
-                    Logger.w(
-                        Constants.Logger.EVENTS,
-                        "Fetching FCM registration token failed."
-                    )
-                    return@OnCompleteListener
+        // ToDo
+        internal fun initializeForInternalUsage(context: Context) =
+            instance.also {
+                it.localCache = LocalCache(context)
+                it.executor = OmetriaThreadPoolExecutor()
+                it.repository = Repository(
+                    Client(ConnectionFactory(it.ometriaConfig)),
+                    it.localCache,
+                    it.executor
+                )
+                it.repository.getApiToken()?.let { apiToken ->
+                    it.ometriaConfig = OmetriaConfig(apiToken, context)
                 }
-
-                val token = task.result
-                Logger.d(Constants.Logger.PUSH_NOTIFICATIONS, "Token - $token")
-                instance.onNewToken(token)
-            })
-        }
+                it.eventHandler = EventHandler(context, it.repository)
+                it.isInitialized = true
+            }
+        //
 
         private fun clearOldInstanceIfNeeded() {
             if (instance.isInitialized) {
@@ -169,6 +174,24 @@ class Ometria private constructor() : OmetriaNotificationInteractionHandler {
 
             return instance
         }
+    }
+
+    internal fun isReactNativeUsage(): Boolean = repository.getSdkVersionRN() != null
+
+    private fun retrieveFirebaseToken() {
+        FirebaseMessaging.getInstance().token.addOnCompleteListener(OnCompleteListener { task ->
+            if (!task.isSuccessful) {
+                Logger.w(
+                    Constants.Logger.EVENTS,
+                    "Fetching FCM registration token failed."
+                )
+                return@OnCompleteListener
+            }
+
+            val token = task.result
+            Logger.d(Constants.Logger.PUSH_NOTIFICATIONS, "Token - $token")
+            instance.onNewToken(token)
+        })
     }
 
     private fun shouldGenerateInstallationId(): Boolean = repository.getInstallationId() == null
