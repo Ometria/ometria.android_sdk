@@ -144,6 +144,7 @@ class Ometria private constructor() : OmetriaNotificationInteractionHandler {
          */
         internal fun initializeForInternalUsage(context: Context) =
             instance.also {
+                it.executor = OmetriaThreadPoolExecutor()
                 it.localCache = LocalCache(context)
 
                 val apiToken = it.localCache.getApiToken()
@@ -156,7 +157,6 @@ class Ometria private constructor() : OmetriaNotificationInteractionHandler {
                     it.executor
                 )
                 it.eventHandler = EventHandler(context, it.repository)
-                it.executor = OmetriaThreadPoolExecutor()
                 it.isInitialized = true
             }
 
