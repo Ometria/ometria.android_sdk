@@ -147,10 +147,4 @@ internal class Repository(
     }
 
     fun getSdkVersionRN(): String? = localCache.getSdkVersionRN()
-
-    fun saveApiToken(apiToken: String) {
-        localCache.saveApiToken(apiToken)
-    }
-
-    fun getApiToken(): String? = localCache.getApiToken()
 }

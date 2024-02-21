@@ -134,32 +134,42 @@ class Ometria private constructor() : OmetriaNotificationInteractionHandler {
                 it.retrieveFirebaseToken()
             }
 
-            it.repository.saveApiToken(apiToken)
+            it.localCache.saveApiToken(apiToken)
         }
 
-        // ToDo
+        /**
+         * A lightweight initialization of Ometria, only for internal usage.
+         * Note: Not all SDK functions will be available after this initialization.
+         * @return An initialized Ometria instance object.
+         */
         internal fun initializeForInternalUsage(context: Context) =
             instance.also {
                 it.localCache = LocalCache(context)
-                it.executor = OmetriaThreadPoolExecutor()
+
+                val apiToken = it.localCache.getApiToken()
+                apiToken ?: return@also
+
+                it.ometriaConfig = OmetriaConfig(apiToken, context)
                 it.repository = Repository(
                     Client(ConnectionFactory(it.ometriaConfig)),
                     it.localCache,
                     it.executor
                 )
-                it.repository.getApiToken()?.let { apiToken ->
-                    it.ometriaConfig = OmetriaConfig(apiToken, context)
-                }
                 it.eventHandler = EventHandler(context, it.repository)
+                it.executor = OmetriaThreadPoolExecutor()
                 it.isInitialized = true
             }
-        //
 
         private fun clearOldInstanceIfNeeded() {
             if (instance.isInitialized) {
-                instance.flush()
-                instance.clear()
+                clearOldInstance()
             }
+        }
+
+        internal fun clearOldInstance() {
+            instance.flush()
+            instance.clear()
+            instance.isInitialized = false
         }
 
         /**

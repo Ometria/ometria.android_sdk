@@ -15,6 +15,7 @@ import com.android.sample.presentation.MainActivity
 import com.android.sample.presentation.OMETRIA_NOTIFICATION_STRING_EXTRA_KEY
 
 class SampleApp : Application(), OmetriaNotificationInteractionHandler {
+
     companion object {
         lateinit var instance: SampleApp
     }
