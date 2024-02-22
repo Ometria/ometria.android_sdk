@@ -12,7 +12,9 @@ import com.android.ometriasdk.core.Ometria
 import com.android.ometriasdk.core.Repository
 import java.text.DateFormat
 import java.text.SimpleDateFormat
-import java.util.*
+import java.util.Calendar
+import java.util.Locale
+import java.util.UUID
 import java.util.concurrent.TimeUnit
 
 private const val FLUSH_LIMIT = 10

@@ -2,6 +2,7 @@ package com.android.ometriasdk.core
 
 import android.app.Application
 import android.app.Notification.COLOR_DEFAULT
+import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.webkit.URLUtil
@@ -39,8 +40,10 @@ import com.android.ometriasdk.notification.NotificationHandler
 import com.android.ometriasdk.notification.OMETRIA_CHANNEL_NAME
 import com.android.ometriasdk.notification.OmetriaNotification
 import com.android.ometriasdk.notification.OmetriaNotificationInteractionHandler
+import com.google.android.gms.tasks.OnCompleteListener
+import com.google.firebase.messaging.FirebaseMessaging
 import com.google.firebase.messaging.RemoteMessage
-import java.util.*
+import java.util.UUID
 
 /**
  * The primary class that allows instantiating and integrating Ometria in your application
@@ -126,13 +129,47 @@ class Ometria private constructor() : OmetriaNotificationInteractionHandler {
                 }
                 application.registerActivityLifecycleCallbacks(it.activityLifecycleHelper)
             }
+
+            if (it.localCache.getPushToken().isNullOrEmpty()) {
+                it.retrieveFirebaseToken()
+            }
+
+            it.localCache.saveApiToken(apiToken)
         }
+
+        /**
+         * A lightweight initialization of Ometria, only for internal usage.
+         * Note: Not all SDK functions will be available after this initialization.
+         * @return An initialized Ometria instance object.
+         */
+        internal fun initializeForInternalUsage(context: Context) =
+            instance.also {
+                it.executor = OmetriaThreadPoolExecutor()
+                it.localCache = LocalCache(context)
+
+                val apiToken = it.localCache.getApiToken()
+                apiToken ?: return@also
+
+                it.ometriaConfig = OmetriaConfig(apiToken, context)
+                it.repository = Repository(
+                    Client(ConnectionFactory(it.ometriaConfig)),
+                    it.localCache,
+                    it.executor
+                )
+                it.eventHandler = EventHandler(context, it.repository)
+                it.isInitialized = true
+            }
 
         private fun clearOldInstanceIfNeeded() {
             if (instance.isInitialized) {
-                instance.flush()
-                instance.clear()
+                clearOldInstance()
             }
+        }
+
+        internal fun clearOldInstance() {
+            instance.flush()
+            instance.clear()
+            instance.isInitialized = false
         }
 
         /**
@@ -147,6 +184,24 @@ class Ometria private constructor() : OmetriaNotificationInteractionHandler {
 
             return instance
         }
+    }
+
+    internal fun isReactNativeUsage(): Boolean = repository.getSdkVersionRN() != null
+
+    private fun retrieveFirebaseToken() {
+        FirebaseMessaging.getInstance().token.addOnCompleteListener(OnCompleteListener { task ->
+            if (!task.isSuccessful) {
+                Logger.w(
+                    Constants.Logger.EVENTS,
+                    "Fetching FCM registration token failed."
+                )
+                return@OnCompleteListener
+            }
+
+            val token = task.result
+            Logger.d(Constants.Logger.PUSH_NOTIFICATIONS, "Token - $token")
+            instance.onNewToken(token)
+        })
     }
 
     private fun shouldGenerateInstallationId(): Boolean = repository.getInstallationId() == null
@@ -195,7 +250,9 @@ class Ometria private constructor() : OmetriaNotificationInteractionHandler {
     }
 
     fun onNewToken(token: String) {
-        trackPushTokenRefreshedEvent(token)
+        if (localCache.getPushToken() != token) {
+            trackPushTokenRefreshedEvent(token)
+        }
     }
 
     private fun trackEvent(type: OmetriaEventType, data: Map<String, Any>? = null) {
@@ -272,7 +329,7 @@ class Ometria private constructor() : OmetriaNotificationInteractionHandler {
 
     /**
      * Track the current app user being deidentified.
-     * An app user has deidentified themselves. This basically means: a user has logged out.*
+     * An app user has deidentified themselves. This basically means: a user has logged out.
      */
     fun trackProfileDeidentifiedEvent() {
         trackEvent(OmetriaEventType.PROFILE_DEIDENTIFIED)

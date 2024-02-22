@@ -20,6 +20,7 @@ private const val ARE_NOTIFICATIONS_ENABLED_KEY = "ARE_NOTIFICATIONS_ENABLED_KEY
 private const val IS_FIRST_PERMISSION_UPDATE_EVENT_KEY = "IS_FIRST_PERMISSION_UPDATE_EVENT_KEY"
 private const val JSON_ARRAY = "[]"
 private const val SDK_VERSION_RN_KEY = "SDK_VERSION_RN_KEY"
+private const val API_TOKEN_KEY = "API_TOKEN_KEY"
 
 internal class LocalCache(private val context: Context) {
 
@@ -164,5 +165,13 @@ internal class LocalCache(private val context: Context) {
 
     fun getSdkVersionRN(): String? {
         return localCacheEncryptedPreferences.getString(SDK_VERSION_RN_KEY, null)
+    }
+
+    fun saveApiToken(apiToken: String) {
+        localCacheEncryptedPreferences.edit().putString(API_TOKEN_KEY, apiToken).apply()
+    }
+
+    fun getApiToken(): String? {
+        return localCacheEncryptedPreferences.getString(API_TOKEN_KEY, null)
     }
 }

@@ -55,7 +55,7 @@
             android:layout_margin="16dp"
             android:drawableEnd="@drawable/ic_arrow_right_alt_24px"
             android:drawablePadding="5dp"
-            android:text="Update API Toekn"
+            android:text="@string/update_api_token"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/detailsBTN" />
 

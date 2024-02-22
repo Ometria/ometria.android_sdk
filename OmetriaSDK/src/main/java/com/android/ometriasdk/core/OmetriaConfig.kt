@@ -1,10 +1,10 @@
 package com.android.ometriasdk.core
 
-import android.app.Application
+import android.content.Context
 
 internal class OmetriaConfig(
     var apiToken: String,
-    var application: Application
+    var application: Context
 ) {
     var enableDebugging: Boolean = false
 }
