@@ -60,5 +60,6 @@ dependencies {
     implementation("androidx.work:work-runtime:2.8.1")
 
     // Add the SDK for Firebase Cloud Messaging
-    implementation("com.google.firebase:firebase-messaging:23.2.0")
+    implementation("com.google.firebase:firebase-messaging:24.0.0")
+    implementation("com.google.android.gms:play-services-base:18.4.0")
 }
