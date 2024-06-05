@@ -1,4 +1,4 @@
-val versionName = "1.6.2"
+val versionName = "1.7.0"
 
 plugins {
     id("com.android.library")
@@ -43,7 +43,7 @@ dependencies {
     implementation("androidx.lifecycle:lifecycle-common-java8:2.6.1")
 
     // Add the SDK for Firebase Cloud Messaging
-    implementation("com.google.firebase:firebase-messaging:23.2.0")
+    implementation("com.google.firebase:firebase-messaging:24.0.0")
 }
 
 // Publishing
