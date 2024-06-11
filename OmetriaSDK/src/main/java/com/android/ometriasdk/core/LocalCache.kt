@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.SharedPreferences
 import androidx.security.crypto.EncryptedSharedPreferences
 import androidx.security.crypto.MasterKeys
+import com.android.ometriasdk.core.Constants.Logger.CACHE
 import com.android.ometriasdk.core.event.OmetriaEvent
 import com.android.ometriasdk.core.network.toJson
 import com.android.ometriasdk.core.network.toOmetriaEventList
@@ -52,8 +53,15 @@ internal class LocalCache(private val context: Context) {
     }
 
     fun saveIsFirstAppRun(isFirstAppRun: Boolean) {
-        localCacheEncryptedPreferences.edit().putBoolean(IS_FIRST_APP_RUN_KEY, isFirstAppRun)
-            .apply()
+        synchronized(this) {
+            try {
+                localCacheEncryptedPreferences.edit()
+                    .putBoolean(IS_FIRST_APP_RUN_KEY, isFirstAppRun)
+                    .apply()
+            } catch (e: Exception) {
+                Logger.e(CACHE, e.message ?: "Failed to save isFirstAppRun")
+            }
+        }
     }
 
     fun isFirstAppRun(): Boolean {
@@ -61,7 +69,15 @@ internal class LocalCache(private val context: Context) {
     }
 
     fun saveInstallationId(installationId: String?) {
-        localCacheEncryptedPreferences.edit().putString(INSTALLATION_ID_KEY, installationId).apply()
+        synchronized(this) {
+            try {
+                localCacheEncryptedPreferences.edit()
+                    .putString(INSTALLATION_ID_KEY, installationId)
+                    .apply()
+            } catch (e: Exception) {
+                Logger.e(CACHE, e.message ?: "Failed to save installationId")
+            }
+        }
     }
 
     fun getInstallationId(): String? {
@@ -69,19 +85,27 @@ internal class LocalCache(private val context: Context) {
     }
 
     fun saveEvent(ometriaEvent: OmetriaEvent) {
-        val eventsString =
-            localCacheEncryptedPreferences.getString(EVENTS_KEY, JSON_ARRAY) ?: JSON_ARRAY
+        val eventsString = localCacheEncryptedPreferences
+            .getString(EVENTS_KEY, JSON_ARRAY) ?: JSON_ARRAY
 
         val eventsList = eventsString.toOmetriaEventList()
 
         eventsList.add(ometriaEvent)
 
-        localCacheEncryptedPreferences.edit().putString(EVENTS_KEY, eventsList.toJson().toString())
-            .apply()
+        synchronized(this) {
+            try {
+                localCacheEncryptedPreferences.edit()
+                    .putString(EVENTS_KEY, eventsList.toJson().toString())
+                    .apply()
+            } catch (e: Exception) {
+                Logger.e(CACHE, e.message ?: "Failed to save event")
+            }
+        }
     }
 
     fun getEvents(): List<OmetriaEvent> {
-        val eventsString = localCacheEncryptedPreferences.getString(EVENTS_KEY, null) ?: JSON_ARRAY
+        val eventsString = localCacheEncryptedPreferences
+            .getString(EVENTS_KEY, null) ?: JSON_ARRAY
 
         return eventsString.toOmetriaEventList()
     }
@@ -96,9 +120,15 @@ internal class LocalCache(private val context: Context) {
                 isBeingFlushed
         }
 
-        localCacheEncryptedPreferences.edit()
-            .putString(EVENTS_KEY, cachedEvents.toJson().toString())
-            .apply()
+        synchronized(this) {
+            try {
+                localCacheEncryptedPreferences.edit()
+                    .putString(EVENTS_KEY, cachedEvents.toJson().toString())
+                    .apply()
+            } catch (e: Exception) {
+                Logger.e(CACHE, e.message ?: "Failed to update events")
+            }
+        }
     }
 
     fun removeEvents(eventsToRemove: List<OmetriaEvent>) {
@@ -108,12 +138,25 @@ internal class LocalCache(private val context: Context) {
             eventsList.remove(eventsList.firstOrNull { it.eventId == event.eventId })
         }
 
-        localCacheEncryptedPreferences.edit().putString(EVENTS_KEY, eventsList.toJson().toString())
-            .apply()
+        synchronized(this) {
+            try {
+                localCacheEncryptedPreferences.edit()
+                    .putString(EVENTS_KEY, eventsList.toJson().toString())
+                    .apply()
+            } catch (e: Exception) {
+                Logger.e(CACHE, e.message ?: "Failed to remove events")
+            }
+        }
     }
 
     fun savePushToken(pushToken: String) {
-        localCacheEncryptedPreferences.edit().putString(PUSH_TOKEN_KEY, pushToken).apply()
+        synchronized(this) {
+            try {
+                localCacheEncryptedPreferences.edit().putString(PUSH_TOKEN_KEY, pushToken).apply()
+            } catch (e: Exception) {
+                Logger.e(CACHE, e.message ?: "Failed to save pushToken")
+            }
+        }
     }
 
     fun getPushToken(): String? {
@@ -121,11 +164,23 @@ internal class LocalCache(private val context: Context) {
     }
 
     fun clearEvents() {
-        localCacheEncryptedPreferences.edit().remove(EVENTS_KEY).apply()
+        synchronized(this) {
+            try {
+                localCacheEncryptedPreferences.edit().remove(EVENTS_KEY).apply()
+            } catch (e: Exception) {
+                Logger.e(CACHE, e.message ?: "Failed to clear events")
+            }
+        }
     }
 
     fun saveCustomerId(customerId: String?) {
-        localCacheEncryptedPreferences.edit().putString(CUSTOMER_ID_KEY, customerId).apply()
+        synchronized(this) {
+            try {
+                localCacheEncryptedPreferences.edit().putString(CUSTOMER_ID_KEY, customerId).apply()
+            } catch (e: Exception) {
+                Logger.e(CACHE, e.message ?: "Failed to save customerId")
+            }
+        }
     }
 
     fun getCustomerId(): String? {
@@ -133,7 +188,13 @@ internal class LocalCache(private val context: Context) {
     }
 
     fun saveEmail(email: String?) {
-        localCacheEncryptedPreferences.edit().putString(EMAIL_KEY, email).apply()
+        synchronized(this) {
+            try {
+                localCacheEncryptedPreferences.edit().putString(EMAIL_KEY, email).apply()
+            } catch (e: Exception) {
+                Logger.e(CACHE, e.message ?: "Failed to save email")
+            }
+        }
     }
 
     fun getEmail(): String? {
@@ -141,13 +202,26 @@ internal class LocalCache(private val context: Context) {
     }
 
     fun clearProfileIdentifiedData() {
-        localCacheEncryptedPreferences.edit().remove(CUSTOMER_ID_KEY).apply()
-        localCacheEncryptedPreferences.edit().remove(EMAIL_KEY).apply()
+        synchronized(this) {
+            try {
+                localCacheEncryptedPreferences.edit().remove(CUSTOMER_ID_KEY).apply()
+                localCacheEncryptedPreferences.edit().remove(EMAIL_KEY).apply()
+            } catch (e: Exception) {
+                Logger.e(CACHE, e.message ?: "Failed to clear profile identified data")
+            }
+        }
     }
 
     fun saveAreNotificationsEnabled(areNotificationsEnabled: Boolean) {
-        localCacheEncryptedPreferences.edit()
-            .putBoolean(ARE_NOTIFICATIONS_ENABLED_KEY, areNotificationsEnabled).apply()
+        synchronized(this) {
+            try {
+                localCacheEncryptedPreferences.edit()
+                    .putBoolean(ARE_NOTIFICATIONS_ENABLED_KEY, areNotificationsEnabled)
+                    .apply()
+            } catch (e: Exception) {
+                Logger.e(CACHE, e.message ?: "Failed to save areNotificationsEnabled")
+            }
+        }
     }
 
     fun areNotificationsEnabled(): Boolean {
@@ -155,12 +229,22 @@ internal class LocalCache(private val context: Context) {
     }
 
     fun saveIsFirstPermissionsUpdateEvent(isFirstPermissionsUpdateEvent: Boolean) {
-        localCacheEncryptedPreferences.edit()
-            .putBoolean(IS_FIRST_PERMISSION_UPDATE_EVENT_KEY, isFirstPermissionsUpdateEvent).apply()
+        synchronized(this) {
+            try {
+                localCacheEncryptedPreferences.edit()
+                    .putBoolean(IS_FIRST_PERMISSION_UPDATE_EVENT_KEY, isFirstPermissionsUpdateEvent)
+                    .apply()
+            } catch (e: Exception) {
+                Logger.e(CACHE, e.message ?: "Failed to save isFirstPermissionsUpdateEvent")
+            }
+        }
     }
 
     fun isFirstPermissionsUpdateEvent(): Boolean {
-        return localCacheEncryptedPreferences.getBoolean(IS_FIRST_PERMISSION_UPDATE_EVENT_KEY, true)
+        return localCacheEncryptedPreferences.getBoolean(
+            IS_FIRST_PERMISSION_UPDATE_EVENT_KEY,
+            true
+        )
     }
 
     fun getSdkVersionRN(): String? {
@@ -168,7 +252,13 @@ internal class LocalCache(private val context: Context) {
     }
 
     fun saveApiToken(apiToken: String) {
-        localCacheEncryptedPreferences.edit().putString(API_TOKEN_KEY, apiToken).apply()
+        synchronized(this) {
+            try {
+                localCacheEncryptedPreferences.edit().putString(API_TOKEN_KEY, apiToken).apply()
+            } catch (e: Exception) {
+                Logger.e(CACHE, e.message ?: "Failed to save apiToken")
+            }
+        }
     }
 
     fun getApiToken(): String? {
