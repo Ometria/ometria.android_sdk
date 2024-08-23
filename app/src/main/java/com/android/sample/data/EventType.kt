@@ -17,6 +17,7 @@ enum class EventType {
     ORDER_COMPLETED,
     HOME_SCREEN_VIEWED,
     CUSTOM,
+    SIMULATE_PUSH_TOKEN_REFRESHED,
     FLUSH,
     CLEAR
 }

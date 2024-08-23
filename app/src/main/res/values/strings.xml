@@ -17,4 +17,5 @@
     <string name="enter_your_api_token">Please enter your API token</string>
     <string name="do_it_later">Do it later</string>
     <string name="update_api_token">Update API Token</string>
+    <string name="hint_store_id">Store Id</string>
 </resources>

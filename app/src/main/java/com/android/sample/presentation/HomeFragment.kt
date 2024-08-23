@@ -22,6 +22,7 @@ import com.android.ometriasdk.core.event.OmetriaBasketItem
 import com.android.sample.data.AppPreferencesUtils
 import com.android.sample.data.EventType
 import com.android.sample.databinding.FragmentHomeBinding
+import com.google.firebase.messaging.FirebaseMessaging
 
 private const val POSITION_KEY = "position_key"
 const val TAB_ONE = 0
@@ -76,6 +77,7 @@ class HomeFragment : Fragment() {
         binding.loginWithEmailBTN.isVisible = screenPosition == TAB_ONE
         binding.customerIdET.isVisible = screenPosition == TAB_ONE
         binding.loginWithCustomerIdBTN.isVisible = screenPosition == TAB_ONE
+        binding.storeIdET.isVisible = screenPosition == TAB_ONE
 
         binding.titleTV.isVisible =
             screenPosition == TAB_ONE && !ometriaNotificationString.isNullOrEmpty()
@@ -96,13 +98,15 @@ class HomeFragment : Fragment() {
             showEnterApiTokenDialog()
         }
         binding.loginWithEmailBTN.setOnClickListener {
+            val storeId = binding.storeIdET.text.toString()
             val email = binding.emailET.text.toString()
-            Ometria.instance().trackProfileIdentifiedByEmailEvent(email)
+            Ometria.instance().trackProfileIdentifiedByEmailEvent(email, storeId)
             Ometria.instance().flush()
         }
         binding.loginWithCustomerIdBTN.setOnClickListener {
+            val storeId = binding.storeIdET.text.toString()
             val customerId = binding.customerIdET.text.toString()
-            Ometria.instance().trackProfileIdentifiedByCustomerIdEvent(customerId)
+            Ometria.instance().trackProfileIdentifiedByCustomerIdEvent(customerId, storeId)
             Ometria.instance().flush()
         }
     }
@@ -121,30 +125,46 @@ class HomeFragment : Fragment() {
         when (eventType) {
             EventType.SCREEN_VIEWED -> Ometria.instance()
                 .trackScreenViewedEvent("TestScreenName")
+
             EventType.PROFILE_IDENTIFIED_BY_EMAIL -> Ometria.instance()
                 .trackProfileIdentifiedByEmailEvent("test@gmail.com")
+
             EventType.PROFILE_IDENTIFIED_BY_CUSTOMER_ID -> Ometria.instance()
                 .trackProfileIdentifiedByCustomerIdEvent("test_customer_id")
+
             EventType.PROFILE_DEIDENTIFIED -> Ometria.instance()
                 .trackProfileDeidentifiedEvent()
+
             EventType.PRODUCT_VIEWED -> Ometria.instance()
                 .trackProductViewedEvent("product_1")
+
             EventType.PRODUCT_LISTING_VIEWED -> Ometria.instance().trackProductListingViewedEvent(
                 "search",
                 mapOf("searchQuery" to "some search terms")
             )
+
             EventType.BASKET_VIEWED -> Ometria.instance()
                 .trackBasketViewedEvent()
+
             EventType.BASKET_UPDATED -> Ometria.instance()
                 .trackBasketUpdatedEvent(getBasket())
+
             EventType.CHECKOUT_STARTED -> Ometria.instance()
                 .trackCheckoutStartedEvent("orderId_1")
+
             EventType.ORDER_COMPLETED -> Ometria.instance()
                 .trackOrderCompletedEvent("orderId_1", getBasket())
+
             EventType.HOME_SCREEN_VIEWED -> Ometria.instance()
                 .trackHomeScreenViewedEvent()
+
             EventType.CUSTOM -> Ometria.instance()
                 .trackCustomEvent("my_custom_type", mapOf(Pair("param_key", "param_value")))
+
+            EventType.SIMULATE_PUSH_TOKEN_REFRESHED -> FirebaseMessaging.getInstance().token.addOnCompleteListener { task ->
+                Ometria.instance().onNewToken(task.result)
+            }
+
             EventType.FLUSH -> Ometria.instance().flush()
             EventType.CLEAR -> Ometria.instance().clear()
         }
