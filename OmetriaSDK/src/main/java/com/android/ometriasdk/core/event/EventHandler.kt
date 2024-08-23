@@ -2,11 +2,13 @@ package com.android.ometriasdk.core.event
 
 import android.content.Context
 import androidx.core.content.pm.PackageInfoCompat
-import com.android.ometriasdk.core.Constants
+import com.android.ometriasdk.core.Constants.Date.API_DATE_FORMAT
 import com.android.ometriasdk.core.Constants.Logger.EVENTS
 import com.android.ometriasdk.core.Constants.Logger.NETWORK
 import com.android.ometriasdk.core.Constants.Params.CUSTOMER_ID
 import com.android.ometriasdk.core.Constants.Params.EMAIL
+import com.android.ometriasdk.core.Constants.Params.PUSH_TOKEN
+import com.android.ometriasdk.core.Constants.Params.STORE_ID
 import com.android.ometriasdk.core.Logger
 import com.android.ometriasdk.core.Ometria
 import com.android.ometriasdk.core.Repository
@@ -27,7 +29,7 @@ private const val NO_VALUE = -1L
  */
 internal class EventHandler(context: Context, private val repository: Repository) {
     private val dateFormat: DateFormat =
-        SimpleDateFormat(Constants.Date.API_DATE_FORMAT, Locale.UK)
+        SimpleDateFormat(API_DATE_FORMAT, Locale.UK)
     private val appId = context.packageName
     private val packageInfo = context.packageManager.getPackageInfo(context.packageName, 0)
     private var syncTimestamp: Long = NO_VALUE
@@ -42,15 +44,10 @@ internal class EventHandler(context: Context, private val repository: Repository
 
         if (type == OmetriaEventType.PUSH_TOKEN_REFRESHED) {
             data?.let {
-                repository.savePushToken(it[Constants.Params.PUSH_TOKEN] as String)
-
-                repository.getCustomerId()?.let { customerId ->
-                    data[CUSTOMER_ID] = customerId
-                }
-
-                repository.getEmail()?.let { customerId ->
-                    data[EMAIL] = customerId
-                }
+                repository.savePushToken(it[PUSH_TOKEN] as String)
+                repository.getCustomerId()?.let { customerId -> data[CUSTOMER_ID] = customerId }
+                repository.getEmail()?.let { email -> data[EMAIL] = email }
+                repository.getStoreId()?.let { storeId -> data[STORE_ID] = storeId }
             }
         }
 
@@ -70,22 +67,11 @@ internal class EventHandler(context: Context, private val repository: Repository
 
         when (event.type) {
             OmetriaEventType.PROFILE_IDENTIFIED.id -> {
-                cacheProfileIdentifiedData(data)
+                repository.cacheProfileIdentifiedData(data)
                 Ometria.instance().trackPushTokenRefreshedEvent(repository.getPushToken())
             }
-            OmetriaEventType.PROFILE_DEIDENTIFIED.id -> {
-                repository.clearProfileIdentifiedData()
-            }
-        }
-    }
 
-    private fun cacheProfileIdentifiedData(data: Map<String, Any>?) {
-        data?.let {
-            if (it[CUSTOMER_ID] != null) {
-                repository.saveCustomerId(it[CUSTOMER_ID] as String)
-            } else {
-                repository.saveEmail(it[EMAIL] as String)
-            }
+            OmetriaEventType.PROFILE_DEIDENTIFIED.id -> repository.clearProfileIdentifiedData()
         }
     }
 
@@ -98,6 +84,7 @@ internal class EventHandler(context: Context, private val repository: Repository
             OmetriaEventType.APP_FOREGROUNDED.id,
             OmetriaEventType.APP_BACKGROUNDED.id,
             OmetriaEventType.NOTIFICATION_RECEIVED.id -> flushEvents()
+
             else -> flushEventsIfNeeded()
         }
     }

@@ -17,6 +17,7 @@ private const val EVENTS_KEY = "EVENTS_KEY"
 private const val PUSH_TOKEN_KEY = "PUSH_TOKEN_KEY"
 private const val CUSTOMER_ID_KEY = "CUSTOMER_ID_KEY"
 private const val EMAIL_KEY = "EMAIL_KEY"
+private const val STORE_ID_KEY = "STORE_ID_KEY"
 private const val ARE_NOTIFICATIONS_ENABLED_KEY = "ARE_NOTIFICATIONS_ENABLED_KEY"
 private const val IS_FIRST_PERMISSION_UPDATE_EVENT_KEY = "IS_FIRST_PERMISSION_UPDATE_EVENT_KEY"
 private const val JSON_ARRAY = "[]"
@@ -201,11 +202,26 @@ internal class LocalCache(private val context: Context) {
         return localCacheEncryptedPreferences.getString(EMAIL_KEY, null)
     }
 
+    fun saveStoreId(storeId: String?) {
+        synchronized(this) {
+            try {
+                localCacheEncryptedPreferences.edit().putString(STORE_ID_KEY, storeId).apply()
+            } catch (e: Exception) {
+                Logger.e(CACHE, e.message ?: "Failed to save storeId")
+            }
+        }
+    }
+
+    fun getStoreId(): String? {
+        return localCacheEncryptedPreferences.getString(STORE_ID_KEY, null)
+    }
+
     fun clearProfileIdentifiedData() {
         synchronized(this) {
             try {
                 localCacheEncryptedPreferences.edit().remove(CUSTOMER_ID_KEY).apply()
                 localCacheEncryptedPreferences.edit().remove(EMAIL_KEY).apply()
+                localCacheEncryptedPreferences.edit().remove(STORE_ID_KEY).apply()
             } catch (e: Exception) {
                 Logger.e(CACHE, e.message ?: "Failed to clear profile identified data")
             }

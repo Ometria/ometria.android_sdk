@@ -9,6 +9,7 @@ internal object Constants {
         const val PAGE = "page"
         const val EMAIL = "email"
         const val CUSTOMER_ID = "customerId"
+        const val STORE_ID = "storeId"
         const val PRODUCT_ID = "productId"
         const val BASKET = "basket"
         const val ORDER_ID = "orderId"

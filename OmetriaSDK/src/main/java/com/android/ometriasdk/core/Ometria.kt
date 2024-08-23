@@ -26,6 +26,7 @@ import com.android.ometriasdk.core.Constants.Params.PAGE
 import com.android.ometriasdk.core.Constants.Params.PRODUCT_ID
 import com.android.ometriasdk.core.Constants.Params.PROPERTIES
 import com.android.ometriasdk.core.Constants.Params.PUSH_TOKEN
+import com.android.ometriasdk.core.Constants.Params.STORE_ID
 import com.android.ometriasdk.core.event.EventHandler
 import com.android.ometriasdk.core.event.OmetriaBasket
 import com.android.ometriasdk.core.event.OmetriaEventType
@@ -255,6 +256,26 @@ class Ometria private constructor() : OmetriaNotificationInteractionHandler {
         }
     }
 
+    /**
+     *
+     *
+     * ToDo add description
+     *
+     *
+     * @param storeId The name of the screen
+     */
+    fun setStoreId(storeId: String) {
+        repository.saveStoreId(storeId)
+    }
+
+    private fun trackProfileIdentifiedEvent() {
+        val data = mutableMapOf<String, Any>()
+        repository.getEmail()?.let { data[EMAIL] = it }
+        repository.getCustomerId()?.let { data[CUSTOMER_ID] = it }
+        repository.getStoreId()?.let { data[STORE_ID] = it }
+        trackEvent(OmetriaEventType.PROFILE_IDENTIFIED, data)
+    }
+
     private fun trackEvent(type: OmetriaEventType, data: Map<String, Any>? = null) {
         eventHandler.processEvent(type, data?.toMutableMap())
     }
@@ -312,8 +333,10 @@ class Ometria private constructor() : OmetriaNotificationInteractionHandler {
      *
      * @param customerId The ID reserved for a particular user in your database.
      */
-    fun trackProfileIdentifiedByCustomerIdEvent(customerId: String) {
-        trackEvent(OmetriaEventType.PROFILE_IDENTIFIED, mapOf(CUSTOMER_ID to customerId))
+    fun trackProfileIdentifiedByCustomerIdEvent(customerId: String, storeId: String? = null) {
+        val data = mutableMapOf<String, Any>(CUSTOMER_ID to customerId)
+        storeId?.let { data[STORE_ID] = it }
+        trackEvent(OmetriaEventType.PROFILE_IDENTIFIED, data)
     }
 
     /**
@@ -323,8 +346,10 @@ class Ometria private constructor() : OmetriaNotificationInteractionHandler {
      *
      * @param email: The email by which you identify a particular user in your database.
      */
-    fun trackProfileIdentifiedByEmailEvent(email: String) {
-        trackEvent(OmetriaEventType.PROFILE_IDENTIFIED, mapOf(EMAIL to email))
+    fun trackProfileIdentifiedByEmailEvent(email: String, storeId: String? = null) {
+        val data = mutableMapOf<String, Any>(EMAIL to email)
+        storeId?.let { data[STORE_ID] = it }
+        trackEvent(OmetriaEventType.PROFILE_IDENTIFIED, data)
     }
 
     /**

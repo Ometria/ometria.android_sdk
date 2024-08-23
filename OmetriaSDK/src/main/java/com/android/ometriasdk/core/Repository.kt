@@ -3,6 +3,9 @@ package com.android.ometriasdk.core
 import android.os.Handler
 import android.os.Looper
 import com.android.ometriasdk.core.Constants.Logger.NETWORK
+import com.android.ometriasdk.core.Constants.Params.CUSTOMER_ID
+import com.android.ometriasdk.core.Constants.Params.EMAIL
+import com.android.ometriasdk.core.Constants.Params.STORE_ID
 import com.android.ometriasdk.core.event.OmetriaEvent
 import com.android.ometriasdk.core.event.toApiRequest
 import com.android.ometriasdk.core.listener.ProcessAppLinkListener
@@ -103,7 +106,25 @@ internal class Repository(
         localCache.saveEmail(email)
     }
 
+    fun getStoreId(): String? = localCache.getStoreId()
+
+    fun saveStoreId(storeId: String) {
+        localCache.saveStoreId(storeId)
+    }
+
     fun getEmail(): String? = localCache.getEmail()
+
+    fun cacheProfileIdentifiedData(data: Map<String, Any>?) {
+        data?.let {
+            if (it[CUSTOMER_ID] != null) {
+                saveCustomerId(it[CUSTOMER_ID] as String)
+            } else {
+                saveEmail(it[EMAIL] as String)
+            }
+
+            it[STORE_ID]?.let { storeId -> saveStoreId(storeId as String) }
+        }
+    }
 
     fun clearProfileIdentifiedData() {
         localCache.clearProfileIdentifiedData()
