@@ -162,7 +162,7 @@ class HomeFragment : Fragment() {
                 .trackCustomEvent("my_custom_type", mapOf(Pair("param_key", "param_value")))
 
             EventType.SIMULATE_PUSH_TOKEN_REFRESHED -> FirebaseMessaging.getInstance().token.addOnCompleteListener { task ->
-                Ometria.instance().onNewToken(task.result)
+                Ometria.instance().onNewToken(task.result, true)
             }
 
             EventType.FLUSH -> Ometria.instance().flush()
