@@ -78,6 +78,7 @@ class HomeFragment : Fragment() {
         binding.customerIdET.isVisible = screenPosition == TAB_ONE
         binding.loginWithCustomerIdBTN.isVisible = screenPosition == TAB_ONE
         binding.storeIdET.isVisible = screenPosition == TAB_ONE
+        binding.setStoreIdBTN.isVisible = screenPosition == TAB_ONE
 
         binding.titleTV.isVisible =
             screenPosition == TAB_ONE && !ometriaNotificationString.isNullOrEmpty()
@@ -101,13 +102,14 @@ class HomeFragment : Fragment() {
             val storeId = binding.storeIdET.text.toString()
             val email = binding.emailET.text.toString()
             Ometria.instance().trackProfileIdentifiedByEmailEvent(email, storeId)
-            Ometria.instance().flush()
         }
         binding.loginWithCustomerIdBTN.setOnClickListener {
             val storeId = binding.storeIdET.text.toString()
             val customerId = binding.customerIdET.text.toString()
             Ometria.instance().trackProfileIdentifiedByCustomerIdEvent(customerId, storeId)
-            Ometria.instance().flush()
+        }
+        binding.setStoreIdBTN.setOnClickListener {
+            Ometria.instance().setStoreId(binding.storeIdET.text.toString())
         }
     }
 

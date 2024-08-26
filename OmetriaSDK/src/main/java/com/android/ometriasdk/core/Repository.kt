@@ -116,12 +116,8 @@ internal class Repository(
 
     fun cacheProfileIdentifiedData(data: Map<String, Any>?) {
         data?.let {
-            if (it[CUSTOMER_ID] != null) {
-                saveCustomerId(it[CUSTOMER_ID] as String)
-            } else {
-                saveEmail(it[EMAIL] as String)
-            }
-
+            it[CUSTOMER_ID]?.let { customerId -> saveCustomerId(customerId as String) }
+            it[EMAIL]?.let { email -> saveEmail(email as String) }
             it[STORE_ID]?.let { storeId -> saveStoreId(storeId as String) }
         }
     }

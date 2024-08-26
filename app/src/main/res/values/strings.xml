@@ -18,4 +18,5 @@
     <string name="do_it_later">Do it later</string>
     <string name="update_api_token">Update API Token</string>
     <string name="hint_store_id">Store Id</string>
+    <string name="set_store_id">Set store ID</string>
 </resources>

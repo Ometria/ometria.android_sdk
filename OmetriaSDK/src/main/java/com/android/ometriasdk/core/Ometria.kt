@@ -267,6 +267,7 @@ class Ometria private constructor() : OmetriaNotificationInteractionHandler {
      */
     fun setStoreId(storeId: String) {
         repository.saveStoreId(storeId)
+        trackProfileIdentifiedEvent()
     }
 
     private fun trackProfileIdentifiedEvent() {
