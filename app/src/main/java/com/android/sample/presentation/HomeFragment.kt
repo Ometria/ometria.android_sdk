@@ -109,7 +109,7 @@ class HomeFragment : Fragment() {
             Ometria.instance().trackProfileIdentifiedByCustomerIdEvent(customerId, storeId)
         }
         binding.setStoreIdBTN.setOnClickListener {
-            Ometria.instance().setStoreId(binding.storeIdET.text.toString())
+            Ometria.instance().updateStoreId(binding.storeIdET.text.toString())
         }
     }
 

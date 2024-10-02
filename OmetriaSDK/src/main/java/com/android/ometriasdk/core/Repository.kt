@@ -108,7 +108,7 @@ internal class Repository(
 
     fun getStoreId(): String? = localCache.getStoreId()
 
-    fun saveStoreId(storeId: String) {
+    fun saveStoreId(storeId: String?) {
         localCache.saveStoreId(storeId)
     }
 

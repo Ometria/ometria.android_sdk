@@ -258,14 +258,11 @@ class Ometria private constructor() : OmetriaNotificationInteractionHandler {
     }
 
     /**
+     * Updates the store identifier for the current user.
      *
-     *
-     * ToDo add description
-     *
-     *
-     * @param storeId The name of the screen
+     * @param storeId: The string representing the store identifier.
      */
-    fun setStoreId(storeId: String) {
+    fun updateStoreId(storeId: String?) {
         repository.saveStoreId(storeId)
         trackProfileIdentifiedEvent()
     }
@@ -334,11 +331,13 @@ class Ometria private constructor() : OmetriaNotificationInteractionHandler {
      * by e-mail event: send either event as soon as you have the information, for optimal integration.
      *
      * @param customerId The ID reserved for a particular user in your database.
+     * @param storeId: The string representing the store identifier.
      */
     fun trackProfileIdentifiedByCustomerIdEvent(customerId: String, storeId: String? = null) {
         val data = mutableMapOf<String, Any>(CUSTOMER_ID to customerId)
         storeId?.let { data[STORE_ID] = it }
-        trackEvent(OmetriaEventType.PROFILE_IDENTIFIED, data)
+        repository.cacheProfileIdentifiedData(data)
+        trackProfileIdentifiedEvent()
     }
 
     /**
@@ -347,11 +346,13 @@ class Ometria private constructor() : OmetriaNotificationInteractionHandler {
      * an profile identified by customerId event: send either event as soon as you have the information, for optimal integration.
      *
      * @param email: The email by which you identify a particular user in your database.
+     * @param storeId: The string representing the store identifier.
      */
     fun trackProfileIdentifiedByEmailEvent(email: String, storeId: String? = null) {
         val data = mutableMapOf<String, Any>(EMAIL to email)
         storeId?.let { data[STORE_ID] = it }
-        trackEvent(OmetriaEventType.PROFILE_IDENTIFIED, data)
+        repository.cacheProfileIdentifiedData(data)
+        trackProfileIdentifiedEvent()
     }
 
     /**

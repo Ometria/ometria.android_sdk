@@ -205,6 +205,11 @@ internal class LocalCache(private val context: Context) {
     fun saveStoreId(storeId: String?) {
         synchronized(this) {
             try {
+                if (storeId == null) {
+                    localCacheEncryptedPreferences.edit().remove(STORE_ID_KEY).apply()
+                    return
+                }
+
                 localCacheEncryptedPreferences.edit().putString(STORE_ID_KEY, storeId).apply()
             } catch (e: Exception) {
                 Logger.e(CACHE, e.message ?: "Failed to save storeId")
