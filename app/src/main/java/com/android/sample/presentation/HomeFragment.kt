@@ -167,6 +167,8 @@ class HomeFragment : Fragment() {
                 Ometria.instance().onNewToken(task.result, true)
             }
 
+            EventType.RESET_STORE_ID -> Ometria.instance().updateStoreId(null)
+
             EventType.FLUSH -> Ometria.instance().flush()
             EventType.CLEAR -> Ometria.instance().clear()
         }

@@ -18,6 +18,7 @@ enum class EventType {
     HOME_SCREEN_VIEWED,
     CUSTOM,
     SIMULATE_PUSH_TOKEN_REFRESHED,
+    RESET_STORE_ID,
     FLUSH,
     CLEAR
 }
