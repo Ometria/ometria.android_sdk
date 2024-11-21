@@ -127,7 +127,7 @@ Ometria.instance().trackBasketUpdatedEvent(basket = basket)
 An app user has just identified themselves, i.e. logged in.
 
 ```kotlin
-trackProfileIdentifiedByCustomerIdEvent(customerId: String)
+trackProfileIdentifiedByCustomerIdEvent(customerId: String, storeId: String? = null)
 ```
 
 Their **customer ID** is their **user ID** in your database.
@@ -135,7 +135,7 @@ Their **customer ID** is their **user ID** in your database.
 Sometimes a user only supplies their email address without fully logging in or having an account. In that case, Ometria can profile match based on email:
 
 ```kotlin
-trackProfileIdentifiedByEmailEvent(email: String)
+trackProfileIdentifiedByEmailEvent(email: String, storeId: String? = null)
 ```
 
 Having a **customerId** makes profile matching more robust. 
@@ -153,6 +153,33 @@ Use this if a user logs out, or otherwise signals that this device is no longer 
 ```kotlin
 trackProfileDeidentifiedEvent()
 ```
+
+#### Update store identifier
+
+Ometria supports multiple stores for the same ecommerce platform (e.g. separate stores for different countries).
+There are three different ways to update the store identifier:
+
+1. Using an optional parameter in the `profileIdentified` events tracking methods
+
+```kotlin
+trackProfileIdentifiedByCustomerIdEvent(customerId: String, storeId: String? = null)
+trackProfileIdentifiedByEmailEvent(email: String, storeId: String? = null)
+```
+
+When omitting the `storeId` parameter, or providing a `null` value, the store identifier will not be affected in any way. Only sending a valid, non-null parameter will cause the store identifier to be updated to that value.
+
+2. Using the dedicated method that allows setting/resetting the store identifier
+
+```kotlin
+updateStoreId(storeId: String?)
+```
+
+* with a null `storeId` parameter, the method resets the store identifier.
+* with a non-null `storeId` parameter, the method sets the store identifier to the provided value.
+
+3. Using the `profileDeidentified` event
+Tracking a profile deidentified event, will reset the `customerId`, the `email`, and the `storeId` for the current app installment.
+
 
 #### Product Viewed
 
