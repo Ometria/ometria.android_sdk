@@ -26,6 +26,7 @@ import com.android.ometriasdk.core.Constants.Params.PAGE
 import com.android.ometriasdk.core.Constants.Params.PRODUCT_ID
 import com.android.ometriasdk.core.Constants.Params.PROPERTIES
 import com.android.ometriasdk.core.Constants.Params.PUSH_TOKEN
+import com.android.ometriasdk.core.Constants.Params.STORE_ID
 import com.android.ometriasdk.core.event.EventHandler
 import com.android.ometriasdk.core.event.OmetriaBasket
 import com.android.ometriasdk.core.event.OmetriaEventType
@@ -249,10 +250,29 @@ class Ometria private constructor() : OmetriaNotificationInteractionHandler {
         }
     }
 
-    fun onNewToken(token: String) {
-        if (localCache.getPushToken() != token) {
+    // ToDo Remove forceRefresh parameter before release
+    fun onNewToken(token: String, forceRefresh: Boolean = false) {
+        if (localCache.getPushToken() != token || forceRefresh) {
             trackPushTokenRefreshedEvent(token)
         }
+    }
+
+    /**
+     * Updates the store identifier for the current user.
+     *
+     * @param storeId: The string representing the store identifier.
+     */
+    fun updateStoreId(storeId: String?) {
+        repository.saveStoreId(storeId)
+        trackProfileIdentifiedEvent()
+    }
+
+    private fun trackProfileIdentifiedEvent() {
+        val data = mutableMapOf<String, Any>()
+        repository.getEmail()?.let { data[EMAIL] = it }
+        repository.getCustomerId()?.let { data[CUSTOMER_ID] = it }
+        repository.getStoreId()?.let { data[STORE_ID] = it }
+        trackEvent(OmetriaEventType.PROFILE_IDENTIFIED, data)
     }
 
     private fun trackEvent(type: OmetriaEventType, data: Map<String, Any>? = null) {
@@ -311,9 +331,13 @@ class Ometria private constructor() : OmetriaNotificationInteractionHandler {
      * by e-mail event: send either event as soon as you have the information, for optimal integration.
      *
      * @param customerId The ID reserved for a particular user in your database.
+     * @param storeId: The string representing the store identifier.
      */
-    fun trackProfileIdentifiedByCustomerIdEvent(customerId: String) {
-        trackEvent(OmetriaEventType.PROFILE_IDENTIFIED, mapOf(CUSTOMER_ID to customerId))
+    fun trackProfileIdentifiedByCustomerIdEvent(customerId: String, storeId: String? = null) {
+        val data = mutableMapOf<String, Any>(CUSTOMER_ID to customerId)
+        storeId?.let { data[STORE_ID] = it }
+        repository.cacheProfileIdentifiedData(data)
+        trackProfileIdentifiedEvent()
     }
 
     /**
@@ -322,9 +346,13 @@ class Ometria private constructor() : OmetriaNotificationInteractionHandler {
      * an profile identified by customerId event: send either event as soon as you have the information, for optimal integration.
      *
      * @param email: The email by which you identify a particular user in your database.
+     * @param storeId: The string representing the store identifier.
      */
-    fun trackProfileIdentifiedByEmailEvent(email: String) {
-        trackEvent(OmetriaEventType.PROFILE_IDENTIFIED, mapOf(EMAIL to email))
+    fun trackProfileIdentifiedByEmailEvent(email: String, storeId: String? = null) {
+        val data = mutableMapOf<String, Any>(EMAIL to email)
+        storeId?.let { data[STORE_ID] = it }
+        repository.cacheProfileIdentifiedData(data)
+        trackProfileIdentifiedEvent()
     }
 
     /**
