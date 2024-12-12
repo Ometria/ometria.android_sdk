@@ -61,5 +61,5 @@ dependencies {
 
     // Add the SDK for Firebase Cloud Messaging
     implementation("com.google.firebase:firebase-messaging:24.1.0")
-    implementation("com.google.android.gms:play-services-base:18.4.0")
+    implementation("com.google.android.gms:play-services-base:18.5.0")
 }
