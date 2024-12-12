@@ -43,7 +43,7 @@ dependencies {
     implementation("androidx.lifecycle:lifecycle-common-java8:2.6.1")
 
     // Add the SDK for Firebase Cloud Messaging
-    implementation("com.google.firebase:firebase-messaging:24.0.0")
+    implementation("com.google.firebase:firebase-messaging:24.1.0")
 }
 
 // Publishing
