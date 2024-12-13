@@ -1,6 +1,11 @@
 package com.android.sample
 
+import android.app.Notification
+import android.app.NotificationChannel
+import android.app.NotificationManager
 import android.content.Context
+import androidx.core.app.NotificationCompat
+import androidx.work.ForegroundInfo
 import androidx.work.Worker
 import androidx.work.WorkerParameters
 import com.google.android.gms.common.GoogleApiAvailability
@@ -37,5 +42,29 @@ class PatchWorker(private val appContext: Context, workerParams: WorkerParameter
 
         // If this is reached, you know that the provider was already up to date or was successfully updated.
         return Result.success()
+    }
+
+    override fun getForegroundInfo(): ForegroundInfo {
+        val notificationId = 1
+        val channelId = "PATCH_WORKER_CHANNEL"
+        val notificationManager =
+            applicationContext.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+            val channel = NotificationChannel(
+                channelId,
+                "Patch Worker",
+                NotificationManager.IMPORTANCE_DEFAULT
+            )
+            notificationManager.createNotificationChannel(channel)
+        }
+
+        val notification: Notification = NotificationCompat.Builder(applicationContext, channelId)
+            .setContentTitle("Patch Worker")
+            .setContentText("Expedited work in progress")
+            .setSmallIcon(R.drawable.ic_notification_nys)
+            .build()
+
+        return ForegroundInfo(notificationId, notification)
     }
 }
