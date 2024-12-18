@@ -250,9 +250,8 @@ class Ometria private constructor() : OmetriaNotificationInteractionHandler {
         }
     }
 
-    // ToDo Remove forceRefresh parameter before release
-    fun onNewToken(token: String, forceRefresh: Boolean = false) {
-        if (localCache.getPushToken() != token || forceRefresh) {
+    fun onNewToken(token: String) {
+        if (localCache.getPushToken() != token) {
             trackPushTokenRefreshedEvent(token)
         }
     }
