@@ -23,6 +23,7 @@ private const val IS_FIRST_PERMISSION_UPDATE_EVENT_KEY = "IS_FIRST_PERMISSION_UP
 private const val JSON_ARRAY = "[]"
 private const val SDK_VERSION_RN_KEY = "SDK_VERSION_RN_KEY"
 private const val API_TOKEN_KEY = "API_TOKEN_KEY"
+private const val LAST_PUSH_TOKEN_REFRESH_TIMESTAMP_KEY = "LAST_PUSH_TOKEN_REFRESH_TIMESTAMP_KEY"
 
 internal class LocalCache(private val context: Context) {
 
@@ -284,5 +285,21 @@ internal class LocalCache(private val context: Context) {
 
     fun getApiToken(): String? {
         return localCacheEncryptedPreferences.getString(API_TOKEN_KEY, null)
+    }
+
+    fun saveLastPushTokenRefreshTimestamp(timestamp: Long) {
+        synchronized(this) {
+            try {
+                localCacheEncryptedPreferences.edit().putLong(
+                    LAST_PUSH_TOKEN_REFRESH_TIMESTAMP_KEY, timestamp
+                ).apply()
+            } catch (e: Exception) {
+                Logger.e(CACHE, e.message ?: "Failed to save apiToken")
+            }
+        }
+    }
+
+    fun getLastPushTokenRefreshTimestamp(): Long {
+        return localCacheEncryptedPreferences.getLong(LAST_PUSH_TOKEN_REFRESH_TIMESTAMP_KEY, 0)
     }
 }

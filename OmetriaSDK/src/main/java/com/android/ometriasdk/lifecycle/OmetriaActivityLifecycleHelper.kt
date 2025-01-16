@@ -9,6 +9,7 @@ import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
 import com.android.ometriasdk.core.Ometria
 import com.android.ometriasdk.core.Repository
+import com.android.ometriasdk.util.isOlderThanAWeek
 import java.util.concurrent.atomic.AtomicBoolean
 
 internal class OmetriaActivityLifecycleHelper(
@@ -56,6 +57,13 @@ internal class OmetriaActivityLifecycleHelper(
      */
     override fun onStop(owner: LifecycleOwner) {
         Ometria.instance().trackAppBackgroundedEvent()
+
+        if (repository.getLastPushTokenRefreshTimestamp() == 0L
+            || repository.getLastPushTokenRefreshTimestamp().isOlderThanAWeek()
+        ) {
+            Ometria.instance().trackPushTokenRefreshedEvent(repository.getPushToken())
+            repository.saveLastPushTokenRefreshTimestamp(System.currentTimeMillis())
+        }
     }
 
     // ActivityLifecycleCallbacks

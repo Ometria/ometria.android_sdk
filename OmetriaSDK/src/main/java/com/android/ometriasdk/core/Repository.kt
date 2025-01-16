@@ -106,13 +106,13 @@ internal class Repository(
         localCache.saveEmail(email)
     }
 
-    fun getStoreId(): String? = localCache.getStoreId()
+    fun getEmail(): String? = localCache.getEmail()
 
     fun saveStoreId(storeId: String?) {
         localCache.saveStoreId(storeId)
     }
 
-    fun getEmail(): String? = localCache.getEmail()
+    fun getStoreId(): String? = localCache.getStoreId()
 
     fun cacheProfileIdentifiedData(data: Map<String, Any>?) {
         data?.let {
@@ -164,4 +164,10 @@ internal class Repository(
     }
 
     fun getSdkVersionRN(): String? = localCache.getSdkVersionRN()
+
+    fun saveLastPushTokenRefreshTimestamp(timestamp: Long) {
+        localCache.saveLastPushTokenRefreshTimestamp(timestamp)
+    }
+
+    fun getLastPushTokenRefreshTimestamp(): Long = localCache.getLastPushTokenRefreshTimestamp()
 }

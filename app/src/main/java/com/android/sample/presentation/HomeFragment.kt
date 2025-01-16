@@ -164,7 +164,7 @@ class HomeFragment : Fragment() {
                 .trackCustomEvent("my_custom_type", mapOf(Pair("param_key", "param_value")))
 
             EventType.SIMULATE_PUSH_TOKEN_REFRESHED -> FirebaseMessaging.getInstance().token.addOnCompleteListener { task ->
-                Ometria.instance().onNewToken(task.result, true)
+                Ometria.instance().onNewToken(task.result)
             }
 
             EventType.RESET_STORE_ID -> Ometria.instance().updateStoreId(null)
