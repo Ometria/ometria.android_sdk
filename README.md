@@ -31,7 +31,7 @@ To install the library inside **Android Studio**, declare it as dependency in yo
 
 ```gradle
 dependencies {
-    implementation 'com.ometria:android-sdk:1.9.0'
+    implementation 'com.ometria:android-sdk:1.9.1'
 }
 ```
 
@@ -392,7 +392,7 @@ Ometria requires firebase-messaging, we recommend using the latest version.
 Add the following to your build.gradle, if not already present:
 
 ```gradle
-implementation 'com.google.firebase:firebase-messaging:20.2.4'
+implementation 'com.google.firebase:firebase-messaging:24.1.0'
 ```
 
 Android 13 (API level 33) and higher requires a runtime permission for sending push notifications. If you target Android 13 or higher
