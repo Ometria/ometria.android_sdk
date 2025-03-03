@@ -11,11 +11,10 @@ import com.android.ometriasdk.core.event.toApiRequest
 import com.android.ometriasdk.core.listener.ProcessAppLinkListener
 import com.android.ometriasdk.core.network.Client
 import com.android.ometriasdk.core.network.OmetriaThreadPoolExecutor
+import com.android.ometriasdk.core.network.RedirectService
 import com.android.ometriasdk.core.network.model.OmetriaApiRequest
 import java.io.IOException
-import java.net.HttpURLConnection
 import java.net.MalformedURLException
-import java.net.URL
 
 private const val TOO_MANY_REQUESTS_STATUS_CODE = 429
 
@@ -135,31 +134,24 @@ internal class Repository(
 
     fun isFirstPermissionsUpdateEvent(): Boolean = localCache.isFirstPermissionsUpdateEvent()
 
-    fun getRedirectForUrl(url: String, listener: ProcessAppLinkListener) {
+    fun getRedirectForUrl(
+        url: String,
+        listener: ProcessAppLinkListener,
+        domain: String? = null,
+        regex: Regex? = null
+    ) {
         executor.execute {
-            val urlTemp: URL?
-            val connection: HttpURLConnection?
+            val finalUrl: String
             try {
-                urlTemp = URL(url)
+                finalUrl = RedirectService.getFinalRedirectUrl(url = url, domain = domain, regex = regex)
             } catch (e: MalformedURLException) {
                 resultHandler.post { listener.onProcessFailed(e.message ?: "Something went wrong") }
                 return@execute
-            }
-            try {
-                connection = urlTemp.openConnection() as? HttpURLConnection
             } catch (e: IOException) {
                 resultHandler.post { listener.onProcessFailed(e.message ?: "Something went wrong") }
                 return@execute
             }
-            try {
-                connection?.responseCode
-            } catch (e: IOException) {
-                resultHandler.post { listener.onProcessFailed(e.message ?: "Something went wrong") }
-                connection?.disconnect()
-                return@execute
-            }
-            resultHandler.post { listener.onProcessResult(connection?.url.toString()) }
-            connection?.disconnect()
+            resultHandler.post { listener.onProcessResult(finalUrl.toString()) }
         }
     }
 

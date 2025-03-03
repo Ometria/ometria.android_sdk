@@ -32,8 +32,7 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        val ometriaNotificationString =
-            intent.getStringExtra(OMETRIA_NOTIFICATION_STRING_EXTRA_KEY).orEmpty()
+        val ometriaNotificationString = intent.getStringExtra(OMETRIA_NOTIFICATION_STRING_EXTRA_KEY).orEmpty()
         val deepLinkActionUrl = intent.getStringExtra(DEEPLINK_ACTION_URL_EXTRA_KEY)
 
         setUpBottomNavMenu()
@@ -61,21 +60,21 @@ class MainActivity : AppCompatActivity() {
         switchFragment(0)
         binding.bottomMenuBnv.menu.getItem(0).isChecked = true
 
-        binding.containerVP.registerOnPageChangeCallback(object :
-            ViewPager2.OnPageChangeCallback() {
-            override fun onPageScrollStateChanged(state: Int) {}
+        binding.containerVP.registerOnPageChangeCallback(
+            object : ViewPager2.OnPageChangeCallback() {
+                override fun onPageScrollStateChanged(state: Int) {}
 
-            override fun onPageScrolled(
-                position: Int,
-                positionOffset: Float,
-                positionOffsetPixels: Int
-            ) {
-            }
+                override fun onPageScrolled(
+                    position: Int,
+                    positionOffset: Float,
+                    positionOffsetPixels: Int
+                ) = Unit
 
-            override fun onPageSelected(position: Int) {
-                binding.bottomMenuBnv.menu.getItem(position).isChecked = true
+                override fun onPageSelected(position: Int) {
+                    binding.bottomMenuBnv.menu.getItem(position).isChecked = true
+                }
             }
-        })
+        )
     }
 
     private fun handleAppLinkFromIntent(deepLinkActionUrl: String?) {
@@ -85,15 +84,18 @@ class MainActivity : AppCompatActivity() {
         // The processing is done async, so you should present a loading screen.
         val url = deepLinkActionUrl ?: intent.dataString
         url?.let { safeUrl ->
-            Ometria.instance().processAppLink(safeUrl, object : ProcessAppLinkListener {
-                override fun onProcessResult(url: String) {
-                    openBrowser(url)
-                }
+            Ometria.instance().processAppLink(
+                url = safeUrl,
+                listener = object : ProcessAppLinkListener {
+                    override fun onProcessResult(url: String) {
+                        openBrowser(url)
+                    }
 
-                override fun onProcessFailed(error: String) {
-                    displayRedirectUrlDialog("$error $safeUrl")
+                    override fun onProcessFailed(error: String) {
+                        displayRedirectUrlDialog("$error $safeUrl")
+                    }
                 }
-            })
+            )
         }
     }
 

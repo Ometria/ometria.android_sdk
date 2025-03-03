@@ -535,9 +535,37 @@ class Ometria private constructor() : OmetriaNotificationInteractionHandler {
      * Retrieves the redirect url for the url that you provide.
      * @param url The url that will be processed.
      * @param listener The callback interface.
+     *
+     * Note: If no redirect url is found, the initial url will be provided in the callback.
      */
     fun processAppLink(url: String, listener: ProcessAppLinkListener) {
-        repository.getRedirectForUrl(url, listener)
+        repository.getRedirectForUrl(url = url, listener = listener)
+    }
+
+    /**
+     * Retrieves the redirect url for the url that you provide.
+     * @param url The url that will be processed.
+     * @param domain If a url that belongs to the given domain is found, then that is returned in the callback.
+     * Otherwise the callback returns the url retrieved after the last redirect.
+     * @param listener The callback interface.
+     *
+     * Note: If no redirect url is found, the initial url will be provided in the callback.
+     */
+    fun processAppLink(url: String, domain: String, listener: ProcessAppLinkListener) {
+        repository.getRedirectForUrl(url = url, domain = domain, listener = listener)
+    }
+
+    /**
+     * Retrieves the redirect url for the url that you provide.
+     * @param url The url that will be processed.
+     * @param regex If a url that matches the given regex is found, then that is returned in the callback.
+     * Otherwise the callback returns the url retrieved after the last redirect.
+     * @param listener The callback interface.
+     *
+     * Note: If no redirect url is found, the initial url will be provided in the callback.
+     */
+    fun processAppLink(url: String, regex: Regex, listener: ProcessAppLinkListener) {
+        repository.getRedirectForUrl(url = url, regex = regex, listener = listener)
     }
 
     /**
