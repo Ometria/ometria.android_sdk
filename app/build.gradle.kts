@@ -13,7 +13,7 @@ android {
         applicationId = "com.android.sample"
         minSdk = 23
         targetSdk = 33
-        versionCode = 17
+        versionCode = 19
         versionName = "1.9.1"
     }
     signingConfigs {

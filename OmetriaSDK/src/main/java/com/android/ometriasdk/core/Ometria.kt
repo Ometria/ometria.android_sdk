@@ -355,6 +355,27 @@ class Ometria private constructor() : OmetriaNotificationInteractionHandler {
     }
 
     /**
+     * Tracks the current app user being identified by email and customerId.
+     * An app user has just identified themselves. This basically means: a user has logged in.
+     *
+     * Note: If you don't have a one of the values, you can use the alternate versions of this method:
+     * trackProfileIdentifiedByEmailEvent(email: String) OR trackProfileIdentifiedByCustomerIdEvent(customerId: String)
+     *
+     * @param email: The email by which you identify a particular user in your database.
+     * @param customerId: The ID reserved for a particular user in your database.
+     * @param storeId: The string representing the store identifier.
+     */
+    fun trackProfileIdentifiedEvent(email: String, customerId: String, storeId: String? = null) {
+        val data = mutableMapOf<String, Any>(
+            EMAIL to email,
+            CUSTOMER_ID to customerId
+        )
+        storeId?.let { data[STORE_ID] = it }
+        repository.cacheProfileIdentifiedData(data)
+        trackProfileIdentifiedEvent()
+    }
+
+    /**
      * Track the current app user being deidentified.
      * An app user has deidentified themselves. This basically means: a user has logged out.
      */
