@@ -28,8 +28,7 @@ private const val NO_VALUE = -1L
  * Class used to process logged or intercepted events.
  */
 internal class EventHandler(context: Context, private val repository: Repository) {
-    private val dateFormat: DateFormat =
-        SimpleDateFormat(API_DATE_FORMAT, Locale.UK)
+    private val dateFormat: DateFormat = SimpleDateFormat(API_DATE_FORMAT, Locale.UK)
     private val appId = context.packageName
     private val packageInfo = context.packageManager.getPackageInfo(context.packageName, 0)
     private var syncTimestamp: Long = NO_VALUE
@@ -38,16 +37,16 @@ internal class EventHandler(context: Context, private val repository: Repository
         type: OmetriaEventType,
         data: MutableMap<String, Any>? = null
     ) {
-        val installationId = repository.getInstallationId()
+        val installationId = repository.installationId
         val appVersion = packageInfo.versionName
         val appBuildNumber = PackageInfoCompat.getLongVersionCode(packageInfo).toString()
 
         if (type == OmetriaEventType.PUSH_TOKEN_REFRESHED) {
             data?.let {
                 repository.savePushToken(it[PUSH_TOKEN] as String)
-                repository.getCustomerId()?.let { customerId -> data[CUSTOMER_ID] = customerId }
-                repository.getEmail()?.let { email -> data[EMAIL] = email }
-                repository.getStoreId()?.let { storeId -> data[STORE_ID] = storeId }
+                repository.customerId?.let { customerId -> data[CUSTOMER_ID] = customerId }
+                repository.email?.let { email -> data[EMAIL] = email }
+                repository.storeId?.let { storeId -> data[STORE_ID] = storeId }
             }
         }
 
@@ -60,14 +59,14 @@ internal class EventHandler(context: Context, private val repository: Repository
             appBuildNumber = appBuildNumber,
             type = type.id,
             data = data,
-            sdkVersionRN = repository.getSdkVersionRN()
+            sdkVersionRN = repository.sdkVersionRN
         )
 
         sendEvent(event)
 
         when (event.type) {
             OmetriaEventType.PROFILE_IDENTIFIED.id -> {
-                Ometria.instance().trackPushTokenRefreshedEvent(repository.getPushToken())
+                Ometria.instance().trackPushTokenRefreshedEvent(repository.pushToken)
             }
 
             OmetriaEventType.PROFILE_DEIDENTIFIED.id -> repository.clearProfileIdentifiedData()
@@ -96,7 +95,7 @@ internal class EventHandler(context: Context, private val repository: Repository
     }
 
     fun flushEvents() {
-        val events = repository.getEvents().filter { !it.isBeingFlushed }
+        val events = repository.events.filter { !it.isBeingFlushed }
 
         events.groupBy { it.batchIdentifier() }.forEach { group ->
             group.value
@@ -121,9 +120,7 @@ internal class EventHandler(context: Context, private val repository: Repository
      * Checks if enough time passed between two consecutive flushes
      */
     private fun canFlush(): Boolean {
-        return (System.currentTimeMillis() >= syncTimestamp + TimeUnit.SECONDS.toMillis(
-            THROTTLE_LIMIT
-        )).also {
+        return (System.currentTimeMillis() >= syncTimestamp + TimeUnit.SECONDS.toMillis(THROTTLE_LIMIT)).also {
             if (!it) {
                 Logger.d(
                     NETWORK,
@@ -137,6 +134,5 @@ internal class EventHandler(context: Context, private val repository: Repository
      * Checks if the size of cached events list, which are not currently being flushed, is greater than
      * the [FLUSH_LIMIT]
      */
-    private fun shouldFlush(): Boolean =
-        repository.getEvents().filter { !it.isBeingFlushed }.size >= FLUSH_LIMIT
+    private fun shouldFlush(): Boolean = repository.events.count { !it.isBeingFlushed } >= FLUSH_LIMIT
 }

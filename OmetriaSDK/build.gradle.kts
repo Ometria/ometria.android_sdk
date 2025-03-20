@@ -1,4 +1,4 @@
-val versionName = "1.9.1"
+val versionName = "1.10.0"
 
 plugins {
     id("com.android.library")
@@ -7,7 +7,7 @@ plugins {
 
 android {
     namespace = "com.android.ometriasdk"
-    compileSdk = 34
+    compileSdk = 35
 
     defaultConfig {
         minSdk = 23
@@ -40,16 +40,14 @@ android {
     }
 }
 
-val kotlinVersion = rootProject.extra.get("kotlin_version") as String
-
 dependencies {
     implementation(fileTree(mapOf("dir" to "libs", "include" to listOf("*.jar"))))
 
     // Android Core
-    implementation("org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion")
-    implementation("androidx.core:core-ktx:1.13.1")
+    implementation("androidx.core:core-ktx:1.15.0")
     implementation("androidx.appcompat:appcompat:1.7.0")
     implementation("androidx.security:security-crypto:1.0.0")
+    implementation("androidx.datastore:datastore-preferences:1.1.3")
 
     // Lifecycle
     implementation("androidx.lifecycle:lifecycle-process:2.8.7")

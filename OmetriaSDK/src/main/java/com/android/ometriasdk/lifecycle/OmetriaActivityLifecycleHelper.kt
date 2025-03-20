@@ -38,7 +38,7 @@ internal class OmetriaActivityLifecycleHelper(
      * and Bring Application to Foreground event
      */
     override fun onStart(owner: LifecycleOwner) {
-        if (repository.isFirstAppRun()) {
+        if (repository.isFirstAppRun) {
             Ometria.instance().trackAppInstalledEvent()
             repository.saveIsFirstAppRun(false)
         }
@@ -58,10 +58,8 @@ internal class OmetriaActivityLifecycleHelper(
     override fun onStop(owner: LifecycleOwner) {
         Ometria.instance().trackAppBackgroundedEvent()
 
-        if (repository.getLastPushTokenRefreshTimestamp() == 0L
-            || repository.getLastPushTokenRefreshTimestamp().isOlderThanAWeek()
-        ) {
-            Ometria.instance().trackPushTokenRefreshedEvent(repository.getPushToken())
+        if (repository.lastPushTokenRefreshTimestamp == 0L || repository.lastPushTokenRefreshTimestamp.isOlderThanAWeek()) {
+            Ometria.instance().trackPushTokenRefreshedEvent(repository.pushToken)
             repository.saveLastPushTokenRefreshTimestamp(System.currentTimeMillis())
         }
     }
@@ -91,9 +89,8 @@ internal class OmetriaActivityLifecycleHelper(
      * Using activity resumed callback to update Notifications opt-in/out
      */
     override fun onActivityResumed(activity: Activity) {
-        val areNotificationsEnabled =
-            NotificationManagerCompat.from(context).areNotificationsEnabled()
-        if (areNotificationsEnabled != repository.areNotificationsEnabled() || repository.isFirstPermissionsUpdateEvent()) {
+        val areNotificationsEnabled = NotificationManagerCompat.from(context).areNotificationsEnabled()
+        if (areNotificationsEnabled != repository.areNotificationsEnabled || repository.isFirstPermissionsUpdateEvent) {
             repository.saveAreNotificationsEnabled(areNotificationsEnabled)
             Ometria.instance().trackPermissionsUpdateEvent(areNotificationsEnabled)
         }
