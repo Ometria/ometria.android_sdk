@@ -145,8 +145,8 @@ class HomeFragment : Fragment() {
                 .trackProfileIdentifiedByCustomerIdEvent(customerId = "test_customer_id")
 
             EventType.PROFILE_IDENTIFIED_BY_CUSTOMER_ID_AND_STORE_ID -> Ometria.instance()
-                .trackProfileIdentifiedByEmailEvent(
-                    email = "test_customer_id",
+                .trackProfileIdentifiedByCustomerIdEvent(
+                    customerId = "test_customer_id",
                     storeId = "test_store_id"
                 )
 
