@@ -17,6 +17,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import java.io.IOException
 import java.net.MalformedURLException
 
@@ -131,41 +132,41 @@ internal class Repository(
     }
 
     fun saveIsFirstAppRun(isFirstAppRun: Boolean) {
-        coroutineScope.launch { localCache.saveIsFirstAppRun(isFirstAppRun) }
+        runBlocking { localCache.saveIsFirstAppRun(isFirstAppRun) }
     }
 
     fun saveInstallationId(installationId: String) {
-        coroutineScope.launch { localCache.saveInstallationId(installationId) }
+        runBlocking { localCache.saveInstallationId(installationId) }
     }
 
     fun saveEvent(ometriaEvent: OmetriaEvent) {
-        coroutineScope.launch { localCache.saveEvent(ometriaEvent) }
+        runBlocking { localCache.saveEvent(ometriaEvent) }
     }
 
     private fun updateEvents(events: List<OmetriaEvent>?, isBeingFlushed: Boolean) {
-        coroutineScope.launch { localCache.updateEvents(events, isBeingFlushed) }
+        runBlocking { localCache.updateEvents(events, isBeingFlushed) }
     }
 
     private fun removeEvents(events: List<OmetriaEvent>?) {
         events ?: return
 
-        coroutineScope.launch { localCache.removeEvents(events) }
+        runBlocking { localCache.removeEvents(events) }
     }
 
     fun savePushToken(pushToken: String) {
-        coroutineScope.launch { localCache.savePushToken(pushToken) }
+        runBlocking { localCache.savePushToken(pushToken) }
     }
 
     fun saveCustomerId(customerId: String) {
-        coroutineScope.launch { localCache.saveCustomerId(customerId) }
+        runBlocking { localCache.saveCustomerId(customerId) }
     }
 
     fun saveEmail(email: String) {
-        coroutineScope.launch { localCache.saveEmail(email) }
+        runBlocking { localCache.saveEmail(email) }
     }
 
     fun saveStoreId(storeId: String?) {
-        coroutineScope.launch { localCache.saveStoreId(storeId) }
+        runBlocking { localCache.saveStoreId(storeId) }
     }
 
     fun cacheProfileIdentifiedData(data: Map<String, Any>?) {
@@ -177,11 +178,11 @@ internal class Repository(
     }
 
     fun clearProfileIdentifiedData() {
-        coroutineScope.launch { localCache.clearProfileIdentifiedData() }
+        runBlocking { localCache.clearProfileIdentifiedData() }
     }
 
     fun saveAreNotificationsEnabled(areNotificationsEnabled: Boolean) {
-        coroutineScope.launch {
+        runBlocking {
             localCache.saveAreNotificationsEnabled(areNotificationsEnabled)
             localCache.saveIsFirstPermissionsUpdateEvent(false)
         }
@@ -209,14 +210,14 @@ internal class Repository(
     }
 
     fun saveLastPushTokenRefreshTimestamp(timestamp: Long) {
-        coroutineScope.launch { localCache.saveLastPushTokenRefreshTimestamp(timestamp) }
+        runBlocking { localCache.saveLastPushTokenRefreshTimestamp(timestamp) }
     }
 
     fun saveApiToken(apiToken: String) {
-        coroutineScope.launch { localCache.saveApiToken(apiToken) }
+        runBlocking { localCache.saveApiToken(apiToken) }
     }
 
     fun clearEvents() {
-        coroutineScope.launch { localCache.clearEvents() }
+        runBlocking { localCache.clearEvents() }
     }
 }

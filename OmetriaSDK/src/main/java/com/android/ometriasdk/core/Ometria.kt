@@ -134,7 +134,7 @@ class Ometria private constructor() : OmetriaNotificationInteractionHandler {
                 application.registerActivityLifecycleCallbacks(it.activityLifecycleHelper)
             }
 
-            if (it.repository.pushToken.isNullOrEmpty()) {
+            if (runBlocking { it.localDataStore.getPushToken().firstOrNull() }.isNullOrEmpty()) {
                 it.retrieveFirebaseToken()
             }
 
