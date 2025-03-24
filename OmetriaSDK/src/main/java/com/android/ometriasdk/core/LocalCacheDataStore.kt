@@ -12,12 +12,10 @@ import androidx.datastore.preferences.preferencesDataStore
 import com.android.ometriasdk.core.event.OmetriaEvent
 import com.android.ometriasdk.core.network.toJson
 import com.android.ometriasdk.core.network.toOmetriaEventList
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 
 private const val LOCAL_CACHE_DATA_STORE_PREFERENCES = "LOCAL_CACHE_DATA_STORE_PREFERENCES"
 private const val JSON_ARRAY = "[]"
@@ -32,7 +30,7 @@ internal class LocalCacheDataStore(private val context: Context) {
         }
     }
 
-    private fun copyDataFromOldCache(oldCache: LocalCache) = CoroutineScope(Dispatchers.IO).launch {
+    private fun copyDataFromOldCache(oldCache: LocalCache) = runBlocking {
         context.localCacheDataStore.edit { preferences: MutablePreferences ->
             preferences[PreferencesKeys.isFirstAppRun] = oldCache.isFirstAppRun()
             preferences[PreferencesKeys.events] = oldCache.getEvents().toJson().toString()
