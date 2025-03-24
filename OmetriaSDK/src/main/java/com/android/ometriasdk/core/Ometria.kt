@@ -4,9 +4,9 @@ import android.app.Application
 import android.app.Notification.COLOR_DEFAULT
 import android.content.Context
 import android.content.Intent
-import android.net.Uri
 import android.webkit.URLUtil
 import androidx.core.app.NotificationManagerCompat
+import androidx.core.net.toUri
 import androidx.lifecycle.ProcessLifecycleOwner
 import com.android.ometriasdk.core.Constants.Params.BASKET
 import com.android.ometriasdk.core.Constants.Params.CLASS
@@ -44,6 +44,8 @@ import com.android.ometriasdk.notification.OmetriaNotificationInteractionHandler
 import com.google.android.gms.tasks.OnCompleteListener
 import com.google.firebase.messaging.FirebaseMessaging
 import com.google.firebase.messaging.RemoteMessage
+import kotlinx.coroutines.flow.firstOrNull
+import kotlinx.coroutines.runBlocking
 import java.util.UUID
 
 /**
@@ -54,7 +56,8 @@ class Ometria private constructor() : OmetriaNotificationInteractionHandler {
 
     private lateinit var ometriaConfig: OmetriaConfig
     private var isInitialized = false
-    private lateinit var localCache: LocalCache
+
+    private lateinit var localDataStore: LocalCacheDataStore
     private lateinit var eventHandler: EventHandler
     private lateinit var repository: Repository
     private lateinit var notificationHandler: NotificationHandler
@@ -93,13 +96,13 @@ class Ometria private constructor() : OmetriaNotificationInteractionHandler {
         ) = instance.also {
             clearOldInstanceIfNeeded()
 
-            it.ometriaConfig = OmetriaConfig(apiToken, application)
-            it.localCache = LocalCache(application)
+            it.ometriaConfig = OmetriaConfig(apiToken = apiToken, application = application)
+            it.localDataStore = LocalCacheDataStore(context = application)
             it.executor = OmetriaThreadPoolExecutor()
             it.repository = Repository(
-                Client(ConnectionFactory(it.ometriaConfig)),
-                it.localCache,
-                it.executor
+                client = Client(connectionFactory = ConnectionFactory(ometriaConfig = it.ometriaConfig)),
+                localCache = it.localDataStore,
+                executor = it.executor
             )
             it.eventHandler = EventHandler(application, it.repository)
             it.notificationHandler =
@@ -131,11 +134,11 @@ class Ometria private constructor() : OmetriaNotificationInteractionHandler {
                 application.registerActivityLifecycleCallbacks(it.activityLifecycleHelper)
             }
 
-            if (it.localCache.getPushToken().isNullOrEmpty()) {
+            if (runBlocking { it.localDataStore.getPushToken().firstOrNull() }.isNullOrEmpty()) {
                 it.retrieveFirebaseToken()
             }
 
-            it.localCache.saveApiToken(apiToken)
+            it.repository.saveApiToken(apiToken = apiToken)
         }
 
         /**
@@ -143,23 +146,22 @@ class Ometria private constructor() : OmetriaNotificationInteractionHandler {
          * Note: Not all SDK functions will be available after this initialization.
          * @return An initialized Ometria instance object.
          */
-        internal fun initializeForInternalUsage(context: Context) =
-            instance.also {
-                it.executor = OmetriaThreadPoolExecutor()
-                it.localCache = LocalCache(context)
+        internal fun initializeForInternalUsage(context: Context) = instance.also {
+            it.executor = OmetriaThreadPoolExecutor()
+            it.localDataStore = LocalCacheDataStore(context)
 
-                val apiToken = it.localCache.getApiToken()
-                apiToken ?: return@also
+            val apiToken = runBlocking { it.localDataStore.getApiToken().firstOrNull() }
+            apiToken ?: return@also
 
-                it.ometriaConfig = OmetriaConfig(apiToken, context)
-                it.repository = Repository(
-                    Client(ConnectionFactory(it.ometriaConfig)),
-                    it.localCache,
-                    it.executor
-                )
-                it.eventHandler = EventHandler(context, it.repository)
-                it.isInitialized = true
-            }
+            it.ometriaConfig = OmetriaConfig(apiToken = apiToken, application = context)
+            it.repository = Repository(
+                client = Client(connectionFactory = ConnectionFactory(it.ometriaConfig)),
+                localCache = it.localDataStore,
+                executor = it.executor
+            )
+            it.eventHandler = EventHandler(context = context, repository = it.repository)
+            it.isInitialized = true
+        }
 
         private fun clearOldInstanceIfNeeded() {
             if (instance.isInitialized) {
@@ -187,30 +189,32 @@ class Ometria private constructor() : OmetriaNotificationInteractionHandler {
         }
     }
 
-    internal fun isReactNativeUsage(): Boolean = repository.getSdkVersionRN() != null
+    internal fun isReactNativeUsage(): Boolean = repository.sdkVersionRN != null
 
     private fun retrieveFirebaseToken() {
-        FirebaseMessaging.getInstance().token.addOnCompleteListener(OnCompleteListener { task ->
-            if (!task.isSuccessful) {
-                Logger.w(
-                    Constants.Logger.EVENTS,
-                    "Fetching FCM registration token failed."
-                )
-                return@OnCompleteListener
-            }
+        FirebaseMessaging.getInstance().token.addOnCompleteListener(
+            OnCompleteListener { task ->
+                if (!task.isSuccessful) {
+                    Logger.w(
+                        Constants.Logger.EVENTS,
+                        "Fetching FCM registration token failed."
+                    )
+                    return@OnCompleteListener
+                }
 
-            val token = task.result
-            Logger.d(Constants.Logger.PUSH_NOTIFICATIONS, "Token - $token")
-            instance.onNewToken(token)
-        })
+                val token = task.result
+                Logger.d(Constants.Logger.PUSH_NOTIFICATIONS, "Token - $token")
+                instance.onNewToken(token)
+            }
+        )
     }
 
-    private fun shouldGenerateInstallationId(): Boolean = repository.getInstallationId() == null
+    private fun shouldGenerateInstallationId(): Boolean = repository.installationId == null
 
     internal fun generateInstallationId() {
         val installationId = UUID.randomUUID().toString()
 
-        repository.saveInstallationId(installationId)
+        repository.saveInstallationId(installationId = installationId)
     }
 
     /**
@@ -231,14 +235,17 @@ class Ometria private constructor() : OmetriaNotificationInteractionHandler {
      * notificationReceived event.
      */
     fun onMessageReceived(remoteMessage: RemoteMessage) {
-        notificationHandler.handleNotification(remoteMessage)
+        notificationHandler.handleNotification(remoteMessage = remoteMessage)
     }
 
     /**
      * Extracts OmetriaNotification from RemoteMessage and tracks notificationReceived event.
      */
     fun onNotificationReceived(remoteMessage: RemoteMessage) {
-        notificationHandler.handleNotification(remoteMessage, false)
+        notificationHandler.handleNotification(
+            remoteMessage = remoteMessage,
+            shouldDisplayNotification = false
+        )
     }
 
     /**
@@ -246,13 +253,13 @@ class Ometria private constructor() : OmetriaNotificationInteractionHandler {
      */
     fun onNotificationInteracted(remoteMessage: RemoteMessage) {
         remoteMessage.toOmetriaNotificationBody()?.let { ometriaPushNotificationBody ->
-            trackNotificationInteractedEvent(ometriaPushNotificationBody.context ?: return)
+            trackNotificationInteractedEvent(context = ometriaPushNotificationBody.context ?: return)
         }
     }
 
     fun onNewToken(token: String) {
-        if (localCache.getPushToken() != token) {
-            trackPushTokenRefreshedEvent(token)
+        if (repository.pushToken != token) {
+            trackPushTokenRefreshedEvent(pushToken = token)
         }
     }
 
@@ -262,36 +269,42 @@ class Ometria private constructor() : OmetriaNotificationInteractionHandler {
      * @param storeId: The string representing the store identifier.
      */
     fun updateStoreId(storeId: String?) {
-        repository.saveStoreId(storeId)
+        repository.saveStoreId(storeId = storeId)
         trackProfileIdentifiedEvent()
     }
 
     private fun trackProfileIdentifiedEvent() {
         val data = mutableMapOf<String, Any>()
-        repository.getEmail()?.let { data[EMAIL] = it }
-        repository.getCustomerId()?.let { data[CUSTOMER_ID] = it }
-        repository.getStoreId()?.let { data[STORE_ID] = it }
-        trackEvent(OmetriaEventType.PROFILE_IDENTIFIED, data)
+        repository.email?.let { data[EMAIL] = it }
+        repository.customerId?.let { data[CUSTOMER_ID] = it }
+        repository.storeId?.let { data[STORE_ID] = it }
+        trackEvent(
+            type = OmetriaEventType.PROFILE_IDENTIFIED,
+            data = data
+        )
     }
 
     private fun trackEvent(type: OmetriaEventType, data: Map<String, Any>? = null) {
-        eventHandler.processEvent(type, data?.toMutableMap())
+        eventHandler.processEvent(
+            type = type,
+            data = data?.toMutableMap()
+        )
     }
 
     internal fun trackAppInstalledEvent() {
-        trackEvent(OmetriaEventType.APP_INSTALLED)
+        trackEvent(type = OmetriaEventType.APP_INSTALLED)
     }
 
     internal fun trackAppLaunchedEvent() {
-        trackEvent(OmetriaEventType.APP_LAUNCHED)
+        trackEvent(type = OmetriaEventType.APP_LAUNCHED)
     }
 
     internal fun trackAppForegroundedEvent() {
-        trackEvent(OmetriaEventType.APP_FOREGROUNDED)
+        trackEvent(type = OmetriaEventType.APP_FOREGROUNDED)
     }
 
     internal fun trackAppBackgroundedEvent() {
-        trackEvent(OmetriaEventType.APP_BACKGROUNDED)
+        trackEvent(type = OmetriaEventType.APP_BACKGROUNDED)
     }
 
     /**
@@ -307,7 +320,10 @@ class Ometria private constructor() : OmetriaNotificationInteractionHandler {
         val data = mutableMapOf<String, Any>()
         data[EXTRA] = additionalInfo
         data[PAGE] = screenName
-        trackEvent(OmetriaEventType.SCREEN_VIEWED, data)
+        trackEvent(
+            type = OmetriaEventType.SCREEN_VIEWED,
+            data = data
+        )
     }
 
     internal fun trackAutomatedScreenViewedEvent(
@@ -316,7 +332,10 @@ class Ometria private constructor() : OmetriaNotificationInteractionHandler {
     ) {
         val data = additionalInfo.toMutableMap()
         data[PAGE] = screenName.orEmpty()
-        trackEvent(OmetriaEventType.SCREEN_VIEWED_AUTOMATIC, data)
+        trackEvent(
+            type = OmetriaEventType.SCREEN_VIEWED_AUTOMATIC,
+            data = data
+        )
     }
 
     /**
@@ -335,7 +354,7 @@ class Ometria private constructor() : OmetriaNotificationInteractionHandler {
     fun trackProfileIdentifiedByCustomerIdEvent(customerId: String, storeId: String? = null) {
         val data = mutableMapOf<String, Any>(CUSTOMER_ID to customerId)
         storeId?.let { data[STORE_ID] = it }
-        repository.cacheProfileIdentifiedData(data)
+        repository.cacheProfileIdentifiedData(data = data)
         trackProfileIdentifiedEvent()
     }
 
@@ -350,7 +369,28 @@ class Ometria private constructor() : OmetriaNotificationInteractionHandler {
     fun trackProfileIdentifiedByEmailEvent(email: String, storeId: String? = null) {
         val data = mutableMapOf<String, Any>(EMAIL to email)
         storeId?.let { data[STORE_ID] = it }
-        repository.cacheProfileIdentifiedData(data)
+        repository.cacheProfileIdentifiedData(data = data)
+        trackProfileIdentifiedEvent()
+    }
+
+    /**
+     * Tracks the current app user being identified by email and customerId.
+     * An app user has just identified themselves. This basically means: a user has logged in.
+     *
+     * Note: If you don't have a one of the values, you can use the alternate versions of this method:
+     * trackProfileIdentifiedByEmailEvent(email: String) OR trackProfileIdentifiedByCustomerIdEvent(customerId: String)
+     *
+     * @param email: The email by which you identify a particular user in your database.
+     * @param customerId: The ID reserved for a particular user in your database.
+     * @param storeId: The string representing the store identifier.
+     */
+    fun trackProfileIdentifiedEvent(email: String, customerId: String, storeId: String? = null) {
+        val data = mutableMapOf<String, Any>(
+            EMAIL to email,
+            CUSTOMER_ID to customerId
+        )
+        storeId?.let { data[STORE_ID] = it }
+        repository.cacheProfileIdentifiedData(data = data)
         trackProfileIdentifiedEvent()
     }
 
@@ -359,7 +399,7 @@ class Ometria private constructor() : OmetriaNotificationInteractionHandler {
      * An app user has deidentified themselves. This basically means: a user has logged out.
      */
     fun trackProfileDeidentifiedEvent() {
-        trackEvent(OmetriaEventType.PROFILE_DEIDENTIFIED)
+        trackEvent(type = OmetriaEventType.PROFILE_DEIDENTIFIED)
     }
 
     /**
@@ -368,7 +408,10 @@ class Ometria private constructor() : OmetriaNotificationInteractionHandler {
      * @param productId: The unique identifier for the product that has been interacted with.
      */
     fun trackProductViewedEvent(productId: String) {
-        trackEvent(OmetriaEventType.PRODUCT_VIEWED, mapOf(PRODUCT_ID to productId))
+        trackEvent(
+            type = OmetriaEventType.PRODUCT_VIEWED,
+            data = mapOf(PRODUCT_ID to productId)
+        )
     }
 
     /**
@@ -383,7 +426,10 @@ class Ometria private constructor() : OmetriaNotificationInteractionHandler {
         val data = mutableMapOf<String, Any>()
         listingType?.let { data[LISTING_TYPE] = it }
         data[LISTING_ATTRIBUTES] = listingAttributes
-        trackEvent(OmetriaEventType.PRODUCT_LISTING_VIEWED, data)
+        trackEvent(
+            type = OmetriaEventType.PRODUCT_LISTING_VIEWED,
+            data = data
+        )
     }
 
     /**
@@ -415,7 +461,7 @@ class Ometria private constructor() : OmetriaNotificationInteractionHandler {
      * Track when the user has viewed a dedicated page, screen or modal with the contents of the shopping basket.
      */
     fun trackBasketViewedEvent() {
-        trackEvent(OmetriaEventType.BASKET_VIEWED)
+        trackEvent(type = OmetriaEventType.BASKET_VIEWED)
     }
 
     /**
@@ -423,7 +469,10 @@ class Ometria private constructor() : OmetriaNotificationInteractionHandler {
      * @param basket An OmetriaBasket object with all the available details of the current basket contents.
      */
     fun trackBasketUpdatedEvent(basket: OmetriaBasket) {
-        trackEvent(OmetriaEventType.BASKET_UPDATED, mapOf(BASKET to basket))
+        trackEvent(
+            type = OmetriaEventType.BASKET_UPDATED,
+            data = mapOf(BASKET to basket)
+        )
     }
 
     /**
@@ -431,7 +480,10 @@ class Ometria private constructor() : OmetriaNotificationInteractionHandler {
      * @param orderId The id that your system generated for the order.
      */
     fun trackCheckoutStartedEvent(orderId: String) {
-        trackEvent(OmetriaEventType.CHECKOUT_STARTED, mapOf(ORDER_ID to (orderId)))
+        trackEvent(
+            type = OmetriaEventType.CHECKOUT_STARTED,
+            data = mapOf(ORDER_ID to orderId)
+        )
     }
 
     /**
@@ -443,40 +495,51 @@ class Ometria private constructor() : OmetriaNotificationInteractionHandler {
         val data = mutableMapOf<String, Any>()
         data[ORDER_ID] = orderId
         basket?.let { data[BASKET] = it }
-        trackEvent(OmetriaEventType.ORDER_COMPLETED, data)
+        trackEvent(
+            type = OmetriaEventType.ORDER_COMPLETED,
+            data = data
+        )
     }
 
     /**
      * Track when the user has viewed the "home page" or landing screen of your app.
      */
     fun trackHomeScreenViewedEvent() {
-        trackEvent(OmetriaEventType.HOME_SCREEN_VIEWED)
+        trackEvent(type = OmetriaEventType.HOME_SCREEN_VIEWED)
     }
 
     internal fun trackPushTokenRefreshedEvent(pushToken: String?) {
-        val hasPermission =
-            NotificationManagerCompat.from(ometriaConfig.application).areNotificationsEnabled()
+        val hasPermission = NotificationManagerCompat.from(ometriaConfig.application).areNotificationsEnabled()
         val permissionValue = if (hasPermission) "opt-in" else "opt-out"
         trackEvent(
-            OmetriaEventType.PUSH_TOKEN_REFRESHED,
-            mapOf(PUSH_TOKEN to (pushToken.orEmpty()), NOTIFICATIONS to permissionValue)
+            type = OmetriaEventType.PUSH_TOKEN_REFRESHED,
+            data = mapOf(
+                PUSH_TOKEN to pushToken.orEmpty(),
+                NOTIFICATIONS to permissionValue
+            )
         )
     }
 
     internal fun trackNotificationReceivedEvent(context: Map<String, Any>) {
-        trackEvent(OmetriaEventType.NOTIFICATION_RECEIVED, mapOf(NOTIFICATION_CONTEXT to context))
+        trackEvent(
+            type = OmetriaEventType.NOTIFICATION_RECEIVED,
+            data = mapOf(NOTIFICATION_CONTEXT to context)
+        )
     }
 
     internal fun trackNotificationInteractedEvent(context: Map<String, Any>) {
         trackEvent(
-            OmetriaEventType.NOTIFICATION_INTERACTED,
-            mapOf(NOTIFICATION_CONTEXT to context)
+            type = OmetriaEventType.NOTIFICATION_INTERACTED,
+            data = mapOf(NOTIFICATION_CONTEXT to context)
         )
     }
 
     internal fun trackPermissionsUpdateEvent(hasPermission: Boolean) {
         val permissionValue = if (hasPermission) "opt-in" else "opt-out"
-        trackEvent(OmetriaEventType.PERMISSION_UPDATE, mapOf(NOTIFICATIONS to permissionValue))
+        trackEvent(
+            type = OmetriaEventType.PERMISSION_UPDATE,
+            data = mapOf(NOTIFICATIONS to permissionValue)
+        )
     }
 
     /**
@@ -485,7 +548,13 @@ class Ometria private constructor() : OmetriaNotificationInteractionHandler {
      * @param page A string representing the name of the screen that has been opened as a result of decomposing the URL.
      */
     fun trackDeepLinkOpenedEvent(link: String?, page: String) {
-        trackEvent(OmetriaEventType.DEEP_LINK_OPENED, mapOf(LINK to link.orEmpty(), PAGE to page))
+        trackEvent(
+            type = OmetriaEventType.DEEP_LINK_OPENED,
+            data = mapOf(
+                LINK to link.orEmpty(),
+                PAGE to page
+            )
+        )
     }
 
     internal fun trackErrorOccurredEvent(
@@ -494,7 +563,8 @@ class Ometria private constructor() : OmetriaNotificationInteractionHandler {
         originalMessage: Map<String, Any>
     ) {
         trackEvent(
-            OmetriaEventType.ERROR_OCCURRED, mapOf(
+            type = OmetriaEventType.ERROR_OCCURRED,
+            data = mapOf(
                 CLASS to errorClass,
                 MESSAGE to errorMessage.orEmpty(),
                 ORIGINAL_MESSAGE to originalMessage
@@ -511,7 +581,10 @@ class Ometria private constructor() : OmetriaNotificationInteractionHandler {
         val data = mutableMapOf<String, Any>()
         data[PROPERTIES] = additionalInfo
         data[CUSTOM_EVENT_TYPE] = customEventType
-        trackEvent(OmetriaEventType.CUSTOM, data)
+        trackEvent(
+            type = OmetriaEventType.CUSTOM,
+            data = data
+        )
     }
 
     /**
@@ -528,7 +601,7 @@ class Ometria private constructor() : OmetriaNotificationInteractionHandler {
      * Clears all the events from local cache.
      */
     fun clear() {
-        localCache.clearEvents()
+        repository.clearEvents()
     }
 
     /**
@@ -572,8 +645,7 @@ class Ometria private constructor() : OmetriaNotificationInteractionHandler {
      * Retrieves the [OmetriaNotification] object.
      * @param remoteMessage The object that will be processed, received from Firebase messaging.
      */
-    fun parseNotification(remoteMessage: RemoteMessage): OmetriaNotification? =
-        remoteMessage.toOmetriaNotification()
+    fun parseNotification(remoteMessage: RemoteMessage): OmetriaNotification? = remoteMessage.toOmetriaNotification()
 
     override fun onNotificationInteraction(ometriaNotification: OmetriaNotification) {
         ometriaNotification.deepLinkActionUrl?.let { safeDeeplinkActionUrl ->
@@ -585,10 +657,13 @@ class Ometria private constructor() : OmetriaNotificationInteractionHandler {
             Logger.d(Constants.Logger.PUSH_NOTIFICATIONS, "Open URL: $safeDeeplinkActionUrl")
             val intent = Intent(Intent.ACTION_VIEW)
             intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
-            intent.data = Uri.parse(safeDeeplinkActionUrl)
+            intent.data = safeDeeplinkActionUrl.toUri()
             ometriaConfig.application.startActivity(intent)
 
-            trackDeepLinkOpenedEvent(safeDeeplinkActionUrl, "Browser")
+            trackDeepLinkOpenedEvent(
+                link = safeDeeplinkActionUrl,
+                page = "Browser"
+            )
         }
     }
 }

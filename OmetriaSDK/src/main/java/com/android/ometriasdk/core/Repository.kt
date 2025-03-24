@@ -13,6 +13,11 @@ import com.android.ometriasdk.core.network.Client
 import com.android.ometriasdk.core.network.OmetriaThreadPoolExecutor
 import com.android.ometriasdk.core.network.RedirectService
 import com.android.ometriasdk.core.network.model.OmetriaApiRequest
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import java.io.IOException
 import java.net.MalformedURLException
 
@@ -20,12 +25,77 @@ private const val TOO_MANY_REQUESTS_STATUS_CODE = 429
 
 internal class Repository(
     private val client: Client,
-    private val localCache: LocalCache,
+    private val localCache: LocalCacheDataStore,
     private val executor: OmetriaThreadPoolExecutor
 ) {
 
     private val resultHandler: Handler = Handler(Looper.getMainLooper())
     private val dropStatusCodesRange = 400..499
+    private val coroutineScope = CoroutineScope(Dispatchers.IO)
+
+    var isFirstAppRun: Boolean = true
+        private set
+    var installationId: String? = null
+        private set
+    var events: List<OmetriaEvent> = emptyList()
+        private set
+    var pushToken: String? = null
+        private set
+    var customerId: String? = null
+        private set
+    var email: String? = null
+        private set
+    var storeId: String? = null
+        private set
+    var areNotificationsEnabled: Boolean = true
+        private set
+    var isFirstPermissionsUpdateEvent: Boolean = true
+        private set
+    var sdkVersionRN: String? = null
+        private set
+    var lastPushTokenRefreshTimestamp: Long = 0
+        private set
+    var apiToken: String? = null
+        private set
+
+    init {
+        coroutineScope.launch {
+            localCache.isFirstAppRun().collectLatest { isFirstAppRun = it }
+        }
+        coroutineScope.launch {
+            localCache.getInstallationId().collectLatest { installationId = it }
+        }
+        coroutineScope.launch {
+            localCache.getEvents().collectLatest { events = it }
+        }
+        coroutineScope.launch {
+            localCache.getPushToken().collectLatest { pushToken = it }
+        }
+        coroutineScope.launch {
+            localCache.getCustomerId().collectLatest { customerId = it }
+        }
+        coroutineScope.launch {
+            localCache.getEmail().collectLatest { email = it }
+        }
+        coroutineScope.launch {
+            localCache.getStoreId().collectLatest { storeId = it }
+        }
+        coroutineScope.launch {
+            localCache.areNotificationsEnabled().collectLatest { areNotificationsEnabled = it }
+        }
+        coroutineScope.launch {
+            localCache.isFirstPermissionsUpdateEvent().collectLatest { isFirstPermissionsUpdateEvent = it }
+        }
+        coroutineScope.launch {
+            localCache.getSdkVersionRN().collectLatest { sdkVersionRN = it }
+        }
+        coroutineScope.launch {
+            localCache.getLastPushTokenRefreshTimestamp().collectLatest { lastPushTokenRefreshTimestamp = it }
+        }
+        coroutineScope.launch {
+            localCache.getApiToken().collectLatest { apiToken = it }
+        }
+    }
 
     fun flushEvents(events: List<OmetriaEvent>, success: () -> Unit, error: () -> Unit) {
         events.forEach { it.isBeingFlushed = true }
@@ -62,56 +132,42 @@ internal class Repository(
     }
 
     fun saveIsFirstAppRun(isFirstAppRun: Boolean) {
-        localCache.saveIsFirstAppRun(isFirstAppRun)
+        runBlocking { localCache.saveIsFirstAppRun(isFirstAppRun) }
     }
-
-    fun isFirstAppRun(): Boolean = localCache.isFirstAppRun()
 
     fun saveInstallationId(installationId: String) {
-        localCache.saveInstallationId(installationId)
+        runBlocking { localCache.saveInstallationId(installationId) }
     }
-
-    fun getInstallationId(): String? = localCache.getInstallationId()
 
     fun saveEvent(ometriaEvent: OmetriaEvent) {
-        localCache.saveEvent(ometriaEvent)
+        runBlocking { localCache.saveEvent(ometriaEvent) }
     }
 
-    fun getEvents(): List<OmetriaEvent> = localCache.getEvents()
-
     private fun updateEvents(events: List<OmetriaEvent>?, isBeingFlushed: Boolean) {
-        localCache.updateEvents(events, isBeingFlushed)
+        runBlocking { localCache.updateEvents(events, isBeingFlushed) }
     }
 
     private fun removeEvents(events: List<OmetriaEvent>?) {
         events ?: return
 
-        localCache.removeEvents(events)
+        runBlocking { localCache.removeEvents(events) }
     }
 
     fun savePushToken(pushToken: String) {
-        localCache.savePushToken(pushToken)
+        runBlocking { localCache.savePushToken(pushToken) }
     }
-
-    fun getPushToken(): String? = localCache.getPushToken()
 
     fun saveCustomerId(customerId: String) {
-        localCache.saveCustomerId(customerId)
+        runBlocking { localCache.saveCustomerId(customerId) }
     }
-
-    fun getCustomerId(): String? = localCache.getCustomerId()
 
     fun saveEmail(email: String) {
-        localCache.saveEmail(email)
+        runBlocking { localCache.saveEmail(email) }
     }
-
-    fun getEmail(): String? = localCache.getEmail()
 
     fun saveStoreId(storeId: String?) {
-        localCache.saveStoreId(storeId)
+        runBlocking { localCache.saveStoreId(storeId) }
     }
-
-    fun getStoreId(): String? = localCache.getStoreId()
 
     fun cacheProfileIdentifiedData(data: Map<String, Any>?) {
         data?.let {
@@ -122,17 +178,15 @@ internal class Repository(
     }
 
     fun clearProfileIdentifiedData() {
-        localCache.clearProfileIdentifiedData()
+        runBlocking { localCache.clearProfileIdentifiedData() }
     }
 
     fun saveAreNotificationsEnabled(areNotificationsEnabled: Boolean) {
-        localCache.saveAreNotificationsEnabled(areNotificationsEnabled)
-        localCache.saveIsFirstPermissionsUpdateEvent(false)
+        runBlocking {
+            localCache.saveAreNotificationsEnabled(areNotificationsEnabled)
+            localCache.saveIsFirstPermissionsUpdateEvent(false)
+        }
     }
-
-    fun areNotificationsEnabled(): Boolean = localCache.areNotificationsEnabled()
-
-    fun isFirstPermissionsUpdateEvent(): Boolean = localCache.isFirstPermissionsUpdateEvent()
 
     fun getRedirectForUrl(
         url: String,
@@ -155,11 +209,15 @@ internal class Repository(
         }
     }
 
-    fun getSdkVersionRN(): String? = localCache.getSdkVersionRN()
-
     fun saveLastPushTokenRefreshTimestamp(timestamp: Long) {
-        localCache.saveLastPushTokenRefreshTimestamp(timestamp)
+        runBlocking { localCache.saveLastPushTokenRefreshTimestamp(timestamp) }
     }
 
-    fun getLastPushTokenRefreshTimestamp(): Long = localCache.getLastPushTokenRefreshTimestamp()
+    fun saveApiToken(apiToken: String) {
+        runBlocking { localCache.saveApiToken(apiToken) }
+    }
+
+    fun clearEvents() {
+        runBlocking { localCache.clearEvents() }
+    }
 }
