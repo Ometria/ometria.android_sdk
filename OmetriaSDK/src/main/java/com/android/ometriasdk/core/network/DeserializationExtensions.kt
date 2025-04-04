@@ -1,5 +1,7 @@
 package com.android.ometriasdk.core.network
 
+import android.os.Build
+import com.android.ometriasdk.BuildConfig
 import com.android.ometriasdk.core.Constants.Logger.PUSH_NOTIFICATIONS
 import com.android.ometriasdk.core.Logger
 import com.android.ometriasdk.core.Ometria
@@ -29,17 +31,17 @@ internal fun String.toOmetriaEvent(): OmetriaEvent {
         jsonObject.getString("eventId"),
         jsonObject.getBoolean("isBeingFlushed"),
         jsonObject.getString("dtOccurred"),
-        jsonObject.getString("appId"),
-        jsonObject.getString("installationId"),
-        jsonObject.getString("appVersion"),
-        jsonObject.getString("appBuildNumber"),
-        jsonObject.getString("sdkVersion"),
+        if (jsonObject.has("appId")) jsonObject.getString("appId") else null,
+        if (jsonObject.has("installationId")) jsonObject.getString("installationId") else null,
+        if (jsonObject.has("appVersion")) jsonObject.getString("appVersion") else null,
+        if (jsonObject.has("appBuildNumber")) jsonObject.getString("appBuildNumber") else null,
+        if (jsonObject.has("sdkVersion")) jsonObject.getString("sdkVersion") else BuildConfig.SDK_VERSION_NAME,
         jsonObject.getString("platform"),
-        jsonObject.getString("osVersion"),
-        jsonObject.getString("deviceManufacturer"),
-        jsonObject.getString("deviceModel"),
+        if (jsonObject.has("osVersion")) jsonObject.getString("osVersion") else Build.VERSION.RELEASE,
+        if (jsonObject.has("deviceManufacturer")) jsonObject.getString("deviceManufacturer") else Build.MANUFACTURER,
+        if (jsonObject.has("deviceModel")) jsonObject.getString("deviceModel") else Build.MODEL,
         jsonObject.getString("type"),
-        jsonObject.getJSONObject("data").toMap()
+        if (jsonObject.has("data")) jsonObject.getJSONObject("data").toMap() else mapOf()
     )
 
     var sdkVersionRN: String? = null

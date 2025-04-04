@@ -97,7 +97,9 @@ class Ometria private constructor() : OmetriaNotificationInteractionHandler {
             clearOldInstanceIfNeeded()
 
             it.ometriaConfig = OmetriaConfig(apiToken = apiToken, application = application)
-            it.localDataStore = LocalCacheDataStore(context = application)
+            if (it::localDataStore.isInitialized.not()) {
+                it.localDataStore = LocalCacheDataStore(context = application)
+            }
             it.executor = OmetriaThreadPoolExecutor()
             it.repository = Repository(
                 client = Client(connectionFactory = ConnectionFactory(ometriaConfig = it.ometriaConfig)),
@@ -134,7 +136,7 @@ class Ometria private constructor() : OmetriaNotificationInteractionHandler {
                 application.registerActivityLifecycleCallbacks(it.activityLifecycleHelper)
             }
 
-            if (runBlocking { it.localDataStore.getPushToken().firstOrNull() }.isNullOrEmpty()) {
+            if (it.repository.pushToken.isNullOrEmpty()) {
                 it.retrieveFirebaseToken()
             }
 
@@ -148,7 +150,10 @@ class Ometria private constructor() : OmetriaNotificationInteractionHandler {
          */
         internal fun initializeForInternalUsage(context: Context) = instance.also {
             it.executor = OmetriaThreadPoolExecutor()
-            it.localDataStore = LocalCacheDataStore(context)
+
+            if (it::localDataStore.isInitialized.not()) {
+                it.localDataStore = LocalCacheDataStore(context)
+            }
 
             val apiToken = runBlocking { it.localDataStore.getApiToken().firstOrNull() }
             apiToken ?: return@also

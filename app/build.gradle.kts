@@ -12,8 +12,8 @@ android {
         applicationId = "com.android.sample"
         minSdk = 23
         targetSdk = 35
-        versionCode = 23
-        versionName = "1.10.0"
+        versionCode = 25
+        versionName = "1.10.1"
     }
     signingConfigs {
         getByName("debug") {
@@ -61,6 +61,6 @@ dependencies {
     implementation("androidx.work:work-runtime:2.10.0")
 
     // Add the SDK for Firebase Cloud Messaging
-    implementation("com.google.firebase:firebase-messaging:24.1.0")
-    implementation("com.google.android.gms:play-services-base:18.5.0")
+    implementation("com.google.firebase:firebase-messaging:24.1.1")
+    implementation("com.google.android.gms:play-services-base:18.6.0")
 }
