@@ -3,6 +3,7 @@ package com.android.ometriasdk.notification
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
+import com.android.ometriasdk.core.Logger
 import com.android.ometriasdk.core.Ometria
 import com.android.ometriasdk.core.Ometria.Companion.clearOldInstance
 import com.android.ometriasdk.core.event.OmetriaEventType
@@ -18,14 +19,14 @@ import com.google.firebase.messaging.RemoteMessage
 class OmetriaMessagingReceiver : BroadcastReceiver() {
 
     override fun onReceive(context: Context?, intent: Intent?) {
+        context ?: return
         val remoteMessage = RemoteMessage(intent?.extras)
 
         try {
             Ometria.instance()
-        } catch (e: IllegalStateException) {
-            context?.let {
-                Ometria.initializeForInternalUsage(context)
-
+        } catch (_: IllegalStateException) {
+            Ometria.initializeForInternalUsage(context)
+            try {
                 if (Ometria.instance().isReactNativeUsage()) {
                     val ometriaNotificationBody = remoteMessage.toOmetriaNotificationBody()
                     val ometriaNotificationContext = ometriaNotificationBody?.context
@@ -35,6 +36,9 @@ class OmetriaMessagingReceiver : BroadcastReceiver() {
                         clearOldInstance()
                     }
                 }
+            } catch (_: IllegalStateException) {
+                // missing API token, ignore
+                Logger.e(tag = "OmetriaMessagingReceiver", message = "Missing API token", throwable = null)
             }
         }
     }

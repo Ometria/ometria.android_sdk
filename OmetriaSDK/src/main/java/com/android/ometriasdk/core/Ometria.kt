@@ -97,9 +97,7 @@ class Ometria private constructor() : OmetriaNotificationInteractionHandler {
             clearOldInstanceIfNeeded()
 
             it.ometriaConfig = OmetriaConfig(apiToken = apiToken, application = application)
-            if (it::localDataStore.isInitialized.not()) {
-                it.localDataStore = LocalCacheDataStore(context = application)
-            }
+            it.localDataStore = LocalCacheDataStore.getInstance(context = application)
             it.executor = OmetriaThreadPoolExecutor()
             it.repository = Repository(
                 client = Client(connectionFactory = ConnectionFactory(ometriaConfig = it.ometriaConfig)),
@@ -151,9 +149,7 @@ class Ometria private constructor() : OmetriaNotificationInteractionHandler {
         internal fun initializeForInternalUsage(context: Context) = instance.also {
             it.executor = OmetriaThreadPoolExecutor()
 
-            if (it::localDataStore.isInitialized.not()) {
-                it.localDataStore = LocalCacheDataStore(context)
-            }
+            it.localDataStore = LocalCacheDataStore.getInstance(context)
 
             val apiToken = runBlocking { it.localDataStore.getApiToken().firstOrNull() }
             apiToken ?: return@also

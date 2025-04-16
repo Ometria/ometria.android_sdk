@@ -1,5 +1,6 @@
 package com.android.ometriasdk.core
 
+import android.annotation.SuppressLint
 import android.content.Context
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.MutablePreferences
@@ -20,8 +21,20 @@ import kotlinx.coroutines.runBlocking
 private const val LOCAL_CACHE_DATA_STORE_PREFERENCES = "LOCAL_CACHE_DATA_STORE_PREFERENCES"
 private const val JSON_ARRAY = "[]"
 
-internal class LocalCacheDataStore(private val context: Context) {
+internal class LocalCacheDataStore private constructor(private val context: Context) {
     private val Context.localCacheDataStore: DataStore<Preferences> by preferencesDataStore(name = LOCAL_CACHE_DATA_STORE_PREFERENCES)
+
+    companion object {
+        @SuppressLint("StaticFieldLeak")
+        private var instance: LocalCacheDataStore? = null
+
+        fun getInstance(context: Context): LocalCacheDataStore {
+            if (instance == null) {
+                instance = LocalCacheDataStore(context)
+            }
+            return instance!!
+        }
+    }
 
     init {
         val oldCache = LocalCache(context)
