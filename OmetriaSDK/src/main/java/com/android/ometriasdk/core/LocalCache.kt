@@ -6,6 +6,7 @@ import androidx.security.crypto.EncryptedSharedPreferences
 import androidx.security.crypto.MasterKeys
 import com.android.ometriasdk.core.event.OmetriaEvent
 import com.android.ometriasdk.core.network.toOmetriaEventList
+import java.security.KeyStoreException
 
 private const val LOCAL_CACHE_PREFERENCES = "LOCAL_CACHE_PREFERENCES"
 private const val LOCAL_ENCRYPTED_CACHE_PREFERENCES = "LOCAL_ENCRYPTED_CACHE_PREFERENCES"
@@ -29,7 +30,7 @@ internal class LocalCache(private val context: Context) {
 
     init {
         val localCachePreferences = getLocalCachePreferences()
-        localCacheEncryptedPreferences = getLocalEncryptedCachePreferences()
+        localCacheEncryptedPreferences = getLocalEncryptedCachePreferences() ?: localCachePreferences
 
         if (localCachePreferences.all.isNotEmpty()) {
             localCachePreferences.copyTo(localCacheEncryptedPreferences)
@@ -41,7 +42,7 @@ internal class LocalCache(private val context: Context) {
         return context.getSharedPreferences(LOCAL_CACHE_PREFERENCES, Context.MODE_PRIVATE)
     }
 
-    private fun getLocalEncryptedCachePreferences(): SharedPreferences = try {
+    private fun getLocalEncryptedCachePreferences(): SharedPreferences? = try {
         createSecurePreferencesAttempts++
         val masterKey = MasterKeys.getOrCreate(MasterKeys.AES256_GCM_SPEC)
         EncryptedSharedPreferences.create(
@@ -51,15 +52,21 @@ internal class LocalCache(private val context: Context) {
             EncryptedSharedPreferences.PrefKeyEncryptionScheme.AES256_SIV,
             EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM
         )
+    } catch (e: KeyStoreException) {
+        Logger.e("EncryptedSharedPreferences", e.message.orEmpty())
+        null
     } catch (e: Exception) {
-        if (createSecurePreferencesAttempts > 1) throw e
+        if (createSecurePreferencesAttempts > 1) {
+            Logger.e("EncryptedSharedPreferences", e.message.orEmpty())
+            null
+        } else {
+            context.getSharedPreferences(
+                LOCAL_ENCRYPTED_CACHE_PREFERENCES,
+                Context.MODE_PRIVATE
+            ).clear()
 
-        context.getSharedPreferences(
-            LOCAL_ENCRYPTED_CACHE_PREFERENCES,
-            Context.MODE_PRIVATE
-        ).clear()
-
-        getLocalEncryptedCachePreferences()
+            getLocalEncryptedCachePreferences()
+        }
     }
 
     fun isCacheEmpty(): Boolean = localCacheEncryptedPreferences.all.isEmpty()
