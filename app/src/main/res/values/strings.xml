@@ -1,12 +1,8 @@
 <resources>
     <string name="app_name">Ometria Sample</string>
-    <string name="tab_one">TAB ONE</string>
-    <string name="tab_two">TAB TWO</string>
-    <string name="tab_three">TAB THREE</string>
     <string name="home">Home</string>
     <string name="events">Events</string>
     <string name="redirect_modal_title">App Link Processed</string>
-    <string name="notification_interaction_modal_title">Ometria Notification Object</string>
     <string name="ok">OK</string>
     <string name="hint_token_key">API token</string>
     <string name="save_api_token">Save API token</string>
@@ -19,4 +15,6 @@
     <string name="update_api_token">Update API Token</string>
     <string name="hint_store_id">Store Id</string>
     <string name="set_store_id">Set store ID</string>
+    <string name="details_screen">Details screen</string>
+    <string name="notification_object">Notification object:</string>
 </resources>

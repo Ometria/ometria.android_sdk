@@ -17,7 +17,7 @@
             android:layout_margin="16dp"
             android:drawableEnd="@drawable/ic_arrow_right_alt_24px"
             android:drawablePadding="5dp"
-            android:text="Details screen"
+            android:text="@string/details_screen"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
@@ -34,7 +34,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
             android:layout_marginTop="16dp"
-            android:text="Notification object:"
+            android:text="@string/notification_object"
             android:textColor="@android:color/black"
             android:visibility="gone"
             app:layout_constraintTop_toBottomOf="@+id/loginWithCustomerIdBTN" />

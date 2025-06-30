@@ -73,9 +73,6 @@ internal class OmetriaPushNotification(
             .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
     }
 
-    private fun getFlags(): Int = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+    private fun getFlags(): Int =
         PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
-    } else {
-        PendingIntent.FLAG_UPDATE_CURRENT
-    }
 }

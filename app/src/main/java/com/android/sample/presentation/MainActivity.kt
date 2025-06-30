@@ -1,7 +1,6 @@
 package com.android.sample.presentation
 
 import android.content.Intent
-import android.net.Uri
 import android.os.Bundle
 import android.text.SpannableString
 import android.text.method.LinkMovementMethod
@@ -9,8 +8,13 @@ import android.text.util.Linkify
 import android.util.Log
 import android.webkit.URLUtil
 import android.widget.TextView
+import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.net.toUri
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.get
 import androidx.viewpager2.widget.ViewPager2
 import com.android.ometriasdk.core.Ometria
 import com.android.ometriasdk.core.listener.ProcessAppLinkListener
@@ -31,8 +35,10 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        configureEdgeToEdge()
 
-        val ometriaNotificationString = intent.getStringExtra(OMETRIA_NOTIFICATION_STRING_EXTRA_KEY).orEmpty()
+        val ometriaNotificationString =
+            intent.getStringExtra(OMETRIA_NOTIFICATION_STRING_EXTRA_KEY).orEmpty()
         val deepLinkActionUrl = intent.getStringExtra(DEEPLINK_ACTION_URL_EXTRA_KEY)
 
         setUpBottomNavMenu()
@@ -58,7 +64,7 @@ class MainActivity : AppCompatActivity() {
         val adapter = ViewPagerAdapter(supportFragmentManager, lifecycle, ometriaNotificationString)
         binding.containerVP.adapter = adapter
         switchFragment(0)
-        binding.bottomMenuBnv.menu.getItem(0).isChecked = true
+        binding.bottomMenuBnv.menu[0].isChecked = true
 
         binding.containerVP.registerOnPageChangeCallback(
             object : ViewPager2.OnPageChangeCallback() {
@@ -71,7 +77,7 @@ class MainActivity : AppCompatActivity() {
                 ) = Unit
 
                 override fun onPageSelected(position: Int) {
-                    binding.bottomMenuBnv.menu.getItem(position).isChecked = true
+                    binding.bottomMenuBnv.menu[position].isChecked = true
                 }
             }
         )
@@ -101,7 +107,10 @@ class MainActivity : AppCompatActivity() {
 
     private fun displayRedirectUrlDialog(message: String) {
         val messageSpannableString = SpannableString(message)
-        Linkify.addLinks(messageSpannableString, Linkify.ALL)
+        Linkify.addLinks(
+            messageSpannableString,
+            Linkify.WEB_URLS or Linkify.EMAIL_ADDRESSES or Linkify.PHONE_NUMBERS
+        )
 
         val textView = TextView(this)
         textView.text = messageSpannableString
@@ -124,8 +133,20 @@ class MainActivity : AppCompatActivity() {
             Log.d(SampleApp::class.java.simpleName, "Open URL: $safeDeepLink")
             val intent = Intent(Intent.ACTION_VIEW)
             intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
-            intent.data = Uri.parse(safeDeepLink)
+            intent.data = safeDeepLink.toUri()
             startActivity(intent)
+        }
+    }
+
+    private fun configureEdgeToEdge() {
+        enableEdgeToEdge()
+
+        ViewCompat.setOnApplyWindowInsetsListener(binding.root) { view, insets ->
+            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
+
+            // Set only the top padding as BottomNavigationView automatically handles bottom padding
+            view.setPadding(view.paddingLeft, systemBars.top, view.paddingRight, view.paddingBottom)
+            return@setOnApplyWindowInsetsListener insets
         }
     }
 }

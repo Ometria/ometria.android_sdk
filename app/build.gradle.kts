@@ -6,12 +6,12 @@ plugins {
 
 android {
     namespace = "com.android.sample"
-    compileSdk = 35
+    compileSdk = 36
 
     defaultConfig {
         applicationId = "com.android.sample"
         minSdk = 23
-        targetSdk = 35
+        targetSdk = 36
         versionCode = 27
         versionName = "1.10.3"
     }
@@ -42,6 +42,8 @@ android {
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
+
+        isCoreLibraryDesugaringEnabled = true
     }
 
     kotlinOptions {
@@ -54,13 +56,15 @@ dependencies {
     implementation(fileTree(mapOf("dir" to "libs", "include" to listOf("*.jar"))))
 
     // Support libraries
-    implementation("androidx.core:core-ktx:1.15.0")
-    implementation("androidx.appcompat:appcompat:1.7.0")
+    implementation("androidx.core:core-ktx:1.16.0")
+    implementation("androidx.appcompat:appcompat:1.7.1")
     implementation("androidx.constraintlayout:constraintlayout:2.2.1")
     implementation("com.google.android.material:material:1.12.0")
-    implementation("androidx.work:work-runtime:2.10.0")
+    implementation("androidx.work:work-runtime:2.10.1")
 
     // Add the SDK for Firebase Cloud Messaging
     implementation("com.google.firebase:firebase-messaging:24.1.1")
-    implementation("com.google.android.gms:play-services-base:18.6.0")
+    implementation("com.google.android.gms:play-services-base:18.7.0")
+
+    coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.1.5")
 }

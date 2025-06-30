@@ -1,7 +1,6 @@
 package com.android.ometriasdk.core.event
 
 import android.content.Context
-import android.util.Log
 import androidx.core.content.pm.PackageInfoCompat
 import com.android.ometriasdk.core.Constants.Date.API_DATE_FORMAT
 import com.android.ometriasdk.core.Constants.Logger.EVENTS

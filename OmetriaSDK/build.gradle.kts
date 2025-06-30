@@ -7,7 +7,7 @@ plugins {
 
 android {
     namespace = "com.android.ometriasdk"
-    compileSdk = 35
+    compileSdk = 36
 
     defaultConfig {
         minSdk = 23
@@ -44,14 +44,14 @@ dependencies {
     implementation(fileTree(mapOf("dir" to "libs", "include" to listOf("*.jar"))))
 
     // Android Core
-    implementation("androidx.core:core-ktx:1.15.0")
-    implementation("androidx.appcompat:appcompat:1.7.0")
+    implementation("androidx.core:core-ktx:1.16.0")
+    implementation("androidx.appcompat:appcompat:1.7.1")
     implementation("androidx.security:security-crypto:1.0.0")
-    implementation("androidx.datastore:datastore-preferences:1.1.4")
+    implementation("androidx.datastore:datastore-preferences:1.1.7")
 
     // Lifecycle
-    implementation("androidx.lifecycle:lifecycle-process:2.8.7")
-    implementation("androidx.lifecycle:lifecycle-common-java8:2.8.7")
+    implementation("androidx.lifecycle:lifecycle-process:2.9.1")
+    implementation("androidx.lifecycle:lifecycle-common-java8:2.9.1")
 
     // Add the SDK for Firebase Cloud Messaging
     implementation("com.google.firebase:firebase-messaging:24.1.1")

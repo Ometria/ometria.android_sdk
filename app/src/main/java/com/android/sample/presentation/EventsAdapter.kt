@@ -17,10 +17,10 @@ class EventsAdapter(private val onEventClicked: (EventType) -> Unit) :
         return EventVH(itemView)
     }
 
-    override fun getItemCount(): Int = EventType.values().size
+    override fun getItemCount(): Int = EventType.entries.size
 
     override fun onBindViewHolder(holder: EventVH, position: Int) {
-        holder.bind(EventType.values()[position])
+        holder.bind(EventType.entries[position])
     }
 
     inner class EventVH(containerView: View) : RecyclerView.ViewHolder(containerView) {
@@ -29,7 +29,7 @@ class EventsAdapter(private val onEventClicked: (EventType) -> Unit) :
 
         init {
             binding.eventTV.setOnClickListener {
-                onEventClicked.invoke(EventType.values()[adapterPosition])
+                onEventClicked.invoke(EventType.entries[adapterPosition])
             }
         }
 
