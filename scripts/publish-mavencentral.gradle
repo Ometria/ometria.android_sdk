@@ -16,8 +16,8 @@ version = PUBLISH_VERSION
 ext["signing.keyId"] = ''
 ext["signing.password"] = ''
 ext["signing.secretKeyRingFile"] = ''
-ext["ossrhUsername"] = ''
-ext["ossrhPassword"] = ''
+ext["mavenCentralUsername"] = ''
+ext["mavenCentralPassword"] = ''
 
 File secretPropsFile = project.rootProject.file('local.properties')
 if (secretPropsFile.exists()) {
@@ -32,8 +32,8 @@ if (secretPropsFile.exists()) {
     ext["signing.keyId"] = System.getenv('SIGNING_KEY_ID')
     ext["signing.password"] = System.getenv('SIGNING_PASSWORD')
     ext["signing.secretKeyRingFile"] = System.getenv('SIGNING_SECRET_KEY_RING_FILE')
-    ext["ossrhUsername"] = System.getenv('OSSRH_USERNAME')
-    ext["ossrhPassword"] = System.getenv('OSSRH_PASSWORD')
+    ext["mavenCentralUsername"] = System.getenv('MAVEN_CENTRAL_USERNAME')
+    ext["mavenCentralPassword"] = System.getenv('MAVEN_CENTRAL_PASSWORD')
 }
 
 publishing {
@@ -46,7 +46,7 @@ publishing {
             version PUBLISH_VERSION
 
             // Two artifacts, the `aar` and the sources
-            artifact("${layout.projectDirectory}./outputs/aar/${project.getName()}-release.aar")
+            artifact("${layout.projectDirectory}/build/outputs/aar/${project.getName()}-release.aar")
             artifact androidSourcesJar
 
             // Self-explanatory metadata for the most part
@@ -88,27 +88,6 @@ publishing {
                         }
                     }
                 }
-            }
-        }
-    }
-
-    repositories {
-        // The repository to publish to, Sonatype/MavenCentral
-        maven {
-            // This is an arbitrary name, you may also use "mavencentral" or
-            // any other name that's descriptive for you
-            name = "sonatype"
-
-            def releasesRepoUrl = "https://oss.sonatype.org/service/local/staging/deploy/maven2/"
-            def snapshotsRepoUrl = "https://oss.sonatype.org/content/repositories/snapshots/"
-            // You only need this if you want to publish snapshots, otherwise just set the URL
-            // to the release repo directly
-            url = version.endsWith('SNAPSHOT') ? snapshotsRepoUrl : releasesRepoUrl
-
-            // The username and password we've fetched earlier
-            credentials {
-                username ossrhUsername
-                password ossrhPassword
             }
         }
     }

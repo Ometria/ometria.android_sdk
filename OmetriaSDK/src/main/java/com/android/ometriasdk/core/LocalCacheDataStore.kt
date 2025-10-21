@@ -3,10 +3,12 @@ package com.android.ometriasdk.core
 import android.annotation.SuppressLint
 import android.content.Context
 import androidx.datastore.core.DataStore
+import androidx.datastore.core.handlers.ReplaceFileCorruptionHandler
 import androidx.datastore.preferences.core.MutablePreferences
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
+import androidx.datastore.preferences.core.emptyPreferences
 import androidx.datastore.preferences.core.longPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
@@ -22,7 +24,13 @@ private const val LOCAL_CACHE_DATA_STORE_PREFERENCES = "LOCAL_CACHE_DATA_STORE_P
 private const val JSON_ARRAY = "[]"
 
 internal class LocalCacheDataStore private constructor(private val context: Context) {
-    private val Context.localCacheDataStore: DataStore<Preferences> by preferencesDataStore(name = LOCAL_CACHE_DATA_STORE_PREFERENCES)
+    private val Context.localCacheDataStore: DataStore<Preferences> by preferencesDataStore(
+        name = LOCAL_CACHE_DATA_STORE_PREFERENCES,
+        corruptionHandler = ReplaceFileCorruptionHandler {
+            Logger.e(Constants.Logger.CACHE, "Local cache data store corrupted, resetting to empty preferences.")
+            emptyPreferences()
+        }
+    )
 
     companion object {
         @SuppressLint("StaticFieldLeak")
