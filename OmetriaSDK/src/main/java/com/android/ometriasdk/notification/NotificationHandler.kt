@@ -9,7 +9,6 @@ import com.android.ometriasdk.core.Ometria
 import com.android.ometriasdk.core.network.OmetriaThreadPoolExecutor
 import com.android.ometriasdk.core.network.toOmetriaNotificationBody
 import com.google.firebase.messaging.RemoteMessage
-import java.io.IOException
 import java.net.URL
 
 const val KEY_TITLE = "title"
@@ -23,7 +22,6 @@ internal class NotificationHandler(
     notificationChannelName: String,
     private val executor: OmetriaThreadPoolExecutor
 ) {
-
     private val ometriaPushNotification: OmetriaPushNotification = OmetriaPushNotification(
         context = context,
         notificationIcon = notificationIcon,
@@ -50,35 +48,34 @@ internal class NotificationHandler(
         val title = remoteMessage.data[KEY_TITLE]
         val body = remoteMessage.data[KEY_BODY]
 
-        if (ometriaNotificationBody.imageUrl != null) {
-            loadImage(ometriaNotificationBody.imageUrl) {
+        loadImage(ometriaNotificationBody.miniImageUrl) { notificationLargeIcon ->
+            loadImage(ometriaNotificationBody.imageUrl) { notificationImage ->
                 ometriaPushNotification.createPushNotification(
                     title = title,
                     body = body,
-                    image = it,
+                    notificationLargeIcon = notificationLargeIcon,
+                    notificationImage = notificationImage,
                     ometriaNotificationBody = ometriaNotificationBody,
                     collapseId = remoteMessage.collapseKey
                 )
             }
-        } else {
-            ometriaPushNotification.createPushNotification(
-                title = title,
-                body = body,
-                ometriaNotificationBody = ometriaNotificationBody,
-                collapseId = remoteMessage.collapseKey
-            )
         }
     }
 
     private fun loadImage(stringUrl: String?, success: (Bitmap?) -> Unit) {
+        if (stringUrl.isNullOrEmpty()) {
+            success(null)
+            return
+        }
+
         executor.execute {
-            val url = URL(stringUrl)
             var bitmap: Bitmap? = null
+
             try {
+                val url = URL(stringUrl)
                 bitmap = BitmapFactory.decodeStream(url.openConnection().getInputStream())
-            } catch (e: IOException) {
+            } catch (e: Throwable) {
                 Logger.e(Constants.Logger.PUSH_NOTIFICATIONS, e.message, e)
-                success(null)
             }
 
             success(bitmap)

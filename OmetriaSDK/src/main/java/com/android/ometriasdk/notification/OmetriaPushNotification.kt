@@ -1,6 +1,5 @@
 package com.android.ometriasdk.notification
 
-import android.annotation.SuppressLint
 import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
@@ -23,11 +22,11 @@ internal class OmetriaPushNotification(
     private val notificationChannelName: String
 ) {
 
-    @SuppressLint("LaunchActivityFromNotification")
     fun createPushNotification(
         title: String?,
         body: String?,
-        image: Bitmap? = null,
+        notificationImage: Bitmap? = null,
+        notificationLargeIcon: Bitmap? = null,
         ometriaNotificationBody: OmetriaNotificationBody?,
         collapseId: String?
     ) {
@@ -44,8 +43,17 @@ internal class OmetriaPushNotification(
             .setContentText(body)
             .setAutoCancel(true)
             .setContentIntent(pendingIntent)
-            .setLargeIcon(image)
+            .setLargeIcon(notificationLargeIcon ?: notificationImage)
             .setColor(notificationColor ?: Notification.COLOR_DEFAULT)
+            .apply {
+                if (notificationImage == null) return@apply
+
+                setStyle(
+                    NotificationCompat.BigPictureStyle()
+                        .bigPicture(notificationImage)
+                        .bigLargeIcon(null as Bitmap?)
+                )
+            }
 
         val notificationManager =
             context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager

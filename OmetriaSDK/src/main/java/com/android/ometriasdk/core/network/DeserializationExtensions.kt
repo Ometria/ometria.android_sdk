@@ -90,6 +90,7 @@ internal fun String.toOmetriaNotificationBody(): OmetriaNotificationBody {
     var context: Map<String, Any>? = null
     var deepLinkActionUrl: String? = null
     var imageUrl: String? = null
+    var miniImageUrl: String? = null
 
     try {
         context = jsonObject.getJSONObject("context").toMap()
@@ -107,9 +108,15 @@ internal fun String.toOmetriaNotificationBody(): OmetriaNotificationBody {
     } catch (e: JSONException) {
         Logger.w(PUSH_NOTIFICATIONS, e.message.orEmpty())
     }
+    try {
+        miniImageUrl = jsonObject.getString("miniImageUrl")
+    } catch (e: JSONException) {
+        Logger.w(PUSH_NOTIFICATIONS, e.message.orEmpty())
+    }
 
     return OmetriaNotificationBody(
         imageUrl,
+        miniImageUrl,
         deepLinkActionUrl,
         context
     )
@@ -130,6 +137,7 @@ internal fun RemoteMessage.toOmetriaNotification(): OmetriaNotification? =
 internal fun OmetriaNotificationBody.toOmetriaNotification(): OmetriaNotification {
     val deepLinkActionUrl = this.deepLinkActionUrl
     val imageUrl = this.imageUrl
+    val miniImageUrl = this.miniImageUrl
     val campaignType: String? = context?.get("campaign_type") as? String
     val externalCustomerId: String? = context?.get("ext_customer_id") as? String
     val sendId: String? = context?.get("send_id") as? String
@@ -138,6 +146,7 @@ internal fun OmetriaNotificationBody.toOmetriaNotification(): OmetriaNotificatio
     return OmetriaNotification(
         deepLinkActionUrl,
         imageUrl,
+        miniImageUrl,
         campaignType,
         externalCustomerId,
         sendId,

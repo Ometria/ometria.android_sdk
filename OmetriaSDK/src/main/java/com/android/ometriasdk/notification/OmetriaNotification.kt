@@ -15,6 +15,7 @@ package com.android.ometriasdk.notification
 data class OmetriaNotification(
     val deepLinkActionUrl: String?,
     val imageUrl: String?,
+    val miniImageUrl: String?,
     val campaignType: String?,
     val externalCustomerId: String?,
     val sendId: String?,

@@ -119,6 +119,7 @@ internal fun OmetriaEvent.toAPIJson(): JSONObject {
 internal fun OmetriaNotificationBody.toJson(): JSONObject {
     val jsonObject = JSONObject()
     jsonObject.put("imageUrl", imageUrl)
+    jsonObject.put("miniImageUrl", miniImageUrl)
     jsonObject.put("deepLinkActionUrl", deepLinkActionUrl)
     jsonObject.put("context", context?.dataToJson() ?: JSONObject())
 
