@@ -1,8 +1,10 @@
 package com.android.sample
 
 import android.app.Application
+import android.content.ActivityNotFoundException
 import android.content.Intent
 import androidx.core.content.ContextCompat
+import androidx.core.net.toUri
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.OutOfQuotaPolicy
 import androidx.work.WorkManager
@@ -10,9 +12,6 @@ import com.android.ometriasdk.core.Ometria
 import com.android.ometriasdk.notification.OmetriaNotification
 import com.android.ometriasdk.notification.OmetriaNotificationInteractionHandler
 import com.android.sample.data.AppPreferencesUtils
-import com.android.sample.presentation.DEEPLINK_ACTION_URL_EXTRA_KEY
-import com.android.sample.presentation.MainActivity
-import com.android.sample.presentation.OMETRIA_NOTIFICATION_STRING_EXTRA_KEY
 
 class SampleApp : Application(), OmetriaNotificationInteractionHandler {
 
@@ -42,19 +41,22 @@ class SampleApp : Application(), OmetriaNotificationInteractionHandler {
 
         // Set the notificationInteractionDelegate in order to provide actions for
         // notifications that contain a deepLink URL.
-        // The default functionality when you don't assign a delegate is opening urls in a browser
+        // The default functionality when you don't assign a delegate is asking the OS for an app that can open the url
         Ometria.instance().notificationInteractionHandler = this
     }
 
     override fun onNotificationInteraction(ometriaNotification: OmetriaNotification) {
-        openMainActivity(ometriaNotification.toString(), ometriaNotification.deepLinkActionUrl)
-    }
+        ometriaNotification.deepLinkActionUrl?.let { safeDeeplinkActionUrl ->
+            val intent = Intent(Intent.ACTION_VIEW).apply {
+                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                data = safeDeeplinkActionUrl.toUri()
+            }
 
-    private fun openMainActivity(ometriaNotificationString: String, deepLinkActionUrl: String?) {
-        val intent = Intent(this, MainActivity::class.java)
-        intent.putExtra(OMETRIA_NOTIFICATION_STRING_EXTRA_KEY, ometriaNotificationString)
-        intent.putExtra(DEEPLINK_ACTION_URL_EXTRA_KEY, deepLinkActionUrl)
-        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-        startActivity(intent)
+            try {
+                startActivity(intent)
+            } catch (_: ActivityNotFoundException) {
+                return
+            }
+        }
     }
 }

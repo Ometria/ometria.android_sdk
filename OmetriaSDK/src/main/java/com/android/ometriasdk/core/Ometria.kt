@@ -2,9 +2,9 @@ package com.android.ometriasdk.core
 
 import android.app.Application
 import android.app.Notification.COLOR_DEFAULT
+import android.content.ActivityNotFoundException
 import android.content.Context
 import android.content.Intent
-import android.webkit.URLUtil
 import androidx.core.app.NotificationManagerCompat
 import androidx.core.net.toUri
 import androidx.lifecycle.ProcessLifecycleOwner
@@ -650,21 +650,23 @@ class Ometria private constructor() : OmetriaNotificationInteractionHandler {
 
     override fun onNotificationInteraction(ometriaNotification: OmetriaNotification) {
         ometriaNotification.deepLinkActionUrl?.let { safeDeeplinkActionUrl ->
-            if (URLUtil.isValidUrl(safeDeeplinkActionUrl).not()) {
+            val intent = Intent(Intent.ACTION_VIEW).apply {
+                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                data = safeDeeplinkActionUrl.toUri()
+            }
+
+            try {
+                ometriaConfig.application.startActivity(intent)
+                Logger.d(Constants.Logger.PUSH_NOTIFICATIONS, "Open URL: $safeDeeplinkActionUrl")
+
+                trackDeepLinkOpenedEvent(
+                    link = safeDeeplinkActionUrl,
+                    page = "Browser"
+                )
+            } catch (e: ActivityNotFoundException) {
                 Logger.e(Constants.Logger.PUSH_NOTIFICATIONS, "Can not open $safeDeeplinkActionUrl")
                 return
             }
-
-            Logger.d(Constants.Logger.PUSH_NOTIFICATIONS, "Open URL: $safeDeeplinkActionUrl")
-            val intent = Intent(Intent.ACTION_VIEW)
-            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
-            intent.data = safeDeeplinkActionUrl.toUri()
-            ometriaConfig.application.startActivity(intent)
-
-            trackDeepLinkOpenedEvent(
-                link = safeDeeplinkActionUrl,
-                page = "Browser"
-            )
         }
     }
 }
