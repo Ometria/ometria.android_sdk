@@ -31,7 +31,7 @@ To install the library inside **Android Studio**, declare it as dependency in yo
 
 ```gradle
 dependencies {
-    implementation 'com.ometria:android-sdk:1.11.0'
+    implementation 'com.ometria:android-sdk:1.11.1'
 }
 ```
 
@@ -477,7 +477,7 @@ override fun onNewToken(token: String) {
 
 Ometria allows you to send URLs and tracking info alongside your push notifications and allows you to handle them on the device. 
 
-By default, the Ometria SDK automatically handles any interaction with push notifications that contain URLs by opening them in a browser.
+By default, the Ometria SDK automatically handles notification interactions containing URLs by launching an ACTION_VIEW intent for the URL. The link is opened by any application on the device capable of handling it (e.g., a browser or an app registered for the corresponding deep link).
 
 However, it enables developers to handle those URLs as they see fit (e.g. take the user to a specific screen in the app).
 
