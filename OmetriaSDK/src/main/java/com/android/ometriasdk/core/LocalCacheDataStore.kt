@@ -15,10 +15,13 @@ import androidx.datastore.preferences.preferencesDataStore
 import com.android.ometriasdk.core.event.OmetriaEvent
 import com.android.ometriasdk.core.network.toJson
 import com.android.ometriasdk.core.network.toOmetriaEventList
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.launch
 
 private const val LOCAL_CACHE_DATA_STORE_PREFERENCES = "LOCAL_CACHE_DATA_STORE_PREFERENCES"
 private const val JSON_ARRAY = "[]"
@@ -31,6 +34,8 @@ internal class LocalCacheDataStore private constructor(private val context: Cont
             emptyPreferences()
         }
     )
+
+    private val coroutineScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
 
     companion object {
         @SuppressLint("StaticFieldLeak")
@@ -45,13 +50,15 @@ internal class LocalCacheDataStore private constructor(private val context: Cont
     }
 
     init {
-        val oldCache = LocalCache(context)
-        if (oldCache.isCacheEmpty().not()) {
-            copyDataFromOldCache(oldCache)
+        coroutineScope.launch {
+            val oldCache = LocalCache(context)
+            if (oldCache.isCacheEmpty().not()) {
+                copyDataFromOldCache(oldCache)
+            }
         }
     }
 
-    private fun copyDataFromOldCache(oldCache: LocalCache) = runBlocking {
+    private suspend fun copyDataFromOldCache(oldCache: LocalCache) {
         context.localCacheDataStore.edit { preferences: MutablePreferences ->
             preferences[PreferencesKeys.isFirstAppRun] = oldCache.isFirstAppRun()
             preferences[PreferencesKeys.events] = oldCache.getEvents().toJson().toString()
