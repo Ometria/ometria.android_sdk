@@ -286,6 +286,7 @@ class Ometria private constructor() : OmetriaNotificationInteractionHandler {
     }
 
     private fun trackEvent(type: OmetriaEventType, data: Map<String, Any>? = null) {
+        if(!repository.isTrackingEnabled) return
         eventHandler.processEvent(
             type = type,
             data = data?.toMutableMap()
@@ -541,6 +542,27 @@ class Ometria private constructor() : OmetriaNotificationInteractionHandler {
             type = OmetriaEventType.PERMISSION_UPDATE,
             data = mapOf(NOTIFICATIONS to permissionValue)
         )
+    }
+
+    fun setTrackingEnabled(enabled: Boolean) {
+        val hasPermission =
+            NotificationManagerCompat.from(ometriaConfig.application).areNotificationsEnabled()
+        val permissionValue = if (enabled && hasPermission) "opt-in" else "opt-out"
+        val updatePermissionsAndFlush = {
+            trackEvent(
+                type = OmetriaEventType.PERMISSION_UPDATE,
+                data = mapOf(NOTIFICATIONS to permissionValue)
+            )
+            flush()
+        }
+
+        if (enabled) {
+            repository.setIsTrackingEnabled(true)
+            updatePermissionsAndFlush()
+        } else {
+            updatePermissionsAndFlush()
+            repository.setIsTrackingEnabled(false)
+        }
     }
 
     /**

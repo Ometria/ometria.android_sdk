@@ -205,6 +205,10 @@ class HomeFragment : Fragment() {
 
             EventType.RESET_STORE_ID -> Ometria.instance().updateStoreId(storeId = null)
 
+            EventType.DISABLE_TRACKING -> Ometria.instance().setTrackingEnabled(false)
+
+            EventType.ENABLE_TRACKING -> Ometria.instance().setTrackingEnabled(true)
+
             EventType.FLUSH -> Ometria.instance().flush()
             EventType.CLEAR -> Ometria.instance().clear()
         }

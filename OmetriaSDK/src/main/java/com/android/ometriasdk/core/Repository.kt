@@ -47,6 +47,8 @@ internal class Repository(
         get() = runBlocking { localCache.areNotificationsEnabled().firstOrNull() != false }
     val isFirstPermissionsUpdateEvent: Boolean
         get() = runBlocking { localCache.isFirstPermissionsUpdateEvent().firstOrNull() != false }
+    val isTrackingEnabled: Boolean
+        get() = runBlocking { localCache.isTrackingEnabled().firstOrNull() != false }
     val sdkVersionRN: String?
         get() = runBlocking { localCache.getSdkVersionRN().firstOrNull() }
     val lastPushTokenRefreshTimestamp: Long
@@ -126,6 +128,10 @@ internal class Repository(
     fun saveAreNotificationsEnabled(areNotificationsEnabled: Boolean) = runBlocking {
         localCache.saveAreNotificationsEnabled(areNotificationsEnabled)
         localCache.saveIsFirstPermissionsUpdateEvent(false)
+    }
+
+    fun setIsTrackingEnabled(enabled: Boolean) = runBlocking {
+        localCache.saveIsTrackingEnabled(enabled)
     }
 
     fun saveLastPushTokenRefreshTimestamp(timestamp: Long) = runBlocking { localCache.saveLastPushTokenRefreshTimestamp(timestamp) }

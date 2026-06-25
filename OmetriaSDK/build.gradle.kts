@@ -55,6 +55,10 @@ dependencies {
 
     // Add the SDK for Firebase Cloud Messaging
     implementation("com.google.firebase:firebase-messaging:24.1.1")
+
+    // Testing
+    testImplementation("junit:junit:4.13.2")
+    testImplementation("io.mockk:mockk:1.13.17")
 }
 
 // Publishing

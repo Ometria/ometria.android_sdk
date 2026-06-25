@@ -279,6 +279,21 @@ internal class LocalCacheDataStore private constructor(private val context: Cont
         preferences[PreferencesKeys.isFirstPermissionUpdateEvent] != false
     }
 
+    suspend fun saveIsTrackingEnabled(enabled: Boolean) {
+        try {
+            context.localCacheDataStore.edit { preferences: MutablePreferences ->
+                preferences[PreferencesKeys.isTrackingEnabled] = enabled
+            }
+        } catch (e: Exception) {
+            Logger.e(Constants.Logger.CACHE, e.message ?: "Failed to save isTrackingEnabled")
+        }
+    }
+
+    fun isTrackingEnabled(): Flow<Boolean> =
+        context.localCacheDataStore.data.map { preferences: Preferences ->
+            preferences[PreferencesKeys.isTrackingEnabled] != false
+        }
+
     fun getSdkVersionRN(): Flow<String?> = context.localCacheDataStore.data.map { preferences: Preferences ->
         preferences[PreferencesKeys.sdkVersionRN]
     }
@@ -321,6 +336,8 @@ internal class LocalCacheDataStore private constructor(private val context: Cont
         val storeId: Preferences.Key<String> = stringPreferencesKey(name = "STORE_ID_KEY")
         val areNotificationsEnabled: Preferences.Key<Boolean> = booleanPreferencesKey(name = "ARE_NOTIFICATIONS_ENABLED_KEY")
         val isFirstPermissionUpdateEvent: Preferences.Key<Boolean> = booleanPreferencesKey(name = "IS_FIRST_PERMISSION_UPDATE_EVENT_KEY")
+        val isTrackingEnabled: Preferences.Key<Boolean> =
+            booleanPreferencesKey(name = "IS_TRACKING_ENABLED")
         val sdkVersionRN: Preferences.Key<String> = stringPreferencesKey(name = "SDK_VERSION_RN_KEY")
         val apiToken: Preferences.Key<String> = stringPreferencesKey(name = "API_TOKEN_KEY")
         val lastPushTokenRefreshTimestamp: Preferences.Key<Long> = longPreferencesKey(name = "LAST_PUSH_TOKEN_REFRESH_TIMESTAMP_KEY")

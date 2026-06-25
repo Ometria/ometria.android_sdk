@@ -23,6 +23,8 @@ enum class EventType {
     CUSTOM,
     SIMULATE_PUSH_TOKEN_REFRESHED,
     RESET_STORE_ID,
+    DISABLE_TRACKING,
+    ENABLE_TRACKING,
     FLUSH,
     CLEAR
 }
