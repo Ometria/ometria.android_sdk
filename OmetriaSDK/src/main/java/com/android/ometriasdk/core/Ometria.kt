@@ -254,7 +254,9 @@ class Ometria private constructor() : OmetriaNotificationInteractionHandler {
      */
     fun onNotificationInteracted(remoteMessage: RemoteMessage) {
         remoteMessage.toOmetriaNotificationBody()?.let { ometriaPushNotificationBody ->
-            trackNotificationInteractedEvent(context = ometriaPushNotificationBody.context ?: return)
+            trackNotificationInteractedEvent(
+                context = ometriaPushNotificationBody.context ?: return
+            )
         }
     }
 
@@ -286,7 +288,7 @@ class Ometria private constructor() : OmetriaNotificationInteractionHandler {
     }
 
     private fun trackEvent(type: OmetriaEventType, data: Map<String, Any>? = null) {
-        if(!repository.isTrackingEnabled) return
+        if (!repository.isTrackingEnabled) return
         eventHandler.processEvent(
             type = type,
             data = data?.toMutableMap()
@@ -511,7 +513,8 @@ class Ometria private constructor() : OmetriaNotificationInteractionHandler {
     }
 
     internal fun trackPushTokenRefreshedEvent(pushToken: String?) {
-        val hasPermission = NotificationManagerCompat.from(ometriaConfig.application).areNotificationsEnabled()
+        val hasPermission =
+            NotificationManagerCompat.from(ometriaConfig.application).areNotificationsEnabled()
         val permissionValue = if (hasPermission) "opt-in" else "opt-out"
         trackEvent(
             type = OmetriaEventType.PUSH_TOKEN_REFRESHED,
@@ -544,6 +547,12 @@ class Ometria private constructor() : OmetriaNotificationInteractionHandler {
         )
     }
 
+    /**
+     * Tracks a permissions update event indicating whether the user has granted or revoked consent for activity tracking.
+     * Call this function whenever the user updates their tracking consent preference.
+     *
+     * @param enabled Whether the user has granted or revoked consent for activity tracking.
+     */
     fun setTrackingEnabled(enabled: Boolean) {
         val hasPermission =
             NotificationManagerCompat.from(ometriaConfig.application).areNotificationsEnabled()
@@ -564,6 +573,14 @@ class Ometria private constructor() : OmetriaNotificationInteractionHandler {
             repository.setIsTrackingEnabled(false)
         }
     }
+
+    /**
+     * Returns whether activity tracking is currently enabled for the user.
+     * The value is persisted locally and reflects the user's last saved consent preference.
+     *
+     * @return true if tracking is enabled, false otherwise.
+     */
+    fun getTrackingEnabled(): Boolean = repository.isTrackingEnabled
 
     /**
      * Track whenever a deep/universal link is opened in the app.
@@ -668,7 +685,8 @@ class Ometria private constructor() : OmetriaNotificationInteractionHandler {
      * Retrieves the [OmetriaNotification] object.
      * @param remoteMessage The object that will be processed, received from Firebase messaging.
      */
-    fun parseNotification(remoteMessage: RemoteMessage): OmetriaNotification? = remoteMessage.toOmetriaNotification()
+    fun parseNotification(remoteMessage: RemoteMessage): OmetriaNotification? =
+        remoteMessage.toOmetriaNotification()
 
     override fun onNotificationInteraction(ometriaNotification: OmetriaNotification) {
         ometriaNotification.deepLinkActionUrl?.let { safeDeeplinkActionUrl ->
